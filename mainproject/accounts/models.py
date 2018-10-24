@@ -1,12 +1,12 @@
 from django.contrib.auth.models import AbstractBaseUser
 from django.db import models
-from entities.models import *
 # Create your models here.
 class User(AbstractBaseUser):
     username = models.CharField(max_length=64)
     is_active = models.BooleanField(default=True)
     name = models.CharField(max_length=32)
     surname = models.CharField(max_length=64)
+    whenCreated = models.DateField(auto_now_add=True)
     #types of users:
     student = models.BooleanField(default=False)
     teacher = models.BooleanField(default=False)
@@ -29,17 +29,3 @@ class User(AbstractBaseUser):
     @property
     def is_scheduler(self):
         return self.scheduler
-
-class Student(models.Model):
-    user = models.OneToOneField('accounts.User', on_delete=models.CASCADE, primary_key=True, related_name='student_to_user')
-    #fieldOfStudy
-    yearOfStudy = models.DateTimeField()
-    #currentSubjects
-
-class Teacher(models.Model):
-    user = models.OneToOneField('accounts.User', on_delete=models.CASCADE, primary_key=True, related_name='professor_to_user')
-    #faculty
-    #subjects
-
-class Scheduler(models.Model):
-    user = models.OneToOneField('accounts.User', on_delete=models.CASCADE, primary_key=True, related_name='scheduler_to_user')
