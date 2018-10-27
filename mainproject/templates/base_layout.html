@@ -34,21 +34,26 @@
                     <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
                     -->
                     {% if user.is_authenticated %}
-                    <form action="accounts/logout" method="post">
+                    <form action="{% url 'accounts:logout' %}" method="post">
                         {% csrf_token %}
                         <button class="nav-item btn background-second" type="submit">
                             Logout
                         </button>
                     </form>
                     {% else %}
-                    <button class="nav-item btn background-second" onclick="location.href='accounts/login';">
-                        Login
-                    </button>
+                    <form action="{% url 'accounts:login' %}" method="post">
+                        {% csrf_token %}
+                        <button class="nav-item btn background-second" type="submit">
+                            Login
+                        </button>
+                    </form>
                     {% endif %}
                 </div>
             </div>
         </nav>
-    {% block content %}
-    {% endblock %}
+    <div class="container background-third">
+        {% block content %}
+        {% endblock %}
+    </div>
 </body>
 </html>
