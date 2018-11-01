@@ -1,0 +1,16 @@
+{% extends 'base_layout.html' %}
+{% block title %}
+<title> example </title>
+{% endblock %}
+{% block content %}
+    <table class="table-bordered">
+        <thead>
+            <tr>
+                <th> Day </th>
+                {% for i in range:10 %}
+                    <th> {{ 8 + i }} </th>
+                {% endfor %}
+            </tr>
+        </thead>
+    </table>
+{% endblock %}

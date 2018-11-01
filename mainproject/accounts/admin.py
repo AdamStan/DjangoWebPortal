@@ -1,6 +1,32 @@
 from django.contrib import admin
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 # Register your models here.
+from .forms import UserAdminChangeForm, UserAdminCreationForm
+
 User = get_user_model()
 
-admin.site.register(User)
+class UserAdmin(BaseUserAdmin):
+    form = UserAdminChangeForm
+    add_form = UserAdminCreationForm
+
+    list_display = ('username', 'password','admin','scheduler','teacher','student')
+    list_filter = ('admin',)
+
+    fieldsets = (
+        (None, {'fields': ('username','password')}),
+        ('Personal Information', {'fields': ('name','surname') }),
+        ('Permissions', {'fields': ('admin','student','teacher','scheduler') })
+    )
+    add_fieldsets = (
+        (None, {
+           'classes': ('wide'),
+            'fields': ('username', 'password1', 'confirm_password', 'name', 'surname')}
+        ),
+    )
+    search_fields = ('username', 'surname', 'name')
+    filter_horizontal = ()
+
+admin.site.register(User, UserAdmin)
+admin.site.unregister(Group)
