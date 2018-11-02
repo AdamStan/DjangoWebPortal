@@ -10,3 +10,7 @@
 .background-fourth{
     background-color: #f2f2f2
 }
+.tab-my{
+    table-layout: fixed;
+    width: 100%;
+}

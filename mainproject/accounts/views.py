@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm
-
+from .forms import MyAccountUpdate
+from .models import User
 # Create your views here.
 def show_login(request):
     if request.method == 'POST':
@@ -22,3 +23,30 @@ def show_logout(request):
         logout(request)
         return redirect('homepage')
     return redirect('homepage')
+
+def show_my_profile(request):
+    user = request.user
+    if request.POST:
+        old_form = [
+            request.POST['username'],
+            request.POST['password'],
+            request.POST['name'],
+            request.POST['surname'],
+        ]
+        print(old_form)
+        user = User.objects.get(username=request.user.username)
+        user.username = old_form[0]
+        if old_form[1][7:13] != "sha256":
+            user.set_password(old_form[1])
+            print(old_form[1][7:13])
+        user.name  = old_form[2]
+        user.surname = old_form[3]
+        user.save()
+
+    form = MyAccountUpdate({
+        'username': user.username,
+        'password': user.password,
+        'name': user.name,
+        'surname': user.surname
+    })
+    return render(request, 'myprofile.html', {'current_user': user, 'form': form} )

@@ -4,7 +4,7 @@ import datetime
 # Create your models here.
 
 class UserManager(BaseUserManager):
-    def create_user(self, username, password=None, active=True, is_student=False, is_teacher=False, is_scheduler=False, is_admin=False, name=None, surname=None):
+    def create_user(self, username, password=None, active=True, is_student=False, is_teacher=False, is_admin=False, name=None, surname=None):
         if not username:
             raise ValueError("User must have a username")
         if not password:
@@ -15,7 +15,6 @@ class UserManager(BaseUserManager):
         user_instance.is_active = active
         user_instance.student = is_student
         user_instance.teacher = is_teacher
-        user_instance.scheduler = is_scheduler
         user_instance.admin = is_admin
         user_instance.name = name
         user_instance.surname = surname
@@ -44,16 +43,6 @@ class UserManager(BaseUserManager):
         )
         return user_instance
 
-    def create_scheduler(self, username, password=None, active=True, name=None, surname=None):
-        user_instance = self.create_user(
-            username=username,
-            password=password,
-            active=active,
-            is_scheduler=True,
-            name=name,
-            surname=surname
-        )
-        return user_instance
     def create_superuser(self, username, password=None, active=True, name=None, surname=None):
         user_instance = self.create_user(
             username=username,
@@ -74,7 +63,6 @@ class User(AbstractBaseUser):
     #types of users:
     student = models.BooleanField(default=False)
     teacher = models.BooleanField(default=False)
-    scheduler = models.BooleanField(default=False)
     admin = models.BooleanField(default=False)
     staff = True
 
@@ -109,10 +97,6 @@ class User(AbstractBaseUser):
     @property
     def is_teacher(self):
         return self.teacher
-
-    @property
-    def is_scheduler(self):
-        return self.scheduler
 
     @property
     def is_admin(self):

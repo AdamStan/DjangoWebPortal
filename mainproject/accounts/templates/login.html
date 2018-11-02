@@ -7,7 +7,7 @@
     <h2 class="text-center"> Login form </h2>
     <form class="text-center" action="" method="POST">
         {% csrf_token %}
-        {{ form }}
+        {{ form.as_p }}
         {% if request.GET.next %}
             <input type="hidden" name="next" value = "{{ request.GET.next }}">
         {% endif %}

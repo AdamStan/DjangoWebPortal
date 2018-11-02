@@ -1,0 +1,29 @@
+{% extends 'base_layout.html' %}
+{% block title %}
+<title> example </title>
+{% endblock %}
+{% block content %}
+    <div>
+        <form action="#">
+
+        </form>
+    </div>
+    <table class="table-bordered tab-my">
+        <thead>
+            <tr>
+                <th> Day </th>
+                {% for value in values %}
+                    <th> {{ value }}:00 </th>
+                {% endfor %}
+            </tr>
+        </thead>
+        {% for day in days %}
+        <tr>
+            <td> {{ day }} </td>
+            {% for value in values %}
+                <td> (empty) </td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

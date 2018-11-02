@@ -3,7 +3,7 @@
 from django import forms
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from .models import User
-'''
+
 class RegisterForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput)
     confirm_password = forms.CharField(widget=forms.PasswordInput)
@@ -25,7 +25,7 @@ class RegisterForm(forms.ModelForm):
         if password and confirm_password and password != confirm_password:
             raise forms.ValidationError('Passwords don\'t match')
         return password # doesn't matter cp or password, both are the same
-'''
+
 class UserAdminCreationForm(forms.ModelForm):
     password1 = forms.CharField(label='password', widget=forms.PasswordInput)
     confirm_password = forms.CharField(label='password_confirm', widget=forms.PasswordInput)
@@ -64,3 +64,8 @@ class UserAdminChangeForm(forms.ModelForm):
 
     def clean_password(self):
         return self.initial["password"]
+
+class MyAccountUpdate(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['username', 'password', 'name', 'surname']
