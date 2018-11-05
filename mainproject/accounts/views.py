@@ -16,7 +16,7 @@ def show_login(request):
                 return redirect('homepage')
     else:
         form = AuthenticationForm()
-    return render(request, 'login.html', {'form': form})
+    return render(request, 'login.html',{'form':form})
 
 def show_logout(request):
     if request.method == 'POST':

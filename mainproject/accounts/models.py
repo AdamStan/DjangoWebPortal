@@ -2,7 +2,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.db import models
 import datetime
 # Create your models here.
-
+from django.contrib.auth.models import User
 class UserManager(BaseUserManager):
     def create_user(self, username, password=None, active=True, is_student=False, is_teacher=False, is_admin=False, name=None, surname=None):
         if not username:
@@ -16,6 +16,8 @@ class UserManager(BaseUserManager):
         user_instance.student = is_student
         user_instance.teacher = is_teacher
         user_instance.admin = is_admin
+        if is_admin:
+            user_instance.staff = True
         user_instance.name = name
         user_instance.surname = surname
         user_instance.save()
@@ -64,7 +66,7 @@ class User(AbstractBaseUser):
     student = models.BooleanField(default=False)
     teacher = models.BooleanField(default=False)
     admin = models.BooleanField(default=False)
-    staff = True
+    staff = models.BooleanField(default=False)
 
     objects = UserManager()
 
@@ -101,3 +103,7 @@ class User(AbstractBaseUser):
     @property
     def is_admin(self):
         return self.admin
+
+    @property
+    def is_staff(self):
+        return self.staff

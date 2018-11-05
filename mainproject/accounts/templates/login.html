@@ -5,9 +5,26 @@
 {% block content %}
 <div class="background-third">
     <h2 class="text-center"> Login form </h2>
-    <form class="text-center" action="" method="POST">
+    {% if form.errors %}
+        <p class="label label-danger">
+            Your username and password didn't match.
+            Please try again.
+        </p>
+    {% endif %}
+    <form class="text-center" method="POST">
         {% csrf_token %}
-        {{ form.as_p }}
+        <div class="table-responsive">
+            <table>
+            <tr>
+                <td> Username </td>
+                <td><input type="text" name="username"></td>
+            </tr>
+            <tr>
+                <td> Password </td>
+                <td><input type="password" name="password"></td>
+            </tr>
+        </table>
+        </div>
         {% if request.GET.next %}
             <input type="hidden" name="next" value = "{{ request.GET.next }}">
         {% endif %}

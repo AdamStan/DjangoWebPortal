@@ -4,13 +4,31 @@ from .models import User
 # there will be creating users
 class UserTest(TestCase):
     def setUp(self):
-        User.objects.create_superuser()
+        User.objects.create_superuser(
+            username="admin123",
+            password="haslo123",
+            name="admin_name",
+            surname="admin_surname"
+        )
+        User.objects.create_teacher(
+        )
         User.objects.create_teacher()
         User.objects.create_teacher()
         User.objects.create_teacher()
         User.objects.create_teacher()
-        User.objects.create_teacher()
-        User.objects.create_teacher()
+        User.objects.create_student()
+        User.objects.create_student()
+        User.objects.create_student()
+        User.objects.create_student()
+        User.objects.create_student()
+        User.objects.create_student()
+        User.objects.create_student()
+        User.objects.create_student()
+        User.objects.create_student()
+        User.objects.create_student()
+        User.objects.create_student()
+        User.objects.create_student()
+        User.objects.create_student()
         User.objects.create_student()
         User.objects.create_student()
 
