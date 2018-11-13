@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     {% block title %}
     {% endblock %}
+    <script src="{% static 'jquery-3.3.1.min.js' %}"></script>
     <link rel="stylesheet" href="{% static 'styles.css' %}">
     <link rel="stylesheet" href="{% static 'myownstyles.css' %}">
 </head>
@@ -57,7 +58,7 @@
                 </div>
             </div>
         </nav>
-    <div class="container background-third">
+        <div class="container background-third">
         {% block content %}
         {% endblock %}
     </div>
