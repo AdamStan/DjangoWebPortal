@@ -20,14 +20,6 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarCollapse">
                 <ul class="navbar-nav mr-auto">
-                    <!--
-                    <li class="nav-item">
-                        <a class="nav-link" href="/useroptions"> My Account </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/hello"> Options </a>
-                    </li>
-                    -->
                     <li class="nav-item">
                         <a class="nav-link" href="/about"> About us </a>
                     </li>
@@ -41,9 +33,15 @@
                     <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
                     -->
                     {% if user.is_authenticated %}
-                    <button class="nav-item btn background-second" type="GET">
+                    <button class="nav-item btn background-second" type="POST">
                         <a href="{% url 'accounts:myprofile' %}"> My Profile </a>
                     </button>
+                    <form action="{% url 'accounts:myprofile' %}" method="POST">
+                        {% csrf_token %}
+                        <button class="nav-item btn background-second" type="submit">
+                            My Profile
+                        </button>
+                    </form>
                     <form action="{% url 'accounts:logout' %}" method="post">
                         {% csrf_token %}
                         <button class="nav-item btn background-second" type="submit">

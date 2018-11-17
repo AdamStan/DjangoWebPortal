@@ -4,17 +4,12 @@
 <title> example </title>
 {% endblock %}
 {% block content %}
-    <div class="dropdown">
-      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        Who?
-      </button>
-      <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
-        <button class="dropdown-item" type="button"> Teachers </button>
-        <button class="dropdown-item" type="button"> Rooms </button>
-        <button class="dropdown-item" type="button"> Student's groups</button>
-      </div>
+    <div class = "dropdowns-block">
+        {% dropdown_button "Who?" "Students" "Teachers" "Rooms" %}
+        {% dropdown_button "--there will be something--" %}
+        <!-- <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
+        <button class="btn background-second my-2 my-sm-0" type="submit">Search</button> -->
     </div>
-    {% dropdown_button "Kto dokladnie" "Andrzej" "Jan" "Adam" %}
     <div class="table-responsive">
         <table class="table-bordered tab-my">
             <thead>
@@ -34,5 +29,11 @@
             </tr>
             {% endfor %}
         </table>
+    </div>
+    <div>
+        <button class="btn background-second"> EDIT </button>
+        <p> jak button jest press to beda inputy, wypelnia sie one danymi kliknietego przedmiotu (nie wszystkimi),
+            godzinki beda edytowalne tylko</p>
+        <p> ten button bedzie nie aktywny jak nie wybierze planu (taki jest plan) </p>
     </div>
 {% endblock %}

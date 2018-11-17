@@ -4,7 +4,7 @@ import datetime
 # Create your models here.
 from django.contrib.auth.models import User
 class UserManager(BaseUserManager):
-    def create_user(self, username, password=None, active=True, is_student=False, is_teacher=False, is_admin=False, name=None, surname=None):
+    def create_user(self, username, password=None, active=True, is_student=False, is_teacher=False, is_admin=False, name=None, surname=None, sname = None):
         if not username:
             raise ValueError("User must have a username")
         if not password:
@@ -19,39 +19,43 @@ class UserManager(BaseUserManager):
         if is_admin:
             user_instance.staff = True
         user_instance.name = name
+        user_instance.second_name = sname
         user_instance.surname = surname
         user_instance.save()
         return user_instance
 
-    def create_student(self, username, password=None, active=True, name=None, surname=None):
+    def create_student(self, username, password=None, active=True, name=None, sname=None, surname=None):
         user_instance = self.create_user(
             username= username,
             password= password,
             active = active,
             is_student = True,
             name = name,
-            surname = surname
+            sname= sname,
+            surname = surname,
         )
         return user_instance
 
-    def create_teacher(self, username, password=None, active=True, name=None, surname=None):
+    def create_teacher(self, username, password=None, active=True, name=None, sname=None, surname=None):
         user_instance = self.create_user(
             username=username,
             password=password,
             active=active,
             is_teacher=True,
             name=name,
+            sname= sname,
             surname=surname
         )
         return user_instance
 
-    def create_superuser(self, username, password=None, active=True, name=None, surname=None):
+    def create_superuser(self, username, password=None, active=True, name=None, snmae=None, surname=None):
         user_instance = self.create_user(
             username=username,
             password=password,
             active=active,
             is_admin=True,
             name=name,
+            sname=snmae,
             surname=surname
         )
         return user_instance
@@ -60,6 +64,7 @@ class User(AbstractBaseUser):
     username = models.CharField(max_length=64, unique=True, default='USER_WITH_NONAME')
     is_active = models.BooleanField(default=True)
     name = models.CharField(max_length=32, default=None)
+    second_name = models.CharField(max_length=32, default=None, null=True)
     surname = models.CharField(max_length=64, default=None)
     whenCreated = models.DateField(default=datetime.date.today)
     #types of users:
@@ -103,7 +108,3 @@ class User(AbstractBaseUser):
     @property
     def is_admin(self):
         return self.admin
-
-    @property
-    def is_staff(self):
-        return self.staff

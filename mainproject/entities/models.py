@@ -6,7 +6,7 @@ var_on_delete = models.SET_NULL = True
 # Create your models here.
 class Faculty(models.Model):
     name = models.CharField(max_length=64)
-    description = models.CharField(max_length=256, default=None)
+    description = models.CharField(max_length=256, default=None, null=True)
 
 class FieldOfStudy(models.Model):
     name = models.CharField(max_length=64)

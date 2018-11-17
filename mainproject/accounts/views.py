@@ -31,6 +31,7 @@ def show_my_profile(request):
             request.POST['username'],
             request.POST['password'],
             request.POST['name'],
+            request.POST['second_name'],
             request.POST['surname'],
         ]
         print(old_form)
@@ -40,13 +41,15 @@ def show_my_profile(request):
             user.set_password(old_form[1])
             print(old_form[1][7:13])
         user.name  = old_form[2]
-        user.surname = old_form[3]
+        user.second_name = old_form[3]
+        user.surname = old_form[4]
         user.save()
 
     form = MyAccountUpdate({
         'username': user.username,
         'password': user.password,
         'name': user.name,
+        'second_name': user.second_name,
         'surname': user.surname
     })
     return render(request, 'myprofile.html', {'current_user': user, 'form': form} )
