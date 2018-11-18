@@ -33,9 +33,6 @@
                     <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
                     -->
                     {% if user.is_authenticated %}
-                    <button class="nav-item btn background-second" type="POST">
-                        <a href="{% url 'accounts:myprofile' %}"> My Profile </a>
-                    </button>
                     <form action="{% url 'accounts:myprofile' %}" method="POST">
                         {% csrf_token %}
                         <button class="nav-item btn background-second" type="submit">

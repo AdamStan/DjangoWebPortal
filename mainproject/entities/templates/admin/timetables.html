@@ -2,34 +2,48 @@
 {% load helpful_tags %}
 {% block title %}
 <title> example </title>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
+    var values = {{values|safe}};
+    google.charts.load("current", {packages:["timeline"]});
+    google.charts.setOnLoadCallback(drawChart);
+    function drawChart() {
+        var container = document.getElementById('timetable_values');
+        var chart = new google.visualization.Timeline(container);
+        var dataTable = new google.visualization.DataTable();
+        dataTable.addColumn({ type: 'string', id: 'Position' });
+        dataTable.addColumn({ type: 'string', id: 'Name' });
+        dataTable.addColumn({ type: 'date', id: 'Start' });
+        dataTable.addColumn({ type: 'date', id: 'End' });
+        array_of_objects = [];
+        for(var value of values){
+            array_of_objects.push(JSON.parse(value));
+        }
+        for(var object of array_of_objects){
+            dataTable.addRows([
+              [ object.day, object.name, new Date(0, 0, 0, object.when_started, 15), new Date(0, 0, 0, object.when_started + object.how_long, 0) ],
+            ]);
+        }
+        var options = {
+          colors: ['#ff4d4d', '#ffb3b3'],
+          timeline: { rowLabelStyle: {fontName: 'Helvetica', fontSize: 24, color: '#603913' },
+                         barLabelStyle: { fontName: 'Garamond', fontSize: 14 } }
+        };
+        chart.draw(dataTable, options);
+    }
+</script>
 {% endblock %}
 {% block content %}
+    <p> Jak ma to dzialac? </p>
+    <p> Do tabeli dajemy jsona i wypisujemy wg tych danych. </p>
+    <p> JSONa dajemy pod warunkiem buttonow, przy wybraniu jednej z 3 opcji w pierwszym wysylamy liste np  dodajemy
+        grupy studenckie na liscie do nastepnego buttona </p>
     <div class = "dropdowns-block">
-        {% dropdown_button "Who?" "Students" "Teachers" "Rooms" %}
+        {% dropdown_button "Who?" "Student's groups" "Teachers" "Rooms" %}
         {% dropdown_button "--there will be something--" %}
-        <!-- <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
-        <button class="btn background-second my-2 my-sm-0" type="submit">Search</button> -->
     </div>
-    <div class="table-responsive">
-        <table class="table-bordered tab-my">
-            <thead>
-                <tr>
-                    <th> Day </th>
-                    {% for value in values %}
-                        <th> {{ value }}:00 </th>
-                    {% endfor %}
-                </tr>
-            </thead>
-            {% for day in days %}
-            <tr>
-                <td> {{ day }} </td>
-                {% for value in values %}
-                    <td> (empty) </td>
-                {% endfor %}
-            </tr>
-            {% endfor %}
-        </table>
-    </div>
+    <!-- <div id="timetable" style="height: 400px"></div> -->
+    <div class="container" id="timetable_values" style="height: 400px"></div>
     <div>
         <button class="btn background-second"> EDIT </button>
         <p> jak button jest press to beda inputy, wypelnia sie one danymi kliknietego przedmiotu (nie wszystkimi),

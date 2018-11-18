@@ -4,6 +4,12 @@
 .background-second{
     background-color: #ff4d4d
 }
+.background-second:hover{
+    background-color: #ffb3b3
+}
+.background-second:active{
+    background-color: #ffb3b3
+}
 .background-third{
     background-color: #ffb3b3
 }

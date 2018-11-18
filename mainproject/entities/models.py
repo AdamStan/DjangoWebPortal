@@ -39,7 +39,7 @@ class Plan(models.Model):
     fieldOfStudy = models.ForeignKey(FieldOfStudy, on_delete=var_on_delete, default=None)
 
 class ScheduledSubject(models.Model):
-    subject = models.ForeignKey(Subject, on_delete=var_on_delete, default=None)
+    subject = models.ForeignKey(Subject, on_delete=var_on_delete, default=None, null=True)
     whenStart = models.TimeField(default=None)
     whenFinnish = models.TimeField(default=None)
     dayOfWeek = models.CharField(max_length=32, default=None)
