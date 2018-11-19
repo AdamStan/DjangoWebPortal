@@ -1,5 +1,8 @@
 from .models import User
 
+'''
+This is a function for adding example data to database
+'''
 def add_data():
     # -- admins --
     User.objects.create_superuser(
@@ -22,25 +25,25 @@ def add_data():
         surname="Kowalska"
     )
     User.objects.create_teacher(
-        username="teacher2",
+        username="teacher3",
         password="teacher_user",
         name="Andrzej",
         surname="Nowak"
     )
     User.objects.create_teacher(
-        username="teacher3",
+        username="teacher4",
         password="teacher_user",
         name="Arleta",
         surname="Gałga"
     )
     User.objects.create_teacher(
-        username="teacher4",
+        username="teacher5",
         password="teacher_user",
         name="Marzena",
         surname="Domańska"
     )
     User.objects.create_teacher(
-        username="teacher5",
+        username="teacher6",
         password="teacher_user",
         name="Maria",
         surname="Szczerska"

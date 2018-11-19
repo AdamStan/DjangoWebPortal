@@ -24,19 +24,17 @@ class UserTest(TestCase):
         )
 
     def test_admins(self):
-        pass
-
-    def is_admin_a_staff(self):
-        pass
+        admin = User.objects.get(admin=True)
+        self.assertEqual(admin.username, 'admin_x')
+        self.assertEqual(admin.admin, True)
+        self.assertEqual(admin.staff, True)
 
     def test_teachers(self):
-        pass
-
-    def is_teacher_a_staff(self):
-        pass
+        teacher = User.objects.get(teacher=True)
+        self.assertEqual(teacher.teacher, True)
+        self.assertEqual(teacher.staff, False)
 
     def test_students(self):
-        pass
-
-    def is_student_a_staff(self):
-        pass
+        student = User.objects.get(student=True)
+        self.assertEqual(student.student, True)
+        self.assertEqual(student.staff, False)

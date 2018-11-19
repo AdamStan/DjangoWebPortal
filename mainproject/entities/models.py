@@ -1,4 +1,5 @@
 from django.db import models
+import json
 from accounts.models import User # it works, really
 
 var_on_delete = models.SET_NULL = True
@@ -11,7 +12,15 @@ class Faculty(models.Model):
 class FieldOfStudy(models.Model):
     name = models.CharField(max_length=64)
     faculty = models.ForeignKey(Faculty, on_delete=var_on_delete, default=None)
-    degree = models.IntegerField(default=None)
+    BACHELOR = '1st'
+    MASTER = '2nd'
+    UNIFORM_MASTER_DEGREE = 'only-master'
+    DEGREE_CHOICES = (
+        (BACHELOR, 'bachelor'),
+        (MASTER, 'master'),
+        (UNIFORM_MASTER_DEGREE, 'only-master')
+    )
+    degree = models.CharField(max_length=12, choices=DEGREE_CHOICES, default=BACHELOR)
 
 class Teacher(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True, related_name='professor_to_user')
@@ -20,8 +29,11 @@ class Teacher(models.Model):
 class Subject(models.Model):
     name = models.CharField(max_length=128)
     fieldOfStudy = models.ForeignKey(FieldOfStudy, on_delete=var_on_delete, default=None)
-    yearOfStudy = models.IntegerField(default=None)
+    semester = models.IntegerField(default=None)
     teachers = models.ManyToManyField(Teacher)
+
+    def toJSON(self):
+        return json.dumps(self.__dict__)
 
 class Building(models.Model):
     name = models.CharField(max_length=64)
@@ -32,7 +44,7 @@ class Building(models.Model):
 
 class Room(models.Model):
     id = models.CharField(primary_key=True, max_length=8)
-    building = models.ForeignKey(Building, on_delete=var_on_delete)
+    building = models.ForeignKey(Building, on_delete=var_on_delete, null=True)
 
 class Plan(models.Model):
     title = models.CharField(max_length=32)
@@ -46,9 +58,12 @@ class ScheduledSubject(models.Model):
     plan = models.ForeignKey(Plan, on_delete=var_on_delete, default=None)
     room = models.ForeignKey(Room, on_delete=var_on_delete, default=None)
 
+    def toJSON(self):
+        return json.dumps(self.__dict__)
+
 class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True, related_name='student_to_user')
     fieldOfStudy = models.ForeignKey(FieldOfStudy, on_delete=var_on_delete)
-    yearOfStudy = models.IntegerField(default=None)
+    semester = models.IntegerField(default=1)
     degree = models.IntegerField(default=None)
-    plan = models.ForeignKey(Plan, on_delete=var_on_delete, default=None)
+    plan = models.ForeignKey(Plan, on_delete=var_on_delete, default=None, null=True)
