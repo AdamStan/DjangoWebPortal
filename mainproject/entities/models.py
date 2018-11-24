@@ -49,6 +49,18 @@ class Building(models.Model):
 class Room(models.Model):
     id = models.CharField(primary_key=True, max_length=8)
     building = models.ForeignKey(Building, on_delete=var_on_delete, null=True)
+    LECTURE = "LEC"
+    LABORATORY = "LAB"
+    TYPE_OF_ROOMS = (
+        (LECTURE, 'Lecture'),
+        (LABORATORY, 'Laboratory'),
+    )
+    room_type = models.CharField(
+        max_length=3,
+        choices=TYPE_OF_ROOMS,
+        default=None,
+        null=True,
+    )
 
 class Plan(models.Model):
     title = models.CharField(max_length=32)
@@ -57,12 +69,25 @@ class Plan(models.Model):
 
 class ScheduledSubject(models.Model):
     subject = models.ForeignKey(Subject, on_delete=var_on_delete, default=None)
+    LECTURE = "LEC"
+    LABORATORY = "LAB"
+    TYPE_CHOICES = (
+        (LECTURE, 'Lecture'),
+        (LABORATORY, 'Laboratory'),
+    )
+    type = models.CharField(
+        max_length=3,
+        choices=TYPE_CHOICES,
+        default=None,
+        null=True
+    )
     whenStart = models.TimeField(default=None, null=True)
     whenFinnish = models.TimeField(default=None, null=True)
     dayOfWeek = models.IntegerField(default=None, null=True)
     how_long = models.IntegerField(default=None, null=True)
     plan = models.ForeignKey(Plan, on_delete=var_on_delete, default=None)
     room = models.ForeignKey(Room, on_delete=var_on_delete, default=None, null=True)
+    teacher = models.ForeignKey(Teacher, on_delete=var_on_delete, default=None, null=True)
 
     def toJSON(self):
         return json.dumps(self.__dict__)
