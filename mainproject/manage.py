@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 import os
 import sys
-from entities.templatetags import helpful_tags
 
 if __name__ == '__main__':
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mainproject.settings')

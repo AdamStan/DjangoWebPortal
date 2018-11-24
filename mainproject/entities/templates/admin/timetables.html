@@ -1,7 +1,13 @@
 {% extends 'base_layout.html' %}
 {% load helpful_tags %}
+{% load static from staticfiles %}
 {% block title %}
 <title> example </title>
+<link href="{% static 'fullcalendar-3.9.0//fullcalendar.min.css' %}" rel='stylesheet' />
+<link href="{% static 'fullcalendar-3.9.0/fullcalendar.print.min.css' %}" rel='stylesheet' media='print' />
+<script type="text/javascript" src="{% static 'fullcalendar-3.9.0/lib/moment.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'fullcalendar-3.9.0/lib/jquery.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'fullcalendar-3.9.0/fullcalendar.min.js' %}"></script>
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script type="text/javascript">
     var values = {{values|safe}};
@@ -31,6 +37,67 @@
         };
         chart.draw(dataTable, options);
     }
+    $(document).ready(function() {
+        var today = new Date();
+        var dd = today.getDate();
+        var mm = today.getMonth()+1; //January is 0!
+        var yyyy = today.getFullYear();
+        if(dd<10) {
+            dd = '0'+dd
+        }
+        if(mm<10) {
+            mm = '0'+mm
+        }
+        today = yyyy + '-' + mm + '-' + dd;
+
+
+        event_list = []
+        for(var i = 0; i < 15; i++){
+            var date = new Date();
+            date.setDate(date.getDate() + 7*i)
+            dd = date.getDate();
+            mm = date.getMonth()+1;
+            yyyy = date.getFullYear();
+
+            if(dd<10) {
+                dd = '0'+dd
+            }
+            if(mm<10) {
+                mm = '0'+mm
+            }
+            date_str1 = yyyy + '-' + mm + '-' + dd + 'T16:00:00';
+            date_str2 = yyyy + '-' + mm + '-' + dd + 'T18:00:00';
+            event_list.push(
+                {   id: 999,
+                title: 'Repeating Event',
+                start: date_str1,
+                end: date_str2 }
+            );
+        }
+
+        $('#calendar').fullCalendar({
+            allDaySlot: false,
+            defaultView: 'agendaWeek',
+            height: 740,
+            header: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'agendaWeek,agendaDay'
+            },
+            businessHours: {
+                // days of week. an array of zero-based day of week integers (0=Sunday)
+                start: '8:00', // a start time (10am in this example)
+                 end: '21:00', // an end time (6pm in this example)
+            },
+            minTime: "8:00",
+            maxTime: "21:00",
+            defaultDate: today,
+            navLinks: true, // can click day/week names to navigate views
+            editable: true,
+            eventLimit: true, // allow "more" link when too many events
+            events: event_list
+        });
+    });
 </script>
 {% endblock %}
 {% block content %}
@@ -44,6 +111,7 @@
     </div>
     <!-- <div id="timetable" style="height: 400px"></div> -->
     <div class="container" id="timetable_values" style="height: 400px"></div>
+    <div id='calendar'></div>
     <div>
         <button class="btn background-second"> EDIT </button>
         <p> jak button jest press to beda inputy, wypelnia sie one danymi kliknietego przedmiotu (nie wszystkimi),

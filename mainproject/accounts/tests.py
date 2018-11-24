@@ -1,5 +1,6 @@
 from django.test import TestCase
 from .models import User
+from .views import show_login, show_logout, show_my_profile
 # Create your tests here.
 # there will be creating users
 class UserTest(TestCase):
@@ -38,3 +39,13 @@ class UserTest(TestCase):
         student = User.objects.get(student=True)
         self.assertEqual(student.student, True)
         self.assertEqual(student.staff, False)
+
+class ViewsTest(TestCase):
+    def test_show_my_profile(self):
+        pass
+
+    def test_show_login(self):
+        pass
+
+    def test_show_logout(self):
+        pass
