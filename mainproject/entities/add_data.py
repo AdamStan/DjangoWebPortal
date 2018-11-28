@@ -170,5 +170,4 @@ def add_entities():
         transaction.savepoint_commit(sid)
     except Exception as e:
         transaction.savepoint_rollback(sid)
-        print(e.__name__)
         print(str(e))
