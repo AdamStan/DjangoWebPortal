@@ -1,5 +1,5 @@
 from django.test import TestCase
-from .models import *
+from ..models import *
 from accounts.models import User
 
 # Create your tests here.
@@ -91,7 +91,3 @@ class TestEntities(TestCase):
             faculty = Faculty.objects.get(name="Does not exist")
         except Exception:
             self.assertEquals(True, True)
-
-
-
-
