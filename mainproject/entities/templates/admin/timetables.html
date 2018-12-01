@@ -13,6 +13,11 @@
     var values = {{values|safe}};
     google.charts.load("current", {packages:["timeline"]});
     google.charts.setOnLoadCallback(drawChart);
+    array_of_objects = [];
+    for(var value of values){
+        array_of_objects.push(JSON.parse(value));
+    }
+
     function drawChart() {
         var container = document.getElementById('timetable_values');
         var chart = new google.visualization.Timeline(container);
@@ -21,10 +26,6 @@
         dataTable.addColumn({ type: 'string', id: 'Name' });
         dataTable.addColumn({ type: 'date', id: 'Start' });
         dataTable.addColumn({ type: 'date', id: 'End' });
-        array_of_objects = [];
-        for(var value of values){
-            array_of_objects.push(JSON.parse(value));
-        }
         for(var object of array_of_objects){
             dataTable.addRows([
               [ object.day, object.name, new Date(0, 0, 0, object.whenStart, 15), new Date(0, 0, 0, object.whenStart + object.how_long, 0) ],
@@ -50,14 +51,32 @@
         }
         today = yyyy + '-' + mm + '-' + dd;
 
-
         event_list = []
-        for(var i = 0; i < 15; i++){
-            var date = new Date();
-            date.setDate(date.getDate() + 7*i)
+
+        function getMonday(d) {
+          d = new Date(d);
+          var day = d.getDay(),
+              diff = d.getDate() - day + (day == 0 ? -6:1); // adjust when day is sunday
+          return new Date(d.setDate(diff));
+        }
+        days = {
+            "monday": 0,
+            "tuseday": 1,
+            "wenesday": 2,
+            "thursday": 3,
+            "friday": 4,
+            "saturday": 5,
+            "sunday": 6,
+        }
+        for(var object of array_of_objects){
+            var date = getMonday(new Date());
+            date.setDate(date.getDate() + days[object.day]);
             dd = date.getDate();
+            console.log(object);
             mm = date.getMonth()+1;
             yyyy = date.getFullYear();
+            hh = object.whenStart;
+            hh_finish = object.whenStart + object.how_long
 
             if(dd<10) {
                 dd = '0'+dd
@@ -65,46 +84,49 @@
             if(mm<10) {
                 mm = '0'+mm
             }
-            date_str1 = yyyy + '-' + mm + '-' + dd + 'T16:00:00';
-            date_str2 = yyyy + '-' + mm + '-' + dd + 'T18:00:00';
+            date_str1 = yyyy + '-' + mm + '-' + dd + 'T' + hh +':00:00';
+            date_str2 = yyyy + '-' + mm + '-' + dd + 'T' + hh_finish +':00:00';
+
             event_list.push(
-                {   id: 999,
-                title: 'Repeating Event',
-                start: date_str1,
-                end: date_str2 }
+                {
+                    id: object.id,
+                    title: object.name,
+                    start: date_str1,
+                    end: date_str2
+                }
             );
+        }
+        for(var o of event_list){
+            console.log(o);
         }
 
         $('#calendar').fullCalendar({
             allDaySlot: false,
             defaultView: 'agendaWeek',
-            height: 740,
+            height:727,
             header: {
-                left: 'prev,next today',
-                center: 'title',
-                right: 'agendaWeek,agendaDay'
+                left: 'today',
+                center: '',
+                right: 'agendaWeek',
             },
             businessHours: {
                 // days of week. an array of zero-based day of week integers (0=Sunday)
                 start: '8:00', // a start time (10am in this example)
-                 end: '21:00', // an end time (6pm in this example)
+                end: '21:00', // an end time (6pm in this example)
             },
             minTime: "8:00",
             maxTime: "21:00",
             defaultDate: today,
-            navLinks: true, // can click day/week names to navigate views
-            editable: true,
+            navLinks: false, // can click day/week names to navigate views
+            editable: false,
             eventLimit: true, // allow "more" link when too many events
-            events: event_list
+            events: event_list,
+            columnHeaderFormat: 'dddd'
         });
     });
 </script>
 {% endblock %}
 {% block content %}
-    <p> Jak ma to dzialac? </p>
-    <p> Do tabeli dajemy jsona i wypisujemy wg tych danych. </p>
-    <p> JSONa dajemy pod warunkiem buttonow, przy wybraniu jednej z 3 opcji w pierwszym wysylamy liste np  dodajemy
-        grupy studenckie na liscie do nastepnego buttona </p>
     {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
     <form method="post" action="{% url 'entities:timetables_student' %}">
@@ -119,11 +141,9 @@
     </form>
     <!-- <div id="timetable" style="height: 400px"></div> -->
     <div class="container" id="timetable_values" style="height: 400px"></div>
+    <h1> Plan {{ plan_title }} </h1>
     <div id='calendar'></div>
     <div>
         <button class="btn background-second"> EDIT </button>
-        <p> jak button jest press to beda inputy, wypelnia sie one danymi kliknietego przedmiotu (nie wszystkimi),
-            godzinki beda edytowalne tylko</p>
-        <p> ten button bedzie nie aktywny jak nie wybierze planu (taki jest plan) </p>
     </div>
 {% endblock %}

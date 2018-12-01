@@ -67,15 +67,7 @@ def create_table(plan_id):
     plan = Plan.objects.get(id=plan_id)
     subjects = ScheduledSubject.objects.filter(plan=plan)
     values = []
-    days = [
-        "monday",
-        "tuseday",
-        "wenesday",
-        "thursday",
-        "friday",
-        "saturday",
-        "sunday",
-    ]
+    days = ["monday","tuseday","wenesday","thursday","friday","saturday","sunday"]
 
     for ss in subjects:
         buff = SubjectExample()
@@ -83,11 +75,11 @@ def create_table(plan_id):
         buff.name = ss.subject.name + " " + ss.type
         buff.whenStart = ss.whenStart.hour
         buff.how_long = ss.how_long
-        buff.day = days[ss.dayOfWeek]
+        buff.day = days[ss.dayOfWeek-1]
 
         values.append(buff.toJSON())
 
-    return {"values": values}
+    return {"values": values}, plan.title
 
 def get_plan_for_teacher():
     pass
@@ -100,14 +92,26 @@ def show_timetables(request):
 
 def show_student_plans(request):
     plans = get_plans()
+    plan_title = ""
     if request.method == 'POST':
         value = request.POST.get('plan_id', None)
         print("Which value was taken: " + value)
-        parameters = create_table(value)
+        parameters, plan_title  = create_table(value)
     else:
         parameters = create_table_example()
 
-    return render(request, 'admin/timetables.html', {"values": parameters['values'], "plans": plans, });
+    return render(request, 'admin/timetables.html', {"values": parameters['values'], "plans": plans, "plan_title":plan_title});
+
+def show_teachers_plans(request):
+    pass
+
+def show_rooms_plans(request):
+    pass
+
+def show_generate_page(request):
+    if request.method == 'POST':
+        pass
+    return render(request,'admin/generate.html')
 
 def show_teacher_plan(request):
     parameters = create_table()

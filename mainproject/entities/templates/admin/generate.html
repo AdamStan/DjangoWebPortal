@@ -1,0 +1,25 @@
+{% extends 'base_layout.html' %}
+{% load static from staticfiles %}
+{% block title %}
+<title> Generate plans </title>
+{% endblock %}
+{% block content %}
+<h1> Generate all plans </h1>
+<form action="{% url 'entities:generate' %}" method="post">
+    <div class="table-responsive">
+            <table>
+            <tr>
+                <td> First hour:  </td>
+                <td><input type="number" name="quantity" min="1" max="22" placeholder="empty means default"></td>
+            </tr>
+            <tr>
+                <td> Last hour: </td>
+                <td><input type="number" name="quantity" min="1" max="23" placeholder="empty means default"></td>
+            </tr>
+            <tr>
+                 <td><button class="btn background-second" type="submit"> Send </button></td>
+            </tr>
+        </table>
+    </div>
+</form>
+{% endblock %}
