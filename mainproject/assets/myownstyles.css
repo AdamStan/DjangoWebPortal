@@ -1,22 +1,28 @@
 .background-first{
-    background-color: #b30000
+    background-color: #cf6766;
 }
 .background-second{
-    background-color: #ff4d4d
+    color: white;
+    background-color: #30415d;
 }
 .background-second:hover{
-    background-color: #ffb3b3
+    background-color: #8eaebd;
 }
 .background-second:active{
-    background-color: #ffb3b3
+    background-color: #8eaebd;
 }
 .background-third{
-    background-color: #ffb3b3
+    background-color: #031424;
 }
 .background-fourth{
-    background-color: #f2f2f2
+    background-color: #8eaebd;
 }
 .tab-my{
     table-layout: fixed;
     width: 100%;
+}
+body {
+    font-family: Arial;
+    color: white;
+    background-color: #8eaebd;
 }

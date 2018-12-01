@@ -8,6 +8,8 @@ var_on_delete = models.SET_NULL = True
 class Faculty(models.Model):
     name = models.CharField(max_length=64)
     description = models.CharField(max_length=256, default=None, null=True)
+    def toJSON(self):
+        return json.dumps(self.__dict__)
 
 class FieldOfStudy(models.Model):
     name = models.CharField(max_length=64)
@@ -23,10 +25,14 @@ class FieldOfStudy(models.Model):
     degree = models.CharField(max_length=12, choices=DEGREE_CHOICES, default=BACHELOR)
     howManySemesters = models.IntegerField(default=0)
     type = models.CharField(max_length=32, default='full-time')
+    def toJSON(self):
+        return json.dumps(self.__dict__)
 
 class Teacher(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True, related_name='professor_to_user')
     faculty = models.ForeignKey(Faculty, on_delete=var_on_delete)
+    def toJSON(self):
+        return json.dumps(self.__dict__)
 
 class Subject(models.Model):
     name = models.CharField(max_length=128)
@@ -45,6 +51,8 @@ class Building(models.Model):
     city = models.CharField(max_length=32)
     numberOfBuilding = models.CharField(max_length=8)
     postalCode = models.CharField(max_length=8)
+    def toJSON(self):
+        return json.dumps(self.__dict__)
 
 class Room(models.Model):
     id = models.CharField(primary_key=True, max_length=8)
@@ -61,11 +69,15 @@ class Room(models.Model):
         default=None,
         null=True,
     )
+    def toJSON(self):
+        return json.dumps(self.__dict__)
 
 class Plan(models.Model):
     title = models.CharField(max_length=32)
     fieldOfStudy = models.ForeignKey(FieldOfStudy, on_delete=var_on_delete, default=None)
     semester = models.IntegerField(default=1)
+    def toJSON(self):
+        return json.dumps(self.__dict__)
 
 class ScheduledSubject(models.Model):
     subject = models.ForeignKey(Subject, on_delete=var_on_delete, default=None)
@@ -97,3 +109,5 @@ class Student(models.Model):
     fieldOfStudy = models.ForeignKey(FieldOfStudy, on_delete=var_on_delete)
     semester = models.IntegerField(default=1)
     plan = models.ForeignKey(Plan, on_delete=var_on_delete, default=None, null=True)
+    def toJSON(self):
+        return json.dumps(self.__dict__)

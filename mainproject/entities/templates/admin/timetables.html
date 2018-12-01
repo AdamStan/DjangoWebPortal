@@ -27,7 +27,7 @@
         }
         for(var object of array_of_objects){
             dataTable.addRows([
-              [ object.day, object.name, new Date(0, 0, 0, object.when_started, 15), new Date(0, 0, 0, object.when_started + object.how_long, 0) ],
+              [ object.day, object.name, new Date(0, 0, 0, object.whenStart, 15), new Date(0, 0, 0, object.whenStart + object.how_long, 0) ],
             ]);
         }
         var options = {
@@ -105,10 +105,18 @@
     <p> Do tabeli dajemy jsona i wypisujemy wg tych danych. </p>
     <p> JSONa dajemy pod warunkiem buttonow, przy wybraniu jednej z 3 opcji w pierwszym wysylamy liste np  dodajemy
         grupy studenckie na liscie do nastepnego buttona </p>
-    <div class = "dropdowns-block">
-        {% dropdown_button "Who?" "Student's groups" "Teachers" "Rooms" %}
-        {% dropdown_button "--there will be something--" %}
-    </div>
+    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+    <form method="post" action="{% url 'entities:timetables_student' %}">
+        {% csrf_token %}
+        <select class="btn background-second" name="plan_id">
+            <option value="None"> -- choose plan -- </option>
+            {% for p in plans %}
+            <option value="{{ p.id }}">{{ p.title }} id:{{ p.id }}</option>
+            {% endfor %}
+        </select>
+        <button class="btn background-second" type="submit"> Search </button>
+    </form>
     <!-- <div id="timetable" style="height: 400px"></div> -->
     <div class="container" id="timetable_values" style="height: 400px"></div>
     <div id='calendar'></div>
