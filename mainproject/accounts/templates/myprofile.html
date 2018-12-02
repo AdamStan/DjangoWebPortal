@@ -1,6 +1,6 @@
 {% extends 'base_layout.html' %}
 {% block title %}
-<title> example </title>
+<title> My profile </title>
 {% endblock %}
 {% block content %}
     <div class="text-center">
@@ -8,7 +8,37 @@
     </div>
     <form action="{% url 'accounts:myprofile' %}" method="post">
         {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" value="update">
+        <div class="table-responsive">
+            <table>
+                <tr>
+                    <td> Username </td>
+                    <td><input class="form-control" type="text" name="username" value="{{ current_user.username }}"></td>
+                </tr>
+                <tr>
+                    <td> Password </td>
+                    <td>
+                        <input class="form-control" type="password" name="password" placeholder="empty means no change"/>
+                        <!-- pattern=".{8,}"   required title="8 characters minimum" -->
+                    </td>
+                </tr>
+                <tr>
+                    <td> Name </td>
+                    <td><input class="form-control" type="text" name="name" value="{{ current_user.name }}"></td>
+                </tr>
+                <tr>
+                    <td> Second Name </td>
+                    {% if current_user.second_name == None %}
+                    <td><input class="form-control" type="text" name="second_name" value=""></td>
+                    {% else %}
+                    <td><input class="form-control" type="text" name="second_name" value="{{ current_user.second_name }}"></td>
+                    {% endif %}
+                </tr>
+                <tr>
+                    <td> Surname </td>
+                    <td><input class="form-control" type="text" name="surname" value="{{ current_user.surname }}"></td>
+                </tr>
+            </table>
+        </div>
+        <input class="btn background-second" type="submit" value="update">
     </form>
 {% endblock %}

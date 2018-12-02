@@ -1,8 +1,6 @@
 from django.shortcuts import render
 import json
 from .models import *
-from django.forms.models import model_to_dict
-from datetime import time
 
 class SubjectExample:
     id = 0
@@ -17,6 +15,7 @@ def create_table_example():
     values = []
 
     subject1 = SubjectExample()
+    subject1.id = 1
     subject1.name = "Subject1"
     subject1.whenStart = 9
     subject1.how_long = 2
@@ -26,6 +25,7 @@ def create_table_example():
     values.append(subject1.toJSON())
 
     subject2 = SubjectExample()
+    subject2.id = 2
     subject2.name = "Subject2"
     subject2.whenStart = 11
     subject2.how_long = 2
@@ -34,6 +34,7 @@ def create_table_example():
     values.append(subject2.toJSON())
 
     subject3 = SubjectExample()
+    subject3.id = 3
     subject3.name = "Subject3"
     subject3.whenStart = 13
     subject3.how_long = 2
@@ -42,6 +43,7 @@ def create_table_example():
     values.append(subject3.toJSON())
 
     subject4 = SubjectExample()
+    subject4.id = 4
     subject4.name = "Subject4"
     subject4.whenStart = 15
     subject4.how_long = 2
@@ -50,6 +52,7 @@ def create_table_example():
     values.append(subject4.toJSON())
 
     subject5 = SubjectExample()
+    subject5.id = 5
     subject5.name = "Subject5"
     subject5.whenStart = 17
     subject5.how_long = 2
@@ -65,9 +68,9 @@ def get_plans():
 
 def create_table(plan_id):
     plan = Plan.objects.get(id=plan_id)
-    subjects = ScheduledSubject.objects.filter(plan=plan)
+    subjects = ScheduledSubject.objects.filter(plan=plan).order_by('dayOfWeek')
     values = []
-    days = ["monday","tuseday","wenesday","thursday","friday","saturday","sunday"]
+    days = ["monday","tuesday","wednesday","thursday","friday","saturday","sunday",]
 
     for ss in subjects:
         buff = SubjectExample()

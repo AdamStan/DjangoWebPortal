@@ -14,6 +14,15 @@ check it can be with other subjects in plans <- FIRST, not done yet
 check it can be with other teacher's subjects
 check it can be with other room's subjects
 '''
+
+def clean_plans():
+    pass
+def clean_scheduled_subjects(subjects):
+    pass
+
+def create_scheduled_subjects(subjects):
+    pass
+
 def create_first_plan(scheduled_subjects, min_hour=8, max_hour=19, days=[1,2,3,4,5], weeks = 15):
     for s in scheduled_subjects:
 
@@ -30,9 +39,6 @@ def create_first_plan(scheduled_subjects, min_hour=8, max_hour=19, days=[1,2,3,4
 
         s.save()
 
-    # print(":::PO WYLOSOWANIU:::")
-    # show_scheduled_subject(scheduled_subjects)
-
 def generation():
     pass
 
@@ -42,8 +48,10 @@ def repair_generation():
 @transaction.atomic
 def create_plans():
     sid = transaction.savepoint()
+    # in this moment we have to create plans
     try:
         scheduled_subject_qs = ScheduledSubject.objects
+        clean_scheduled_subjects(scheduled_subject_qs)
         plans = Plan.objects.all()
 
         for p in plans:

@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     {% block title %}
+    <title> My account </title>
     {% endblock %}
     <!--<script src="{% static 'jquery-3.3.1.min.js' %}"></script> -->
     <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}"/>
@@ -35,7 +36,7 @@
                     <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
                     -->
                     {% if user.is_authenticated %}
-                    <form action="{% url 'accounts:myprofile' %}" method="POST">
+                    <form action="{% url 'accounts:myprofile' %}" method="get">
                         {% csrf_token %}
                         <button class="nav-item btn background-second" type="submit">
                             My account: {{ user.username }}

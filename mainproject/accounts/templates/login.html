@@ -17,18 +17,18 @@
             <table>
             <tr>
                 <td> Username </td>
-                <td><input type="text" name="username"></td>
+                <td><input class="form-control" type="text" name="username"></td>
             </tr>
             <tr>
                 <td> Password </td>
-                <td><input type="password" name="password"></td>
+                <td><input class="form-control" type="password" name="password"></td>
             </tr>
         </table>
         </div>
         {% if request.GET.next %}
             <input type="hidden" name="next" value = "{{ request.GET.next }}">
         {% endif %}
-        <input value="Login" type="submit" />
+        <input class="btn background-second" value="Login" type="submit" />
     </form>
 </div>
 {% endblock %}

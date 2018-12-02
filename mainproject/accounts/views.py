@@ -28,16 +28,16 @@ def show_my_profile(request):
     user = request.user
     if request.POST:
         old_form = [
-            request.POST['username'],
-            request.POST['password'],
-            request.POST['name'],
-            request.POST['second_name'],
-            request.POST['surname'],
+            request.POST.get('username'),
+            request.POST.get('password'),
+            request.POST.get('name'),
+            request.POST.get('second_name'),
+            request.POST.get('surname'),
         ]
         print(old_form)
         user = User.objects.get(username=request.user.username)
         user.username = old_form[0]
-        if old_form[1][7:13] != "sha256":
+        if old_form[1] != None and old_form[1][7:13] != "sha256" and old_form[1] != "":
             user.set_password(old_form[1])
             print(old_form[1][7:13])
         user.name  = old_form[2]

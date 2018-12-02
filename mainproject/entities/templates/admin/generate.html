@@ -10,11 +10,25 @@
             <table>
             <tr>
                 <td> First hour:  </td>
-                <td><input type="number" name="quantity" min="1" max="22" placeholder="empty means default"></td>
+                <td><input class="form-control" type="number" name="first_hour" min="1" max="22" placeholder="empty means default"/></td>
             </tr>
             <tr>
                 <td> Last hour: </td>
-                <td><input type="number" name="quantity" min="1" max="23" placeholder="empty means default"></td>
+                <td><input class="form-control" type="number" name="last_hour" min="1" max="23" placeholder="empty means default"/></td>
+            </tr>
+            <tr>
+                <td> Semester: </td>
+                <td>
+                    <select class="btn background-second" placeholder="choose semester" name="semester_type">
+                        <option value="None"> -- choose -- </option>
+                        <option value="1"> Winter </option>
+                        <option value="2"> Summer </option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td> How many groups for semester: </td>
+                <td><input class="form-control" type="number" name="how_many_groups" min="1"/></td>
             </tr>
             <tr>
                  <td><button class="btn background-second" type="submit"> Send </button></td>
