@@ -171,3 +171,20 @@ def add_entities():
     except Exception as e:
         transaction.savepoint_rollback(sid)
         print(str(e))
+
+@transaction.atomic
+def add_students():
+    sid = transaction.savepoint()
+    try:
+        # dangerous piece of code:
+        field_of_study = FieldOfStudy.objects.get(id=5)
+        students = User.objects.filter(student=True)
+        student_list = []
+        for std in students:
+            student_list.append(Student(user=std, fieldOfStudy=field_of_study, semester=1))
+            student_list[-1].save()
+        transaction.savepoint_commit(sid)
+    except Exception as e:
+        transaction.savepoint_rollback(sid)
+        print(str(e))
+

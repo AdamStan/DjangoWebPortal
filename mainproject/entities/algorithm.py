@@ -1,4 +1,4 @@
-from .models import ScheduledSubject, Plan
+from .models import ScheduledSubject, Plan, FieldOfStudy, Subject
 from random import randint, choice
 from datetime import time
 from django.db import transaction
@@ -15,15 +15,24 @@ check it can be with other teacher's subjects
 check it can be with other room's subjects
 '''
 
-def clean_plans():
-    pass
-def clean_scheduled_subjects(subjects):
-    pass
+class AlgorithmManager:
+    bachelor_semesters = [1, 2, 3, 4, 6, 7]
+    master_semesters = [1, 2, 3]
+    only_master_semesters = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
-def create_scheduled_subjects(subjects):
-    pass
+def clean_plans():
+    clean_scheduled_subjects_all()
+    Plan.objects.all().delete()
+
+def clean_scheduled_subjects_all():
+    ScheduledSubject.objects.all().delete()
+
+def create_skeleton(how_many=3,semester=1):
+    field_of_studies = FieldOfStudy
 
 def create_first_plan(scheduled_subjects, min_hour=8, max_hour=19, days=[1,2,3,4,5], weeks = 15):
+    clean_plans()
+
     for s in scheduled_subjects:
 
         if s.type == "LAB":
@@ -51,8 +60,12 @@ def create_plans():
     # in this moment we have to create plans
     try:
         scheduled_subject_qs = ScheduledSubject.objects
-        clean_scheduled_subjects(scheduled_subject_qs)
+        clean_scheduled_subjects_all(scheduled_subject_qs)
         plans = Plan.objects.all()
+
+        # create new skeleton
+
+        # create first plan
 
         for p in plans:
             temp_subject_list = scheduled_subject_qs.filter(plan=p)
@@ -60,10 +73,35 @@ def create_plans():
             create_first_plan(temp_subject_list)
 
         transaction.savepoint_commit(sid)
-
     except Exception as e:
         transaction.savepoint_rollback(sid)
         print(str(e))
+
+    # make_improvemnets()
+
+def create_skeleton(number_of_group = 3, semester = 1):
+    fields_of_study = FieldOfStudy.objects.all()
+
+    filter_list = filter(lambda x : x % 2 == semester, AlgorithmManager.only_master_semesters)
+    print("e:" + str(filter_list))
+    print("ee:" + str(fields_of_study))
+
+    for field in fields_of_study:
+        for sem in filter_list:
+            try:
+                subjects_for_field = Subject.objects.filter(fieldOfStudy=field).filter(semester=sem)
+                print("eee: " + str(subjects_for_field))
+            except:
+                break
+            for i in range(number_of_group):
+                title = field.name + "|" + str(field.degree) + "|s" + str(sem) + "|" + str(i)
+                p = Plan(title=title, fieldOfStudy=field, semester=sem)
+                p.save()
+                for sub in subjects_for_field:
+                    if sub.lecture_hours != None and sub.lecture_hours > 0:
+                        ScheduledSubject(subject=sub, plan=p, type=ScheduledSubject.LECTURE).save()
+                    if sub.laboratory_hours != None and sub.laboratory_hours > 0:
+                        ScheduledSubject(subject=sub, plan=p, type=ScheduledSubject.LABORATORY).save()
 
 def show_scheduled_subject(scheduled_subjects):
     for ss in scheduled_subjects:
