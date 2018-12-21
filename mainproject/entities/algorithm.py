@@ -21,11 +21,19 @@ class AlgorithmManager:
     only_master_semesters = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
 def create_skeleton(number_of_group = 3, semester = 1):
+    """ Creates plans with empty (without hours) scheduled_subjects
+    :param number_of_group: how many groups will be created for every semester
+    :param semester: 1 => 1,3,5,7,9, 0 => 2,4,6,8,10
+    :return: None
+    How does it work?
+    1. Clean existing plans
+    2. Get all fields of study
+    3. Create plans for semesters from field of study
+    """
+    clean_plans()
     fields_of_study = FieldOfStudy.objects.all()
 
     filter_list = filter(lambda x : x % 2 == semester, AlgorithmManager.only_master_semesters)
-    print("e:" + str(filter_list))
-    print("ee:" + str(fields_of_study))
 
     for field in fields_of_study:
         for sem in filter_list:
@@ -45,23 +53,37 @@ def create_skeleton(number_of_group = 3, semester = 1):
                         ScheduledSubject(subject=sub, plan=p, type=ScheduledSubject.LABORATORY).save()
 
 def clean_plans():
+    """
+    Cleans all scheduled_subjects and plans from database
+    :return: None
+    """
     clean_scheduled_subjects_all()
     Plan.objects.all().delete()
 
 def clean_scheduled_subjects_all():
+    """
+    Cleans all cheduled_subjects from database
+    :return: None
+    """
     ScheduledSubject.objects.all().delete()
 
 def create_first_plan(scheduled_subjects, min_hour=8, max_hour=19, days=[1,2,3,4,5], weeks = 15):
-    clean_plans()
-
+    """
+    Creates timetable first time
+    :param scheduled_subjects: subjects without schedule
+    :param min_hour: first hour when subject can start
+    :param max_hour: last hour when subject can start
+    :param days: days in week 0 => sunday, 6=> saturday
+    :param weeks: how many weeks semester can be
+    :return: None
+    """
     for s in scheduled_subjects:
-        flag = True
         if s.type == "LAB":
             s.how_long = int(s.subject.laboratory_hours / weeks)
         elif s.type == "LEC":
             s.how_long = int(s.subject.lecture_hours / weeks)
 
-        while flag:
+        while True:
             when_start = randint(min_hour,max_hour)
             which_day = choice(days)
             s.whenStart = time(when_start,0,0)
@@ -73,9 +95,15 @@ def create_first_plan(scheduled_subjects, min_hour=8, max_hour=19, days=[1,2,3,4
         s.save()
 
 def check_subject_to_subject_time(sch_sub, scheduled_subjects):
+    """
+    Checks that subjects can start and finish on generated hour
+    :param sch_sub:
+    :param scheduled_subjects:
+    :return: None
+    """
     scheduled_subjects_in_plan = scheduled_subjects.filter(plan=sch_sub.plan)
     for scheduled in scheduled_subjects_in_plan:
-        if scheduled.dayOfWeek == sch_sub.dayOfWeek:
+        if scheduled.dayOfWeek == sch_sub.dayOfWeek and scheduled.whenStart != None:
             difference_between_starts = abs(sch_sub.whenStart.hour - scheduled.whenStart.hour)
             difference_between_ends = abs(sch_sub.whenFinnish.hour - scheduled.whenFinnish.hour)
             if difference_between_starts + difference_between_ends >= sch_sub.how_long + scheduled.how_long:
@@ -155,13 +183,10 @@ def create_plans():
     sid = transaction.savepoint()
     # in this moment we have to create plans
     try:
-        scheduled_subject_qs = ScheduledSubject.objects
-        clean_scheduled_subjects_all(scheduled_subject_qs)
-        plans = Plan.objects.all()
-
         # create new skeleton
         create_skeleton(number_of_group=3, semester=1)
-
+        plans = Plan.objects.all()
+        scheduled_subject_qs = ScheduledSubject.objects.all()
         # create first plan
         for p in plans:
             temp_subject_list = scheduled_subject_qs.filter(plan=p)
