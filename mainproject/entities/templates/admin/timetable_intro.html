@@ -2,7 +2,7 @@
 {% load helpful_tags %}
 {% load static from staticfiles %}
 {% block title %}
-<title> example </title>
+<title> Choose type </title>
 <link href="{% static 'fullcalendar-3.9.0//fullcalendar.min.css' %}" rel='stylesheet' />
 <link href="{% static 'fullcalendar-3.9.0/fullcalendar.print.min.css' %}" rel='stylesheet' media='print' />
 <script type="text/javascript" src="{% static 'fullcalendar-3.9.0/lib/moment.min.js' %}"></script>
@@ -13,8 +13,8 @@
 {% block content %}
 <div>
     <p> Choosse plans which you want to see</p>
-    <a href="{% url 'entities:timetables_student' %}"> Student's groups </a>
-    <a href="{% url 'entities:timetables_teacher' %}"> Teachers </a>
-    <a href="{% url 'entities:timetables_room' %}"> Rooms </a>
+    <p> <a href="{% url 'entities:timetables_student' %}"> Student's groups </a> </p>
+    <p> <a href="{% url 'entities:timetables_teacher' %}"> Teachers </a> </p>
+    <p> <a href="{% url 'entities:timetables_room' %}"> Rooms </a> </p>
 </div>
 {% endblock %}

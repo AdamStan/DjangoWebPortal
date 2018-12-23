@@ -91,10 +91,10 @@ def create_first_plan(scheduled_subjects, min_hour=8, max_hour=19, days=[1,2,3,4
             if check_subject_to_subject_time(s, scheduled_subjects):
                 break
 
+        set_teacher_to_subjects(s)
         s.save()
 
-    set_rooms_to_subjects(scheduled_subjects)
-    set_teachers_to_subjects(scheduled_subjects)
+    set_rooms_to_subjects(ScheduledSubject.objects.all())
 
 def check_subject_to_subject_time(sch_sub, scheduled_subjects):
     """
@@ -116,26 +116,32 @@ def check_subject_to_subject_time(sch_sub, scheduled_subjects):
             continue
     return True
 
-def set_teachers_to_subjects(scheduled_subjects):
-    for s in scheduled_subjects:
-        teachers = s.subject.teachers
-        while teachers.exists():
-            teacher = choice(teachers)
-            if( check_teacher_can_teach(s, scheduled_subjects, teacher) ):
-                s.teacher = teacher
-                break
-            else:
-                teachers.delete(s.teacher)
-        if s.teacher == None:
-            raise Exception('Properly teacher was not found for scheduled subject: ' + scheduled_subjects.subject.name)
+def set_teacher_to_subjects(s):
+    teachers = s.subject.teachers.all()
+    teachers_list = []
+    for teacher in teachers:
+        teachers_list.append(teacher)
 
-def check_teacher_can_teach(scheduled_subject, scheduled_subjects, teacher):
-    subjects_in_plan = scheduled_subjects.filter(teacher=teacher).exclude(scheduled_subject.id)
+    while len(teachers_list) > 0:
+        teacher = choice(teachers_list)
+        if check_teacher_can_teach(s, teacher) :
+            s.teacher = teacher
+            s.save()
+            return
+        else:
+            teachers_list.remove(teacher)
+
+    raise Exception('Properly teacher was not found for scheduled subject: ' + s.subject.name + ", from: " + s.plan.title)
+
+
+
+def check_teacher_can_teach(scheduled_subject, teacher):
+    subjects_in_plan = ScheduledSubject.objects.all().filter(teacher=teacher)
     for scheduled in subjects_in_plan:
         if scheduled.dayOfWeek == scheduled_subject.dayOfWeek:
             difference_between_starts = abs(scheduled_subject.whenStart.hour - scheduled.whenStart.hour)
             difference_between_ends = abs(scheduled_subject.whenFinnish.hour - scheduled.whenFinnish.hour)
-            if difference_between_starts + difference_between_ends >= scheduled_subject.how_long + scheduled.how_long:
+            if (difference_between_starts + difference_between_ends) >= (scheduled_subject.how_long + scheduled.how_long):
                 continue
             else:
                 return False
@@ -152,23 +158,23 @@ def set_rooms_to_subjects(scheduled_subjects):
         rooms = all_rooms.copy()
         while len(rooms) > 0: # rooms is equal for this
             room = choice(rooms)
-            if check_room_is_not_taken(ss, scheduled_subjects, room) :
+            if check_room_is_not_taken(ss, room) :
                 ss.room = room
                 break
             else:
                 rooms.remove(room)
         if ss.room is None:
-            raise Exception('There is no properly room for: ' + ss.subject.name + " " + ss.plan.title)
+            raise Exception('There is no properly room for: ' + ss.subject.name + ", " + ss.plan.title)
 
         ss.save()
 
-def check_room_is_not_taken(scheduled_subject, scheduled_subjects, room):
-    subjects_in_this_room = scheduled_subjects.filter(room=room).exclude(id=scheduled_subject.id)
-    for scheduled in subjects_in_this_room:
-        if scheduled.dayOfWeek == scheduled_subject.dayOfWeek:
-            difference_between_starts = abs(scheduled_subject.whenStart.hour - scheduled.whenStart.hour)
-            difference_between_ends = abs(scheduled_subject.whenFinnish.hour - scheduled.whenFinnish.hour)
-            if difference_between_starts + difference_between_ends >= scheduled_subject.how_long + scheduled.how_long:
+def check_room_is_not_taken(scheduled_subject, room):
+    subjects_in_this_room = ScheduledSubject.objects.all().filter(room=room)
+    for s in subjects_in_this_room:
+        if s.dayOfWeek == scheduled_subject.dayOfWeek and scheduled_subject.whenStart != None:
+            difference_between_starts = abs(scheduled_subject.whenStart.hour - s.whenStart.hour)
+            difference_between_ends = abs(scheduled_subject.whenFinnish.hour - s.whenFinnish.hour)
+            if (difference_between_starts + difference_between_ends) >= (scheduled_subject.how_long + s.how_long):
                 continue
             else:
                 return False
@@ -177,13 +183,19 @@ def check_room_is_not_taken(scheduled_subject, scheduled_subjects, room):
     return True
 
 def check_that_plans_are_correctly(scheduled_subjects):
-    pass
+    # -- let's do this...
+    check_room_is_not_taken()
+    check_subject_to_subject_time()
+    check_teacher_can_teach()
 
 def generation(scheduled_subjects):
     pass
 
 def repair_generation():
     pass
+
+def value_for_plan(plan):
+    ScheduledSubject.objects.filter(plan=plan)
 
 @transaction.atomic
 def create_plans():
@@ -208,7 +220,7 @@ def create_plans():
     except Exception as e:
         transaction.savepoint_rollback(sid)
         print(str(e))
-
+        raise e
     # make_improvemnets()
 
 

@@ -89,13 +89,13 @@ def add_entities():
         subject_list.append(Subject(name="Final Project", semester=3, fieldOfStudy=field_of_study2))
         subject_list.append(Subject(name="User Interface Programming", semester=3, fieldOfStudy=field_of_study2,lecture_hours=30, laboratory_hours=30))
 
-        counter = 0
-        for sub in subject_list:
-            sub.save()
-            for x in range(counter, counter+2):
-                sub.teachers.add(teachers_list[x])
-            if x >= 5:
-                counter = 0
+        #counter = 0
+        #for sub in subject_list:
+        #    sub.save()
+        #    for x in range(counter, counter+2):
+        #        sub.teachers.add(teachers_list[x])
+        #        if x >= len(teachers_list):
+        #            counter = 0
 
         plan_list = []
         # 1th semester
@@ -173,20 +173,42 @@ def add_entities():
         print(str(e))
     # additional add functions
     add_students()
+    add_many_to_many()
 
 @transaction.atomic
 def add_students():
     sid = transaction.savepoint()
     try:
         # dangerous piece of code:
-        field_of_study = FieldOfStudy.objects.get(id=5)
+        field_of_study = FieldOfStudy.objects.all()
+        field = None
+        for f in field_of_study:
+            field = f
+            break
         students = User.objects.filter(student=True)
         student_list = []
         for std in students:
-            student_list.append(Student(user=std, fieldOfStudy=field_of_study, semester=1))
+            student_list.append(Student(user=std, fieldOfStudy=field, semester=1))
             student_list[-1].save()
         transaction.savepoint_commit(sid)
     except Exception as e:
         transaction.savepoint_rollback(sid)
         print(str(e))
 
+def add_many_to_many(amount = 3):
+    teachers = Teacher.objects.all()
+    subjects = Subject.objects.all()
+
+    teachers_list = []
+    for t in teachers:
+        teachers_list.append(t)
+
+    counter = 0
+    for sub in subjects:
+        for x in range(counter, counter + amount):
+            sub.teachers.add(teachers_list[x])
+        if counter >= len(teachers_list) - amount:
+            counter = 0
+        else:
+            counter += amount
+        sub.save()
