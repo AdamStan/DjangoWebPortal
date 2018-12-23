@@ -1,5 +1,5 @@
 from django.shortcuts import render
-import json
+from accounts.models import User
 from .models import *
 
 class SubjectExample:
@@ -10,6 +10,10 @@ class SubjectExample:
     day = "monday"
     def toJSON(self):
         return json.dumps(self.__dict__)
+
+class TeacherBox:
+    id = 0
+    title = ""
 
 def create_table_example():
     values = []
@@ -84,11 +88,49 @@ def create_table(plan_id):
 
     return {"values": values}, plan.title
 
-def get_plan_for_teacher():
-    pass
+def get_teachers():
+    teacher = Teacher.objects.all()
+    return teacher
+
+def create_table_for_teacher(teacher_id):
+    teacher = Teacher.objects.get(user_id=teacher_id)
+    subjects = ScheduledSubject.objects.filter(teacher=teacher).order_by('dayOfWeek')
+    values = []
+    days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday", ]
+
+    for ss in subjects:
+        buff = SubjectExample()
+        buff.id = ss.id
+        buff.name = ss.subject.name + " " + ss.type
+        buff.whenStart = ss.whenStart.hour
+        buff.how_long = ss.how_long
+        buff.day = days[ss.dayOfWeek-1]
+
+        values.append(buff.toJSON())
+
+    return {"values": values}, teacher.user.id
 
 def get_plans_for_rooms():
-    pass
+    rooms = Room.objects.all()
+    return rooms
+
+def create_table_for_room(room_id):
+    room = Room.objects.get(id=room_id)
+    subjects = ScheduledSubject.objects.filter(room=room).order_by('dayOfWeek')
+    values = []
+    days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday", ]
+
+    for ss in subjects:
+        buff = SubjectExample()
+        buff.id = ss.id
+        buff.name = ss.subject.name + " " + ss.type
+        buff.whenStart = ss.whenStart.hour
+        buff.how_long = ss.how_long
+        buff.day = days[ss.dayOfWeek-1]
+
+        values.append(buff.toJSON())
+
+    return {"values": values}, room.id
 
 def show_timetables(request):
     return render(request, 'admin/timetable_intro.html');
@@ -99,17 +141,39 @@ def show_student_plans(request):
     if request.method == 'POST':
         value = request.POST.get('plan_id', None)
         print("Which value was taken: " + value)
-        parameters, plan_title  = create_table(value)
+        parameters, plan_title = create_table(value)
     else:
         parameters = create_table_example()
 
-    return render(request, 'admin/timetables.html', {"values": parameters['values'], "plans": plans, "plan_title":plan_title});
+    return render(request, 'admin/timetables.html', {"values": parameters['values'], "plans": plans, "plan_title":plan_title,"type":"student"});
 
 def show_teachers_plans(request):
-    pass
+    teachers = get_teachers()
+    plan_title = "Example"
+    if request.method == 'POST':
+        value = request.POST.get('plan_id', None)
+        print("Which value was taken: " + value)
+        parameters, plan_title = create_table_for_teacher(value)
+    else:
+        parameters = create_table_example()
+
+    teachers_boxes = []
+    for t in teachers:
+        teachers_boxes.append(TeacherBox())
+        teachers_boxes[-1].id = t.user.id
+        teachers_boxes[-1].title = t.user.surname + ", " + t.user.name
+    return render(request, 'admin/timetables.html', {"values": parameters['values'], "plans": teachers_boxes , "plan_title":plan_title, "type": "teacher"});
 
 def show_rooms_plans(request):
-    pass
+    plans = get_plans_for_rooms()
+    plan_title = "Example"
+    if request.method == 'POST':
+        value = request.POST.get('plan_id', None)
+        print("Which value was taken: " + value)
+        parameters, plan_title = create_table_for_room(value)
+    else:
+        parameters = create_table_example()
+    return render(request, 'admin/timetables.html',{"values": parameters['values'], "plans": plans, "plan_title": plan_title, "type":"room"});
 
 def show_generate_page(request):
     if request.method == 'POST':

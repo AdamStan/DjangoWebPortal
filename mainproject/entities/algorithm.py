@@ -39,7 +39,6 @@ def create_skeleton(number_of_group = 3, semester = 1):
         for sem in filter_list:
             try:
                 subjects_for_field = Subject.objects.filter(fieldOfStudy=field).filter(semester=sem)
-                print("eee: " + str(subjects_for_field))
             except:
                 break
             for i in range(number_of_group):
@@ -94,6 +93,9 @@ def create_first_plan(scheduled_subjects, min_hour=8, max_hour=19, days=[1,2,3,4
 
         s.save()
 
+    set_rooms_to_subjects(scheduled_subjects)
+    set_teachers_to_subjects(scheduled_subjects)
+
 def check_subject_to_subject_time(sch_sub, scheduled_subjects):
     """
     Checks that subjects can start and finish on generated hour
@@ -142,21 +144,26 @@ def check_teacher_can_teach(scheduled_subject, scheduled_subjects, teacher):
     return True
 
 def set_rooms_to_subjects(scheduled_subjects):
-    all_rooms = Room.objects.all()
+    all_rooms = []
+    for room in Room.objects.all():
+        all_rooms.append(room)
+
     for ss in scheduled_subjects:
-        rooms = all_rooms.clone()
-        while rooms.exists():
+        rooms = all_rooms.copy()
+        while len(rooms) > 0: # rooms is equal for this
             room = choice(rooms)
             if check_room_is_not_taken(ss, scheduled_subjects, room) :
                 ss.room = room
                 break
             else:
-                rooms.delete(room)
-        if ss.room == None:
-            raise Exception('There is no properly room for: ' + ss.subject.name)
+                rooms.remove(room)
+        if ss.room is None:
+            raise Exception('There is no properly room for: ' + ss.subject.name + " " + ss.plan.title)
+
+        ss.save()
 
 def check_room_is_not_taken(scheduled_subject, scheduled_subjects, room):
-    subjects_in_this_room = scheduled_subjects.filter(room=room).exclued(id=scheduled_subject.id)
+    subjects_in_this_room = scheduled_subjects.filter(room=room).exclude(id=scheduled_subject.id)
     for scheduled in subjects_in_this_room:
         if scheduled.dayOfWeek == scheduled_subject.dayOfWeek:
             difference_between_starts = abs(scheduled_subject.whenStart.hour - scheduled.whenStart.hour)

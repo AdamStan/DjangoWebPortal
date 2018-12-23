@@ -142,6 +142,7 @@ def add_data():
         name="Katarzyna",
         surname="Popowska"
     )
+    add_more_teachers()
 
 def add_more_teachers():
     # -- teachers --

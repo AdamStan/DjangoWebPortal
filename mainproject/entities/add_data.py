@@ -171,6 +171,8 @@ def add_entities():
     except Exception as e:
         transaction.savepoint_rollback(sid)
         print(str(e))
+    # additional add functions
+    add_students()
 
 @transaction.atomic
 def add_students():
