@@ -13,8 +13,8 @@ def add_entities():
         for t in teachers:
             teachers_list.append(Teacher(user=t, faculty=faculty1))
             teachers_list[-1].save()
-        field_of_study1 = FieldOfStudy(name="Computer Science", degree = FieldOfStudy.BACHELOR, faculty=faculty1)
-        field_of_study2 = FieldOfStudy(name="Computer Science", degree = FieldOfStudy.MASTER, faculty=faculty1)
+        field_of_study1 = FieldOfStudy(name="Computer Science", degree = FieldOfStudy.BACHELOR, faculty=faculty1, howManySemesters=7)
+        field_of_study2 = FieldOfStudy(name="Computer Science", degree = FieldOfStudy.MASTER, faculty=faculty1, howManySemesters=3)
         field_of_study1.save()
         field_of_study2.save()
 

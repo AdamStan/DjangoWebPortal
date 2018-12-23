@@ -79,7 +79,8 @@ def create_table(plan_id):
     for ss in subjects:
         buff = SubjectExample()
         buff.id = ss.id
-        buff.name = ss.subject.name + " " + ss.type
+        teacher_name = ss.teacher.user.name + " " + ss.teacher.user.surname
+        buff.name = ss.subject.name + " " + ss.type + " " + teacher_name
         buff.whenStart = ss.whenStart.hour
         buff.how_long = ss.how_long
         buff.day = days[ss.dayOfWeek-1]

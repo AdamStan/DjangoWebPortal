@@ -16,7 +16,7 @@ check it can be with other room's subjects
 '''
 
 class AlgorithmManager:
-    bachelor_semesters = [1, 2, 3, 4, 6, 7]
+    bachelor_semesters = [1, 2, 3, 4, 5, 6, 7]
     master_semesters = [1, 2, 3]
     only_master_semesters = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
@@ -33,16 +33,20 @@ def create_skeleton(number_of_group = 3, semester = 1):
     clean_plans()
     fields_of_study = FieldOfStudy.objects.all()
 
-    filter_list = filter(lambda x : x % 2 == semester, AlgorithmManager.only_master_semesters)
+    filter_lambda = filter(lambda x : x % 2 == semester, AlgorithmManager.only_master_semesters)
+    semesters_list = list(filter_lambda)
 
     for field in fields_of_study:
-        for sem in filter_list:
+        for sem in semesters_list:
+            if sem > field.howManySemesters:
+                break
             try:
                 subjects_for_field = Subject.objects.filter(fieldOfStudy=field).filter(semester=sem)
-            except:
+            except Exception as ex:
+                str(ex)
                 break
             for i in range(number_of_group):
-                title = field.name + "|" + str(field.degree) + "|s" + str(sem) + "|" + str(i)
+                title = field.name + "|" + str(field.degree) + "|s" + str(sem) + "|" + str(i+1)
                 p = Plan(title=title, fieldOfStudy=field, semester=sem)
                 p.save()
                 for sub in subjects_for_field:
@@ -195,7 +199,10 @@ def repair_generation():
     pass
 
 def value_for_plan(plan):
-    ScheduledSubject.objects.filter(plan=plan)
+    pass
+
+def make_improvements(scheduled_subjects):
+    pass
 
 @transaction.atomic
 def create_plans():
@@ -221,7 +228,8 @@ def create_plans():
         transaction.savepoint_rollback(sid)
         print(str(e))
         raise e
-    # make_improvemnets()
+
+    make_improvements(ScheduledSubject.objects.all())
 
 
 def show_scheduled_subject(scheduled_subjects):
