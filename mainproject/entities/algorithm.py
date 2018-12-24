@@ -19,6 +19,7 @@ class AlgorithmManager:
     bachelor_semesters = [1, 2, 3, 4, 5, 6, 7]
     master_semesters = [1, 2, 3]
     only_master_semesters = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    plans_classification = []
 
 def create_skeleton(number_of_group = 3, semester = 1):
     """ Creates plans with empty (without hours) scheduled_subjects
@@ -70,7 +71,65 @@ def clean_scheduled_subjects_all():
     """
     ScheduledSubject.objects.all().delete()
 
-def create_first_plan(scheduled_subjects, min_hour=8, max_hour=19, days=[1,2,3,4,5], weeks = 15):
+def bullshit(s):
+    s.save()
+
+def set_lectures_time(min_hour, max_hour, days, weeks):
+    lectures = ScheduledSubject.objects.filter(type="LEC")
+    for s in lectures:
+        flag = True
+        diff_lectures = ScheduledSubject.objects.filter(subject=s.subject, type=s.type)
+        list_lectures = []
+        for slecture in diff_lectures:
+            list_lectures.append(slecture)
+
+        s.how_long = int(s.subject.lecture_hours / weeks)
+
+        if list_lectures[0].whenStart is not None:
+            print(str(list_lectures[0].dayOfWeek) + " " + str(list_lectures[0].subject.semester) + " " + str(
+                list_lectures[0].whenStart) + " " + list_lectures[0].teacher.user.surname + " " + list_lectures[0].subject.name)
+            s.dayOfWeek = list_lectures[0].dayOfWeek
+            s.whenStart = list_lectures[0].whenStart
+            s.whenFinnish = list_lectures[0].whenFinnish
+            s.teacher = list_lectures[0].teacher
+            s.save()
+            flag = False
+
+        scheduled_subjects_in_plan = ScheduledSubject.objects.filter(plan=s.plan)
+        while flag:
+            try:
+                when_start = randint(min_hour, max_hour)
+                which_day = choice(days)
+                s.whenStart = time(when_start, 0, 0)
+                s.dayOfWeek = which_day
+                s.whenFinnish = time(when_start + s.how_long, 0, 0)
+                if check_subject_to_subject_time(s, scheduled_subjects_in_plan):
+                    s.save()
+                    set_teacher_to_subjects(s)
+                    break
+            except:
+                continue
+
+def set_laboratory_time(min_hour, max_hour, days, weeks):
+    laboratories = ScheduledSubject.objects.filter(type="LAB")
+    for s in laboratories:
+        s.how_long = int(s.subject.laboratory_hours / weeks)
+        scheduled_subjects_in_plan = ScheduledSubject.objects.filter(plan=s.plan)
+        while True:
+            try:
+                when_start = randint(min_hour, max_hour)
+                which_day = choice(days)
+                s.whenStart = time(when_start, 0, 0)
+                s.dayOfWeek = which_day
+                s.whenFinnish = time(when_start + s.how_long, 0, 0)
+                if check_subject_to_subject_time(s, scheduled_subjects_in_plan):
+                    s.save()
+                    set_teacher_to_subjects(s)
+                    break
+            except:
+                continue
+
+def create_first_plan(plan, min_hour=8, max_hour=19, days=[1,2,3,4,5], weeks = 15):
     """
     Creates timetable first time
     :param scheduled_subjects: subjects without schedule
@@ -80,24 +139,8 @@ def create_first_plan(scheduled_subjects, min_hour=8, max_hour=19, days=[1,2,3,4
     :param weeks: how many weeks semester can be
     :return: None
     """
-    for s in scheduled_subjects:
-        if s.type == "LAB":
-            s.how_long = int(s.subject.laboratory_hours / weeks)
-        elif s.type == "LEC":
-            s.how_long = int(s.subject.lecture_hours / weeks)
-
-        while True:
-            when_start = randint(min_hour,max_hour)
-            which_day = choice(days)
-            s.whenStart = time(when_start,0,0)
-            s.dayOfWeek = which_day
-            s.whenFinnish = time(when_start + s.how_long,0,0)
-            if check_subject_to_subject_time(s, scheduled_subjects):
-                break
-
-        set_teacher_to_subjects(s)
-        s.save()
-
+    set_lectures_time(min_hour, max_hour, days, weeks)
+    set_laboratory_time(min_hour, max_hour, days, weeks)
     set_rooms_to_subjects(ScheduledSubject.objects.all())
 
 def check_subject_to_subject_time(sch_sub, scheduled_subjects):
@@ -135,7 +178,7 @@ def set_teacher_to_subjects(s):
         else:
             teachers_list.remove(teacher)
 
-    raise Exception('Properly teacher was not found for scheduled subject: ' + s.subject.name + ", from: " + s.plan.title)
+    raise Exception('Properly teacher was not found for scheduled subject: ' + s.subject.name + " - " + s.type + ", from: " + s.plan.title)
 
 
 
@@ -215,9 +258,8 @@ def create_plans():
         scheduled_subject_qs = ScheduledSubject.objects.all()
         # create first plan
         for p in plans:
-            temp_subject_list = scheduled_subject_qs.filter(plan=p)
             # show_scheduled_subject(temp_subject_list)
-            create_first_plan(temp_subject_list)
+            create_first_plan(p)
 
         # improve plans
         for i in range(0,100):
