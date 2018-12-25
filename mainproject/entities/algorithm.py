@@ -2,6 +2,7 @@ from .models import ScheduledSubject, Plan, FieldOfStudy, Subject, Room
 from random import randint, choice
 from datetime import time
 from django.db import transaction
+from .improvement import ImprovementManager
 '''
 For every Scheduled Subject we have to add single teacher
     We get this teacher from subject.teachers.
@@ -235,18 +236,6 @@ def check_that_plans_are_correctly(scheduled_subjects):
     check_subject_to_subject_time()
     check_teacher_can_teach()
 
-def generation(scheduled_subjects):
-    pass
-
-def repair_generation():
-    pass
-
-def value_for_plan(plan):
-    pass
-
-def make_improvements(scheduled_subjects):
-    pass
-
 @transaction.atomic
 def create_plans():
     sid = transaction.savepoint()
@@ -261,18 +250,19 @@ def create_plans():
             # show_scheduled_subject(temp_subject_list)
             create_first_plan(p)
 
-        # improve plans
-        for i in range(0,100):
-            generation(scheduled_subject_qs)
-
         transaction.savepoint_commit(sid)
     except Exception as e:
         transaction.savepoint_rollback(sid)
         print(str(e))
         raise e
 
-    make_improvements(ScheduledSubject.objects.all())
+def make_improvement():
+    scheduled_subjects = ScheduledSubject.objects.all()
+    plans = Plan.objects.all()
 
+    instance = ImprovementManager(plans=plans, subjects=scheduled_subjects)
+    instance.make_improvement(100)
+    instance.generation()
 
 def show_scheduled_subject(scheduled_subjects):
     for ss in scheduled_subjects:
