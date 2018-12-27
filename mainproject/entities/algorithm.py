@@ -1,4 +1,4 @@
-from .models import ScheduledSubject, Plan, FieldOfStudy, Subject, Room
+from .models import ScheduledSubject, Plan, FieldOfStudy, Subject, Room, Teacher
 from random import randint, choice
 from datetime import time
 from django.db import transaction
@@ -258,9 +258,11 @@ def create_plans():
 
 def make_improvement():
     scheduled_subjects = ScheduledSubject.objects.all()
-    plans = Plan.objects.all()
+    rooms = Room.objects.all().order_by("id")
+    teachers = Teacher.objects.all().order_by("user_id")
+    plans = Plan.objects.all().order_by("id")
 
-    instance = ImprovementManager(plans=plans, subjects=scheduled_subjects)
+    instance = ImprovementManager(plans=plans, subjects=scheduled_subjects, teachers=teachers, rooms=rooms)
     instance.make_improvement(100)
     instance.generation()
 
