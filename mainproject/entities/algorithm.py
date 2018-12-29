@@ -264,7 +264,8 @@ def make_improvement():
 
     instance = ImprovementManager(plans=plans, subjects=scheduled_subjects, teachers=teachers, rooms=rooms)
     instance.make_improvement(100)
-    instance.generation()
+    # instance.generation()
+    # instance.pass_to_database()
 
 def show_scheduled_subject(scheduled_subjects):
     for ss in scheduled_subjects:

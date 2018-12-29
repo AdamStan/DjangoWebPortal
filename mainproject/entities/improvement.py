@@ -63,7 +63,7 @@ class ImprovementManager:
         which_day = choice(self.day_of_week) - 1 # because curva
         print(buff[which_day])
 
-        if buff[which_day] == 0:
+        if not buff[which_day]:
             print("Empty day was chosen")
             return
         try:
@@ -86,31 +86,59 @@ class ImprovementManager:
         # checks that changes don't create any conflicts
         what_return = self.check_subject_to_subjects(subject=subject_after, plan_one=buff[subject_after.dayOfWeek - 1])
         print(what_return)
-        what_return = what_return and self.check_subject_to_teacher(subject=subject_after, which_day=subject_after.dayOfWeek)
+        what_return = what_return and \
+                      self.check_subject_to_teacher(subject=subject_after, which_day=subject_after.dayOfWeek - 1)
         print(what_return)
-        what_return = what_return and self.check_subject_to_rooms(subject=subject_after, which_day=subject_after.dayOfWeek)
+        what_return = what_return and \
+                      self.check_subject_to_rooms(subject=subject_after, which_day=subject_after.dayOfWeek - 1)
         print(what_return)
 
-        if what_return != True:
+        if not what_return:
             print("SOME CASE HAVE NOT PASSED")
             return
-        ### START HERE ###
-        return
+
         # counts value for old plan
-        value_before = self.value_for_plan(plan=buff)
+        value_before = self.value_for_plan(plan_position=which_plan_will_be_mutated)
+        print("VALUE BEFORE:: " + str(value_before))
+
+        # set new subject to plan
+        new_buff = self.changed_piece_of_plan(subject_after, subject_before, which_plan_will_be_mutated)
+        for list_subjects in new_buff:
+            ImprovementManager.show_subject_list(list_of_subject=list_subjects)
         # count value for new plan
-        new_buff = self.set_correct_subject(subject_after, which_day, which_subject_index, which_plan_will_be_mutated)
         value_after = self.value_for_plan(plan=new_buff)
+        print("VALUE AFTER:: " + str(value_after))
 
         if value_after < value_before:
             self.data[which_plan_will_be_mutated] = new_buff
+            self.change_teachers_and_rooms_plan(subject_after=subject_after, subject_before=subject_before)
+        else:
+            self.data[which_plan_will_be_mutated] = buff
 
-    def repair_generation(self):
-        pass
-
-    def value_for_plan(self, plan):
+    def value_for_plan(self, plan_position = -1, plan = array([])):
         # wzor: liczba dni niepustych + (poczotek + koniec - czas trwania przedmiotow) <- dla kazdego dnia
-        pass
+        if plan_position >= 0:
+            buff_new = self.data[plan_position]
+        elif plan.any():
+            buff_new = plan
+        else:
+            raise Exception("GIVE PLAN POSITION OR PLAN TO ESTIMATE")
+        print("VALUE FOR THIS PLAN:")
+        value = 5
+        for list_of_subjects in buff_new:
+            ImprovementManager.show_subject_list(list_of_subjects)
+            subjects_how_long, first_hour, last_hour = 0, 24, 0
+            for subject in list_of_subjects:
+                if subject.whenStart.hour < first_hour:
+                    first_hour = subject.whenStart.hour
+                if subject.whenFinnish.hour > last_hour:
+                    last_hour = subject.whenFinnish.hour
+                subjects_how_long += subject.how_long
+            if not list_of_subjects: # checks that list is empty
+                value -= 1
+            else:
+                value += last_hour - first_hour - subjects_how_long
+        return value
 
     def check_subject_to_subjects(self, subject, plan_one):
         for sub in plan_one:
@@ -126,7 +154,7 @@ class ImprovementManager:
     def check_subject_to_teacher(self, subject, which_day):
         teacher_index = self.teacher_in_array(subject.teacher)
         teachers_week = self.data_teachers[teacher_index]
-        teacher_day = teachers_week[which_day - 1]
+        teacher_day = teachers_week[which_day]
 
         for sub in teacher_day:
             print("checking with: " + str(subject.dayOfWeek) + " " + str(sub.whenStart) + " " + str(sub.whenFinnish))
@@ -142,7 +170,7 @@ class ImprovementManager:
     def check_subject_to_rooms(self, subject, which_day):
         room_index = self.room_in_array(subject.room)
         room_week = self.data_rooms[room_index]
-        room_day = room_week[which_day - 1]
+        room_day = room_week[which_day]
 
         for sub in room_day:
             print("checking with: " + str(subject.dayOfWeek) + " " + str(sub.whenStart) + " " + str(sub.whenFinnish))
@@ -166,11 +194,55 @@ class ImprovementManager:
                 return i
         return None
 
+    def changed_piece_of_plan(self, subject_after, subject_before, which_plan_will_be_mutated):
+        new_plan = self.data[which_plan_will_be_mutated].copy()
+
+        # removes old subject from plan
+        for i in range(0, len(new_plan[subject_before.dayOfWeek - 1])):
+            subject = new_plan[subject_before.dayOfWeek - 1][i]
+            if subject.id == subject_before.id:
+                new_plan[subject_before.dayOfWeek - 1].pop(i)
+                break
+        # sets new subject to plan
+        new_plan[subject_after.dayOfWeek - 1].append(subject_after)
+
+        return new_plan
+
+    def change_teachers_and_rooms_plan(self, subject_after, subject_before):
+        room_index = self.room_in_array(subject_before.room)
+
+        # removes subject...
+        for i in range(0, len(self.data_rooms[room_index][subject_before.dayOfWeek - 1])):
+            subject = self.data_rooms[room_index][subject_before.dayOfWeek - 1][i]
+            if subject.id == subject_after.id:
+                self.data_rooms[room_index][subject_before.dayOfWeek - 1].pop(i)
+                break
+
+        # add subject
+        self.data_rooms[room_index][subject_after.dayOfWeek - 1].append(subject_after)
+
+        teacher_index = self.teacher_in_array(subject_before.teacher)
+        # remove subject
+        for i in range(0, len(self.data_teachers[teacher_index][subject_before.dayOfWeek - 1])):
+            subject = self.data_teachers[teacher_index][subject_before.dayOfWeek - 1][i]
+            if subject.id == subject_after.id:
+                self.data_teachers[teacher_index][subject_before.dayOfWeek - 1].pop(i)
+                break
+
+        # add subject
+        self.data_teachers[teacher_index][subject_after.dayOfWeek - 1].append(subject_after)
+
     def make_improvement(self, number_of_generation):
-        return False
+        for i in range(0, number_of_generation):
+            self.generation()
+
+        self.pass_to_database()
 
     def pass_to_database(self):
-        pass
+        for plans in self.data:
+            for subject_list in plans:
+                for subject in subject_list:
+                    subject.save()
 
     def show_data(self):
         print(self.plans_ids)
@@ -182,4 +254,11 @@ class ImprovementManager:
         print(self.data_teachers)
 
     def show_subject(subject):
-        print("Subject:: " + str(subject.dayOfWeek) + " " + str(subject.whenStart) + " " + str(subject.whenFinnish))
+        print("[Subject:: " + str(subject.dayOfWeek) + " " + str(subject.whenStart) + " " + str(subject.whenFinnish) + "]")
+
+    def show_subject_list(list_of_subject):
+        show_list = ""
+        for subject in list_of_subject:
+            show_list += "[Subject:: " + str(subject.dayOfWeek) + " " + \
+                         str(subject.whenStart) + " " + str(subject.whenFinnish) + "]"
+        print(show_list)
