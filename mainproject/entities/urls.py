@@ -9,7 +9,9 @@ urlpatterns = [
     path('timetables/teacher', views.show_teachers_plans, name='timetables_teacher'),
     path('timetables/room', views.show_rooms_plans, name='timetables_room'),
     path('timetables/', views.show_timetables, name='timetables'),
-    path('studentplans/', views.show_student_plans, name='studentplans'),
-    path('teacherplan/', views.show_teacher_plan, name='teacherplan'),
+    path('edittimetables', views.show_edit_timetable, name='edittimetables'),
+    path('studentplans/', views.show_choose_plan, name='studentplans'),
+    path('studentplan/', views.show_user_plan, name="studentplan"),
+    path('teacherplan/', views.show_user_plan, name='teacherplan'),
     path('generate/', views.show_generate_page, name='generate')
 ]

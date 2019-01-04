@@ -73,6 +73,11 @@ class ImprovementManager:
             which_subject_index = 0
 
         subject_before = buff[which_day][which_subject_index]
+        # workaround xD
+        if subject_before.type == "LEC":
+            print("I will try make improvement on lecture in future version, I swear")
+            return
+
         subject_after = deepcopy(subject_before)
         # modification for one subject
         subject_after.dayOfWeek = choice(self.day_of_week)

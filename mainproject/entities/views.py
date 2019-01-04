@@ -2,6 +2,7 @@ from django.shortcuts import render
 from accounts.models import User
 from .models import *
 
+
 class SubjectExample:
     id = 0
     name = ""
@@ -11,9 +12,11 @@ class SubjectExample:
     def toJSON(self):
         return json.dumps(self.__dict__)
 
+
 class TeacherBox:
     id = 0
     title = ""
+
 
 def create_table_example():
     values = []
@@ -102,7 +105,7 @@ def create_table_for_teacher(teacher_id):
     for ss in subjects:
         buff = SubjectExample()
         buff.id = ss.id
-        buff.name = ss.subject.name + " " + ss.type
+        buff.name = ss.subject.name + " " + ss.type + " " + ss.plan.title
         buff.whenStart = ss.whenStart.hour
         buff.how_long = ss.how_long
         buff.day = days[ss.dayOfWeek-1]
@@ -124,7 +127,8 @@ def create_table_for_room(room_id):
     for ss in subjects:
         buff = SubjectExample()
         buff.id = ss.id
-        buff.name = ss.subject.name + " " + ss.type
+        teacher_name = ss.teacher.user.name + " " + ss.teacher.user.surname
+        buff.name = ss.subject.name + " " + ss.type + " " + ss.plan.title + " " + teacher_name
         buff.whenStart = ss.whenStart.hour
         buff.how_long = ss.how_long
         buff.day = days[ss.dayOfWeek-1]
@@ -132,6 +136,8 @@ def create_table_for_room(room_id):
         values.append(buff.toJSON())
 
     return {"values": values}, room.id
+
+""" ::: VIEWS FOR ADMINS ::: """
 
 def show_timetables(request):
     return render(request, 'admin/timetable_intro.html');
@@ -147,6 +153,7 @@ def show_student_plans(request):
         parameters = create_table_example()
 
     return render(request, 'admin/timetables.html', {"values": parameters['values'], "plans": plans, "plan_title":plan_title,"type":"student"});
+
 
 def show_teachers_plans(request):
     teachers = get_teachers()
@@ -181,6 +188,24 @@ def show_generate_page(request):
         pass
     return render(request,'admin/generate.html')
 
-def show_teacher_plan(request):
-    parameters = create_table()
+def show_edit_timetable(request):
     pass
+
+""" ::: VIEWS FOR STUDENT AND TEACHER ONLY ::: """
+
+def show_user_plan(request):
+    user_id = request.user.id
+    parameters, plan_title = create_table_for_teacher(25) # add user_id
+    print(parameters)
+    return render(request, 'teacher/myplan.html', { "values": parameters['values'], "plan_title": plan_title })
+
+def show_choose_plan(request):
+    # student_id = request.user.id
+    # student = Student.objects.get(id=15) # add student id
+    # plans = Plan.objects.filter(fieldOfStudy = student.fieldOfStudy, semester = student.semester)
+    temp_field = FieldOfStudy.objects.get(id=7)
+    plans = Plan.objects.filter(fieldOfStudy=temp_field, semester=1)
+    parameters, plan_title = create_table(plans.first().id)
+    print(parameters)
+    return render(request, 'student/myplans.html',
+                  {"values": parameters['values'], "plans": plans, "plan_title": plan_title});

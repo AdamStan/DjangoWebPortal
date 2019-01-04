@@ -1,0 +1,5 @@
+
+Apython:S108¹")Either remove or fill this block of code.(ã‘Û¾
+mpython:S116"QRename this field "whenStart" to match the regular expression ^[_a-z][_a-z0-9]*$.(½é‡ùÿÿÿÿ
+Gpython:S1481½".Remove the unused local variable "parameters".(á™¼
+ipython:S100"MRename method "toJSON" to match the regular expression ^[a-z_][a-z0-9_]{2,}$.(ïÌÏüÿÿÿÿ

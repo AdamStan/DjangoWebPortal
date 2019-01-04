@@ -2,7 +2,7 @@
 {% load helpful_tags %}
 {% load static from staticfiles %}
 {% block title %}
-<title> example </title>
+<title> {{ type }}s plan </title>
 <link href="{% static 'fullcalendar-3.9.0//fullcalendar.min.css' %}" rel='stylesheet' />
 <link href="{% static 'fullcalendar-3.9.0/fullcalendar.print.min.css' %}" rel='stylesheet' media='print' />
 <script type="text/javascript" src="{% static 'fullcalendar-3.9.0/lib/jquery.min.js' %}"></script>
@@ -11,6 +11,7 @@
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script type="text/javascript">
     var values = {{values|safe}};
+    console.log(values);
     google.charts.load("current", {packages:["timeline"]});
     google.charts.setOnLoadCallback(drawChart);
     array_of_objects = [];
@@ -68,7 +69,6 @@
             dd = date.getDate();
             mm = date.getMonth()+1;
             yyyy = date.getFullYear();
-            console.log(yyyy + '-' + mm + '-' + dd);
             hh = object.whenStart;
             hh_finish = object.whenStart + object.how_long
 
@@ -98,9 +98,9 @@
             defaultView: 'agendaWeek',
             height:727,
             header: {
-                left: 'today',
+                left: '',
                 center: '',
-                right: 'agendaWeek',
+                right: '',
             },
             businessHours: {
                 // days of week. an array of zero-based day of week integers (0=Sunday)

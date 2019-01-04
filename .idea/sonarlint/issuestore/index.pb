@@ -9,3 +9,17 @@ N
 mainproject/entities/models.py,a\2\a26a8e12002fdeafd66575fea2a6f4360bde48ea
 Q
 !mainproject/entities/algorithm.py,6\0\603135bac6237bad9c9b6916c344e661c65cac6d
+M
+mainproject/entities/views.py,9\7\97096509e11a060808324562984e93d335afcb78
+d
+4mainproject/entities/templates/drop_down_button.html,7\8\78fb7b9dfa944176f2abe53151bb8e55c1536bb4
+d
+4mainproject/entities/templates/admin/timetables.html,4\6\468e99865dab8ed225ac58ca9b36ca3bc4dccc7b
+L
+mainproject/entities/urls.py,6\f\6f3cbc4be2aa9bdae813863cda2cbbcc90b883f4
+i
+9mainproject/entities/templates/admin/timetable_intro.html,f\0\f0830b7ad00188d11df52f7393a19bf06d6f1b93
+P
+ mainproject/accounts/add_data.py,d\3\d32f4ef524963baba8a99b0fe7e7cb333985e599
+S
+#mainproject/entities/improvement.py,a\f\af5ae0a4a99e4700a984e48fac0cfd45cad89645
