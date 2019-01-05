@@ -29,3 +29,5 @@ b
 2mainproject/entities/templates/teacher/myplan.html,3\3\33398731499f49a31e3ff45fb51922d772cc7e98
 c
 3mainproject/entities/templates/student/myplans.html,3\1\31918d61b9bd62eda00337fe8cd3fa4545556efa
+i
+9mainproject/entities/templates/admin/edit_timetables.html,9\d\9de7ed25254fa03ca1e8ffde586451eef6d77102

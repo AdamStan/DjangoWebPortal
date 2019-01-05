@@ -151,7 +151,7 @@ def check_subject_to_subject_time(sch_sub, scheduled_subjects):
     :param scheduled_subjects:
     :return: None
     """
-    scheduled_subjects_in_plan = scheduled_subjects.filter(plan=sch_sub.plan)
+    scheduled_subjects_in_plan = scheduled_subjects.filter(plan=sch_sub.plan).exclude(id=sch_sub.id)
     for scheduled in scheduled_subjects_in_plan:
         if scheduled.dayOfWeek == sch_sub.dayOfWeek and scheduled.whenStart != None:
             difference_between_starts = abs(sch_sub.whenStart.hour - scheduled.whenStart.hour)
@@ -184,7 +184,7 @@ def set_teacher_to_subjects(s):
 
 
 def check_teacher_can_teach(scheduled_subject, teacher):
-    subjects_in_plan = ScheduledSubject.objects.all().filter(teacher=teacher)
+    subjects_in_plan = ScheduledSubject.objects.all().filter(teacher=teacher).exclude(id=scheduled_subject.id)
     for scheduled in subjects_in_plan:
         if scheduled.dayOfWeek == scheduled_subject.dayOfWeek:
             difference_between_starts = abs(scheduled_subject.whenStart.hour - scheduled.whenStart.hour)
@@ -217,7 +217,7 @@ def set_rooms_to_subjects(scheduled_subjects):
         ss.save()
 
 def check_room_is_not_taken(scheduled_subject, room):
-    subjects_in_this_room = ScheduledSubject.objects.all().filter(room=room)
+    subjects_in_this_room = ScheduledSubject.objects.all().filter(room=room).exclude(id=scheduled_subject.id)
     for s in subjects_in_this_room:
         if s.dayOfWeek == scheduled_subject.dayOfWeek and scheduled_subject.whenStart != None:
             difference_between_starts = abs(scheduled_subject.whenStart.hour - s.whenStart.hour)

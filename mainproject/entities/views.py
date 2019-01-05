@@ -1,8 +1,11 @@
+from datetime import time
+
 from django.shortcuts import render
 from accounts.models import User
 from .models import *
-from .algorithm import create_plans
-
+from .algorithm import create_plans, check_subject_to_subject_time, check_teacher_can_teach, check_room_is_not_taken
+from django.http import HttpResponse
+import re
 
 class SubjectExample:
     id = 0
@@ -204,13 +207,36 @@ def show_generate_page(request):
 def show_edit_timetable(request):
     plans = get_plans()
     plan_title = ""
+    value = 0
     if request.method == 'POST':
-        value = request.POST.get('plan_id', None)
-        print("Which value was taken: " + value)
-        parameters, plan_title = create_table(value)
+        action = request.POST.get('action')
+        if action == 'search':
+            value = request.POST.get('plan_id', None)
+            print("Which value was taken: " + value)
+            parameters, plan_title = create_table(value)
+        else:
+            event_id=request.POST.get('event_d[event][id]',False)
+            start_hour=request.POST.get('event_d[event][start]', False)
+            end_hour=request.POST.get('event_d[event][end]', False)
+            print("Dane z ajaxa: " + event_id + ' ' + start_hour + ' ' + end_hour )
+            start_hour = time(int(start_hour[11:13]), 0, 0)
+            end_hour = time(int(end_hour[11:13]), 0, 0)
+            print(start_hour)
+            print(end_hour)
+            subject_to_edit = ScheduledSubject.objects.get(id=int(event_id))
+            subjects = ScheduledSubject.objects.filter(plan=subject_to_edit.plan)
+            subject_to_edit.whenStart = start_hour
+            subject_to_edit.whenFinnish = end_hour
+            case1 = check_subject_to_subject_time(subject_to_edit, subjects)
+            case2 = check_teacher_can_teach(subject_to_edit, teacher= subject_to_edit.teacher)
+            case3 = check_room_is_not_taken(subject_to_edit, room=subject_to_edit.room)
+            if case1 and case2 and case3:
+                 subject_to_edit.save()
+            return HttpResponse('')
     else:
         parameters = { "values": [] }
-    return render(request, 'admin/edit_timetables.html',{"values": parameters['values'], "plans": plans, "plan_title":plan_title})
+    return render(request, 'admin/edit_timetables.html',{"values": parameters['values'], "actual_plan":value,
+                                                         "plans": plans, "plan_title":plan_title})
 
 """ ::: VIEWS FOR STUDENT AND TEACHER ONLY ::: """
 

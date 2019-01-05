@@ -1,4 +1,5 @@
 
 xpython:S3776"TRefactor this function to reduce its Cognitive Complexity from 28 to the 15 allowed.(º¿èËÿÿÿÿÿ8ÙþÄ¾ü,
-Xpython:S1481÷"8Remove the unused local variable "scheduled_subject_qs".(˜ôÕ8àÄªþ,
+Xpython:S1481÷"8Remove the unused local variable "scheduled_subject_qs".(˜ôÕ8ÜÀºð-
+Ipython:S1481ö")Remove the unused local variable "plans".(‡—ó¼8ÀÄÊð-
 >python:S125‹"Remove this commented out code.(ˆìðß8¹º—Õÿ,

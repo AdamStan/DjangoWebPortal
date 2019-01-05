@@ -3,11 +3,12 @@
   <component name="ChangeListManager">
     <list default="true" id="40654973-2854-4e42-8ca8-d5e536ff6365" name="Default Changelist" comment="Users works correctly">
       <change beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/5/e/5e475dad97608a71a77321a8e95f6463de0c0ea8" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/sonarlint/issuestore/5/e/5e475dad97608a71a77321a8e95f6463de0c0ea8" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/6/0/603135bac6237bad9c9b6916c344e661c65cac6d" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/sonarlint/issuestore/6/0/603135bac6237bad9c9b6916c344e661c65cac6d" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/9/7/97096509e11a060808324562984e93d335afcb78" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/sonarlint/issuestore/9/7/97096509e11a060808324562984e93d335afcb78" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/a/f/af5ae0a4a99e4700a984e48fac0cfd45cad89645" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/sonarlint/issuestore/a/f/af5ae0a4a99e4700a984e48fac0cfd45cad89645" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/index.pb" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/sonarlint/issuestore/index.pb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mainproject/entities/templates/student/myplans.html" beforeDir="false" afterPath="$PROJECT_DIR$/mainproject/entities/templates/student/myplans.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mainproject/entities/algorithm.py" beforeDir="false" afterPath="$PROJECT_DIR$/mainproject/entities/algorithm.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mainproject/entities/templates/admin/edit_timetables.html" beforeDir="false" afterPath="$PROJECT_DIR$/mainproject/entities/templates/admin/edit_timetables.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/mainproject/entities/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/mainproject/entities/views.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -20,12 +21,12 @@
     <session id="916722507">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="55" />
+          <entry key="project.closed" value="56" />
           <entry key="project.open.time.10" value="4" />
           <entry key="project.open.time.11" value="2" />
           <entry key="project.open.time.12" value="3" />
           <entry key="project.open.time.13" value="1" />
-          <entry key="project.open.time.14" value="1" />
+          <entry key="project.open.time.14" value="2" />
           <entry key="project.open.time.15" value="1" />
           <entry key="project.open.time.16" value="3" />
           <entry key="project.open.time.17" value="2" />
@@ -38,25 +39,25 @@
           <entry key="project.open.time.7" value="6" />
           <entry key="project.open.time.8" value="8" />
           <entry key="project.open.time.9" value="9" />
-          <entry key="project.opened" value="56" />
+          <entry key="project.opened" value="57" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
           <entry key="css" value="19" />
           <entry key="gitignore" value="1" />
-          <entry key="html" value="71" />
-          <entry key="js" value="5" />
-          <entry key="py" value="176" />
+          <entry key="html" value="75" />
+          <entry key="js" value="6" />
+          <entry key="py" value="182" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
           <entry key="CSS" value="11" />
-          <entry key="HTML" value="71" />
-          <entry key="JavaScript" value="5" />
+          <entry key="HTML" value="75" />
+          <entry key="JavaScript" value="6" />
           <entry key="PLAIN_TEXT" value="9" />
-          <entry key="Python" value="176" />
+          <entry key="Python" value="182" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
@@ -64,8 +65,8 @@
           <entry key="Python Console" value="92" />
           <entry key="css" value="621" />
           <entry key="dummy" value="10" />
-          <entry key="html" value="7809" />
-          <entry key="py" value="39347" />
+          <entry key="html" value="8554" />
+          <entry key="py" value="41099" />
           <entry key="txt" value="21" />
         </counts>
       </usages-collector>
@@ -73,9 +74,9 @@
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="CSS" value="123" />
-          <entry key="HTML" value="7809" />
+          <entry key="HTML" value="8554" />
           <entry key="PLAIN_TEXT" value="529" />
-          <entry key="Python" value="39439" />
+          <entry key="Python" value="41191" />
         </counts>
       </usages-collector>
     </session>
@@ -85,17 +86,17 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/mainproject/entities/algorithm.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="17">
-              <caret line="243" column="29" selection-start-line="243" selection-start-column="29" selection-end-line="243" selection-end-column="29" />
+            <state relative-caret-position="99">
+              <caret line="185" column="56" lean-forward="true" selection-start-line="185" selection-start-column="56" selection-end-line="185" selection-end-column="56" />
               <folding>
                 <element signature="e#0#80#0" expanded="true" />
-                <marker date="1546098432242" expanded="true" signature="776:2555" ph="..." />
-                <marker date="1546098432242" expanded="true" signature="2912:2927" ph="..." />
-                <marker date="1546098432242" expanded="true" signature="2982:4498" ph="..." />
-                <marker date="1546098432242" expanded="true" signature="4555:5314" ph="..." />
-                <marker date="1546098432242" expanded="true" signature="6755:6757" ph="..." />
-                <marker date="1546098432242" expanded="true" signature="9484:9486" ph="..." />
-                <marker date="1546098432242" expanded="true" signature="10113:10526" ph="..." />
+                <marker date="1546727581662" expanded="true" signature="776:2555" ph="..." />
+                <marker date="1546727581662" expanded="true" signature="2912:2927" ph="..." />
+                <marker date="1546727581662" expanded="true" signature="2982:4498" ph="..." />
+                <marker date="1546727581662" expanded="true" signature="4555:5314" ph="..." />
+                <marker date="1546727581662" expanded="true" signature="6830:6832" ph="..." />
+                <marker date="1546727581662" expanded="true" signature="9625:9627" ph="..." />
+                <marker date="1546727581662" expanded="true" signature="10364:10777" ph="..." />
               </folding>
             </state>
           </provider>
@@ -104,7 +105,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/mainproject/entities/improvement.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="654">
+            <state relative-caret-position="501">
               <caret line="91" column="25" selection-start-line="91" selection-start-column="25" selection-end-line="91" selection-end-column="25" />
               <folding>
                 <element signature="e#0#38#0" expanded="true" />
@@ -117,34 +118,41 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/mainproject/entities/templates/admin/edit_timetables.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="228">
+              <caret line="156" column="39" lean-forward="true" selection-start-line="156" selection-start-column="39" selection-end-line="156" selection-end-column="39" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/mainproject/entities/templates/student/myplans.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="177">
-              <caret line="125" column="29" selection-start-line="125" selection-start-column="29" selection-end-line="125" selection-end-column="29" />
+            <state relative-caret-position="145">
+              <caret line="121" column="9" lean-forward="true" selection-start-line="121" selection-start-column="9" selection-end-line="121" selection-end-column="9" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/mainproject/entities/templates/teacher/myplan.html">
+        <entry file="file://$PROJECT_DIR$/mainproject/entities/templates/admin/generate.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-10">
-              <caret line="108" column="14" lean-forward="true" selection-start-line="108" selection-start-column="14" selection-end-line="108" selection-end-column="14" />
+            <state relative-caret-position="111">
+              <caret line="20" column="105" selection-start-line="20" selection-start-column="105" selection-end-line="20" selection-end-column="105" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/mainproject/entities/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="347">
-              <caret line="210" column="16" selection-start-line="210" selection-start-column="16" selection-end-line="210" selection-end-column="16" />
+            <state relative-caret-position="175">
+              <caret line="234" selection-start-line="234" selection-end-line="234" />
               <folding>
-                <element signature="e#0#35#0" expanded="true" />
-                <marker date="1546689620109" expanded="true" signature="276:305" ph="..." />
-                <marker date="1546689620109" expanded="true" signature="5635:5646" ph="..." />
-                <marker date="1546689620109" expanded="true" signature="5994:5999" ph="..." />
+                <element signature="e#0#25#0" expanded="true" />
+                <marker date="1546727847953" expanded="true" signature="466:495" ph="..." />
               </folding>
             </state>
           </provider>
@@ -153,30 +161,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/mainproject/entities/templates/admin/timetables.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="238">
-              <caret line="14" column="59" selection-start-line="14" selection-start-column="59" selection-end-line="14" selection-end-column="59" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/mainproject/templates/base_layout.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="544">
-              <caret line="32" column="81" selection-start-line="32" selection-start-column="81" selection-end-line="32" selection-end-column="81" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/mainproject/entities/add_data.py">
-          <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="221">
-              <caret line="15" column="34" selection-start-line="15" selection-start-column="34" selection-end-line="15" selection-end-column="34" />
-              <folding>
-                <marker date="1545589853629" expanded="true" signature="14346:14355" ph="..." />
-                <marker date="1545589853629" expanded="true" signature="14897:14898" ph="..." />
-              </folding>
+              <caret line="13" column="24" lean-forward="true" selection-start-line="13" selection-start-column="24" selection-end-line="13" selection-end-column="24" />
             </state>
           </provider>
         </entry>
@@ -184,8 +170,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/mainproject/entities/urls.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="170">
-              <caret line="12" column="68" selection-start-line="12" selection-start-column="56" selection-end-line="12" selection-end-column="68" />
+            <state relative-caret-position="187">
+              <caret line="13" column="67" selection-start-line="13" selection-start-column="67" selection-end-line="13" selection-end-column="67" />
             </state>
           </provider>
         </entry>
@@ -195,8 +181,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="HTML File" />
         <option value="Python Script" />
+        <option value="HTML File" />
       </list>
     </option>
   </component>
@@ -216,6 +202,10 @@
       <find>consol</find>
       <find>request.P</find>
       <find>request.POST</find>
+      <find>create_plans</find>
+      <find>check</find>
+      <find>exclu</find>
+      <find>exclude</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -253,7 +243,6 @@
         <option value="$PROJECT_DIR$/mainproject/entities/tests/test_entities.py" />
         <option value="$PROJECT_DIR$/mainproject/entities/tests/test_settings.py" />
         <option value="$PROJECT_DIR$/mainproject/assets/myownstyles.css" />
-        <option value="$PROJECT_DIR$/mainproject/entities/templates/admin/generate.html" />
         <option value="$PROJECT_DIR$/mainproject/accounts/templates/login.html" />
         <option value="$PROJECT_DIR$/mainproject/accounts/views.py" />
         <option value="$PROJECT_DIR$/mainproject/accounts/templates/myprofile.html" />
@@ -263,14 +252,16 @@
         <option value="$PROJECT_DIR$/mainproject/entities/templates/admin/timetable_intro.html" />
         <option value="$PROJECT_DIR$/mainproject/entities/add_data.py" />
         <option value="$PROJECT_DIR$/mainproject/entities/models.py" />
-        <option value="$PROJECT_DIR$/mainproject/entities/algorithm.py" />
         <option value="$PROJECT_DIR$/mainproject/entities/improvement.py" />
         <option value="$PROJECT_DIR$/mainproject/templates/base_layout.html" />
         <option value="$PROJECT_DIR$/mainproject/entities/templates/admin/timetables.html" />
         <option value="$PROJECT_DIR$/mainproject/entities/templates/teacher/myplan.html" />
-        <option value="$PROJECT_DIR$/mainproject/entities/urls.py" />
-        <option value="$PROJECT_DIR$/mainproject/entities/views.py" />
         <option value="$PROJECT_DIR$/mainproject/entities/templates/student/myplans.html" />
+        <option value="$PROJECT_DIR$/mainproject/entities/templates/admin/generate.html" />
+        <option value="$PROJECT_DIR$/mainproject/entities/urls.py" />
+        <option value="$PROJECT_DIR$/mainproject/entities/templates/admin/edit_timetables.html" />
+        <option value="$PROJECT_DIR$/mainproject/entities/algorithm.py" />
+        <option value="$PROJECT_DIR$/mainproject/entities/views.py" />
       </list>
     </option>
   </component>
@@ -283,9 +274,59 @@
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
     <navigator proportions="" version="1">
+      <showMembers ProjectPane="true" />
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope">
+        <subPane subId="Scope 'Default Changelist'; set:Default Changelist; class com.intellij.packageDependencies.ChangeListScope">
+          <expand>
+            <path>
+              <item name="WebPortal" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
+            </path>
+            <path>
+              <item name="WebPortal" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
+              <item name=".idea" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+        <subPane subId="Scope 'Changed Files'; set:Changed Files; ALL; class com.intellij.packageDependencies.ChangeListScope">
+          <expand>
+            <path>
+              <item name="WebPortal" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
+            </path>
+            <path>
+              <item name="WebPortal" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
+              <item name=".idea" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+        <subPane subId="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope">
+          <expand>
+            <path>
+              <item name="WebPortal" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
+            </path>
+            <path>
+              <item name="WebPortal" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
+              <item name=".idea" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+            </path>
+            <path>
+              <item name="WebPortal" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
+              <item name="mainproject" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -297,12 +338,6 @@
               <item name="WebPortal" type="b2602c69:ProjectViewProjectNode" />
               <item name="WebPortal" type="462c0819:PsiDirectoryNode" />
               <item name="mainproject" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="WebPortal" type="b2602c69:ProjectViewProjectNode" />
-              <item name="WebPortal" type="462c0819:PsiDirectoryNode" />
-              <item name="mainproject" type="462c0819:PsiDirectoryNode" />
-              <item name="accounts" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="WebPortal" type="b2602c69:ProjectViewProjectNode" />
@@ -339,31 +374,10 @@
               <item name="templates" type="462c0819:PsiDirectoryNode" />
               <item name="student" type="462c0819:PsiDirectoryNode" />
             </path>
-            <path>
-              <item name="WebPortal" type="b2602c69:ProjectViewProjectNode" />
-              <item name="WebPortal" type="462c0819:PsiDirectoryNode" />
-              <item name="mainproject" type="462c0819:PsiDirectoryNode" />
-              <item name="entities" type="462c0819:PsiDirectoryNode" />
-              <item name="templates" type="462c0819:PsiDirectoryNode" />
-              <item name="teacher" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="WebPortal" type="b2602c69:ProjectViewProjectNode" />
-              <item name="WebPortal" type="462c0819:PsiDirectoryNode" />
-              <item name="mainproject" type="462c0819:PsiDirectoryNode" />
-              <item name="mainproject" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="WebPortal" type="b2602c69:ProjectViewProjectNode" />
-              <item name="WebPortal" type="462c0819:PsiDirectoryNode" />
-              <item name="mainproject" type="462c0819:PsiDirectoryNode" />
-              <item name="templates" type="462c0819:PsiDirectoryNode" />
-            </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -486,19 +500,18 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.2504957" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="0" show_stripe_button="false" />
-      <window_info active="true" anchor="bottom" id="Run" order="1" visible="true" weight="0.2917847" />
+      <window_info anchor="bottom" id="Run" order="1" weight="0.2917847" />
       <window_info anchor="bottom" id="Terminal" order="2" sideWeight="0.49966952" weight="0.24220963" />
       <window_info anchor="bottom" id="Python Console" order="3" weight="0.3286119" />
       <window_info anchor="bottom" id="Event Log" order="4" sideWeight="0.50033045" side_tool="true" weight="0.24220963" />
       <window_info anchor="bottom" id="Message" order="5" />
       <window_info anchor="bottom" id="Find" order="6" weight="0.3286119" />
-      <window_info anchor="bottom" id="Debug" order="7" weight="0.4" />
+      <window_info active="true" anchor="bottom" id="Debug" order="7" visible="true" weight="0.39943343" />
       <window_info anchor="bottom" id="Cvs" order="8" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="9" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="10" />
@@ -515,22 +528,43 @@
     <MESSAGE value="Users works correctly" />
     <option name="LAST_COMMIT_MESSAGE" value="Users works correctly" />
   </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/mainproject/entities/algorithm.py</url>
+          <line>244</line>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/mainproject/entities/algorithm.py</url>
+          <line>250</line>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/mainproject/entities/views.py</url>
+          <line>217</line>
+          <option name="timeStamp" value="24" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/mainproject/entities/views.py</url>
+          <line>220</line>
+          <option name="timeStamp" value="25" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/mainproject/entities/views.py</url>
+          <line>231</line>
+          <option name="timeStamp" value="29" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/mainproject/entities/views.py</url>
+          <line>234</line>
+          <option name="timeStamp" value="31" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/mainproject/add_data.py" />
-    <entry file="file://$PROJECT_DIR$/mainproject/accounts/admin.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="109">
-          <caret line="18" column="30" lean-forward="true" selection-start-line="18" selection-start-column="30" selection-end-line="18" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/mainproject/accounts/forms.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-10">
-          <caret line="50" lean-forward="true" selection-start-line="50" selection-end-line="50" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/mainproject/accounts/urls.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="34">
@@ -695,13 +729,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/mainproject/entities/templates/admin/generate.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="10" column="16" selection-start-line="10" selection-start-column="16" selection-end-line="10" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/mainproject/entities/templates/admin/timetable_intro.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="68">
@@ -716,13 +743,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python37/Lib/random.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="169">
-          <caret line="199" selection-start-line="199" selection-end-line="199" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/mainproject/entities/models.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="264">
@@ -730,65 +750,75 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/mainproject/templates/base_layout.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="544">
-          <caret line="32" column="81" selection-start-line="32" selection-start-column="81" selection-end-line="32" selection-end-column="81" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/mainproject/entities/add_data.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="221">
           <caret line="15" column="34" selection-start-line="15" selection-start-column="34" selection-end-line="15" selection-end-column="34" />
-          <folding>
-            <marker date="1545589853629" expanded="true" signature="14346:14355" ph="..." />
-            <marker date="1545589853629" expanded="true" signature="14897:14898" ph="..." />
-          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/mainproject/entities/urls.py">
+    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python37/Lib/random.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="12" column="68" selection-start-line="12" selection-start-column="56" selection-end-line="12" selection-end-column="68" />
+        <state relative-caret-position="124">
+          <caret line="221" selection-start-line="221" selection-end-line="221" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/mainproject/entities/templates/admin/timetables.html">
+    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python37/Lib/genericpath.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="14" column="59" selection-start-line="14" selection-start-column="59" selection-end-line="14" selection-end-column="59" />
+        <state relative-caret-position="124">
+          <caret line="21" selection-start-line="21" selection-end-line="21" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/mainproject/entities/algorithm.py">
+    <entry file="file://$PROJECT_DIR$/mainproject/templates/base_layout.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="243" column="29" selection-start-line="243" selection-start-column="29" selection-end-line="243" selection-end-column="29" />
-          <folding>
-            <element signature="e#0#80#0" expanded="true" />
-            <marker date="1546098432242" expanded="true" signature="776:2555" ph="..." />
-            <marker date="1546098432242" expanded="true" signature="2912:2927" ph="..." />
-            <marker date="1546098432242" expanded="true" signature="2982:4498" ph="..." />
-            <marker date="1546098432242" expanded="true" signature="4555:5314" ph="..." />
-            <marker date="1546098432242" expanded="true" signature="6755:6757" ph="..." />
-            <marker date="1546098432242" expanded="true" signature="9484:9486" ph="..." />
-            <marker date="1546098432242" expanded="true" signature="10113:10526" ph="..." />
-          </folding>
+        <state relative-caret-position="438">
+          <caret line="32" column="81" selection-start-line="32" selection-start-column="81" selection-end-line="32" selection-end-column="81" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/mainproject/entities/templates/teacher/myplan.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-10">
+        <state relative-caret-position="280">
           <caret line="108" column="14" lean-forward="true" selection-start-line="108" selection-start-column="14" selection-end-line="108" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/mainproject/assets/fullcalendar-3.9.0/fullcalendar.js">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/mainproject/entities/templates/admin/generate.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="111">
+          <caret line="20" column="105" selection-start-line="20" selection-start-column="105" selection-end-line="20" selection-end-column="105" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/mainproject/entities/urls.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="13" column="67" selection-start-line="13" selection-start-column="67" selection-end-line="13" selection-end-column="67" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/mainproject/entities/templates/student/myplans.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="145">
+          <caret line="121" column="9" lean-forward="true" selection-start-line="121" selection-start-column="9" selection-end-line="121" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/mainproject/entities/templates/admin/timetables.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="221">
+          <caret line="13" column="24" lean-forward="true" selection-start-line="13" selection-start-column="24" selection-end-line="13" selection-end-column="24" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/mainproject/entities/improvement.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="654">
+        <state relative-caret-position="501">
           <caret line="91" column="25" selection-start-line="91" selection-start-column="25" selection-end-line="91" selection-end-column="25" />
           <folding>
             <element signature="e#0#38#0" expanded="true" />
@@ -800,23 +830,38 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/mainproject/entities/views.py">
+    <entry file="file://$PROJECT_DIR$/mainproject/entities/algorithm.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="347">
-          <caret line="210" column="16" selection-start-line="210" selection-start-column="16" selection-end-line="210" selection-end-column="16" />
+        <state relative-caret-position="99">
+          <caret line="185" column="56" lean-forward="true" selection-start-line="185" selection-start-column="56" selection-end-line="185" selection-end-column="56" />
           <folding>
-            <element signature="e#0#35#0" expanded="true" />
-            <marker date="1546689620109" expanded="true" signature="276:305" ph="..." />
-            <marker date="1546689620109" expanded="true" signature="5635:5646" ph="..." />
-            <marker date="1546689620109" expanded="true" signature="5994:5999" ph="..." />
+            <element signature="e#0#80#0" expanded="true" />
+            <marker date="1546727581662" expanded="true" signature="776:2555" ph="..." />
+            <marker date="1546727581662" expanded="true" signature="2912:2927" ph="..." />
+            <marker date="1546727581662" expanded="true" signature="2982:4498" ph="..." />
+            <marker date="1546727581662" expanded="true" signature="4555:5314" ph="..." />
+            <marker date="1546727581662" expanded="true" signature="6830:6832" ph="..." />
+            <marker date="1546727581662" expanded="true" signature="9625:9627" ph="..." />
+            <marker date="1546727581662" expanded="true" signature="10364:10777" ph="..." />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/mainproject/entities/templates/student/myplans.html">
+    <entry file="file://$PROJECT_DIR$/mainproject/entities/templates/admin/edit_timetables.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="177">
-          <caret line="125" column="29" selection-start-line="125" selection-start-column="29" selection-end-line="125" selection-end-column="29" />
+        <state relative-caret-position="228">
+          <caret line="156" column="39" lean-forward="true" selection-start-line="156" selection-start-column="39" selection-end-line="156" selection-end-column="39" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/mainproject/entities/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="175">
+          <caret line="234" selection-start-line="234" selection-end-line="234" />
+          <folding>
+            <element signature="e#0#25#0" expanded="true" />
+            <marker date="1546727847953" expanded="true" signature="466:495" ph="..." />
+          </folding>
         </state>
       </provider>
     </entry>

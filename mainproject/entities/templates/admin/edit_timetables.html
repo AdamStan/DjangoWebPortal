@@ -117,6 +117,29 @@
             columnHeaderFormat: 'dddd',
             eventColor: '#000000',
             eventBackgroundColor: '#80ea69',
+            eventDrop: function(event, delta, revertFunc) {
+                eventData = {
+                    event: {
+                        id: event.id,
+                        start: event.start.format(),
+                        end: event.end.format()
+                    }
+                };
+                $.ajax({
+                    url: '/entities/edittimetables',
+                    data: {
+                        event_d: eventData,
+                        csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+                    },
+                    type: 'POST',
+                    success:function(){
+                        alert("You've change and back know that");
+                    },
+                    error: function(XMLHttpRequest, textStatus, errorThrown) {
+                        alert("Status: " + textStatus + " " + errorThrown);
+                    }
+                })
+            }
         });
     });
 </script>
@@ -131,13 +154,11 @@
             <option value="{{ p.id }}">{{ p.title }} id:{{ p.id }}</option>
             {% endfor %}
         </select>
+        <input type="text" name="actual_plan" value="{{ actual_plan }}" hidden/>
         <button class="btn background-second" type="submit" name="action" value="search"> Search </button>
     </form>
     <!-- <div id="timetable" style="height: 400px"></div> -->
     <!-- <div class="container" id="timetable_values" style="height: 500px"></div> -->
     <h1> Plan {{ plan_title }} </h1>
     <div id='calendar'></div>
-    <form method="post" action="{% url 'entities:edittimetables' %}">
-        <button class="btn background-second"> EDIT </button>
-    </form>
 {% endblock %}
