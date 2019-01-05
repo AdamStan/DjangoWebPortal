@@ -23,3 +23,9 @@ P
  mainproject/accounts/add_data.py,d\3\d32f4ef524963baba8a99b0fe7e7cb333985e599
 S
 #mainproject/entities/improvement.py,a\f\af5ae0a4a99e4700a984e48fac0cfd45cad89645
+V
+&mainproject/templates/base_layout.html,c\f\cf976cd46377f4fa8cfb891af4f5c09233f1403d
+b
+2mainproject/entities/templates/teacher/myplan.html,3\3\33398731499f49a31e3ff45fb51922d772cc7e98
+c
+3mainproject/entities/templates/student/myplans.html,3\1\31918d61b9bd62eda00337fe8cd3fa4545556efa

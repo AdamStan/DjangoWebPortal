@@ -201,11 +201,36 @@ def show_user_plan(request):
 
 def show_choose_plan(request):
     # student_id = request.user.id
-    # student = Student.objects.get(id=15) # add student id
+    # student = Student.objects.get(id=student_id) # add student id
     # plans = Plan.objects.filter(fieldOfStudy = student.fieldOfStudy, semester = student.semester)
     temp_field = FieldOfStudy.objects.get(id=7)
     plans = Plan.objects.filter(fieldOfStudy=temp_field, semester=1)
+    plan_id = plans.first().id
     parameters, plan_title = create_table(plans.first().id)
+
+    message = ""
+    if request.POST:
+        action = request.POST.get('action_name', None)
+        print(action)
+        if action == "search":
+            plan_id = request.POST.get('plan_id', None)
+            print("show plan " + str(plan_id))
+            parameters, plan_title = create_table(plan_id)
+        elif action == "add":
+            plan_id = request.POST.get('which_plan', None)
+            print("add student")
+            parameters, plan_title = create_table(plan_id)
+            student_buff = Student.objects.get(user_id=15)
+            student_buff.plan = plans.get(id=plan_id)
+            student_buff.save()
+            message = "You were added to this plan"
+        elif action == "delete":
+            print("delete student")
+            student_buff = Student.objects.get(user_id=15)
+            student_buff.plan = None
+            student_buff.save()
+            message = "You were deleted from your plan, now you don't have a group"
+
     print(parameters)
     return render(request, 'student/myplans.html',
-                  {"values": parameters['values'], "plans": plans, "plan_title": plan_title});
+                  {"values": parameters['values'], "plans": plans, "plan_title": plan_title, "which_plan": plan_id, "message": message});

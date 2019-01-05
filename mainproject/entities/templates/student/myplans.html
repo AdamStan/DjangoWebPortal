@@ -122,6 +122,9 @@
 </script>
 {% endblock %}
 {% block content %}
+    <div>
+      <p class="alert-success"> {{ message }} </p>
+    </div>
     {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
     <form method="post" action="{% url 'entities:studentplans' %}">
         {% csrf_token %}
@@ -131,9 +134,10 @@
             <option value="{{ p.id }}">{{ p.title }} id:{{ p.id }}</option>
             {% endfor %}
         </select>
-        <button class="btn background-second" type="submit" value="search"> Search </button>
-        <button class="btn background-second" type="submit" value="add"> Add me to this group </button>
-        <button class="btn background-second" type="submit" value="delete"> Delete me from my group </button>
+        <input type="text" value="{{ which_plan }}" name="which_plan" hidden/>
+        <button class="btn background-second" type="submit" name="action_name" value="search"> Search </button>
+        <button class="btn background-second" type="submit" name="action_name" value="add"> Add me to this group </button>
+        <button class="btn background-second" type="submit" name="action_name" value="delete"> Delete me from my group </button>
     </form>
     <!-- <div id="timetable" style="height: 400px"></div> -->
     <!-- <div class="container" id="timetable_values" style="height: 500px"></div> -->
