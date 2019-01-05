@@ -130,7 +130,7 @@ def set_laboratory_time(min_hour, max_hour, days, weeks):
             except:
                 continue
 
-def create_first_plan(plan, min_hour=8, max_hour=19, days=[1,2,3,4,5], weeks = 15):
+def create_first_plan(min_hour=8, max_hour=19, days=[1,2,3,4,5], weeks = 15):
     """
     Creates timetable first time
     :param scheduled_subjects: subjects without schedule
@@ -140,8 +140,8 @@ def create_first_plan(plan, min_hour=8, max_hour=19, days=[1,2,3,4,5], weeks = 1
     :param weeks: how many weeks semester can be
     :return: None
     """
-    set_lectures_time(min_hour, max_hour, days, weeks)
-    set_laboratory_time(min_hour, max_hour, days, weeks)
+    set_lectures_time(min_hour=min_hour, max_hour=max_hour, days=days, weeks=weeks)
+    set_laboratory_time(min_hour=min_hour, max_hour=max_hour, days=days, weeks=weeks)
     set_rooms_to_subjects(ScheduledSubject.objects.all())
 
 def check_subject_to_subject_time(sch_sub, scheduled_subjects):
@@ -237,18 +237,18 @@ def check_that_plans_are_correctly(scheduled_subjects):
     check_teacher_can_teach()
 
 @transaction.atomic
-def create_plans():
+def create_plans(number_of_groups=3, semester=1, min_hour=8, max_hour=19):
     sid = transaction.savepoint()
     # in this moment we have to create plans
     try:
         # create new skeleton
-        create_skeleton(number_of_group=3, semester=1)
+        create_skeleton(number_of_group=number_of_groups, semester=semester)
         plans = Plan.objects.all()
         scheduled_subject_qs = ScheduledSubject.objects.all()
         # create first plan
-        for p in plans:
+        # for p in plans:
             # show_scheduled_subject(temp_subject_list)
-            create_first_plan(p)
+        create_first_plan(min_hour=min_hour, max_hour=max_hour)
 
         transaction.savepoint_commit(sid)
     except Exception as e:

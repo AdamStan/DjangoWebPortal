@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from accounts.models import User
 from .models import *
+from .algorithm import create_plans
 
 
 class SubjectExample:
@@ -184,12 +185,32 @@ def show_rooms_plans(request):
     return render(request, 'admin/timetables.html',{"values": parameters['values'], "plans": plans, "plan_title": plan_title, "type":"room"});
 
 def show_generate_page(request):
+    fail_message = ""
+    s_message = ""
     if request.method == 'POST':
-        pass
-    return render(request,'admin/generate.html')
+        min_hour = request.POST.get("first_hour")
+        max_hour = request.POST.get("last_hour")
+        semester_type = request.POST.get("semester_type")
+        how_many_groups = request.POST.get("how_many_groups")
+        if max_hour == "" or min_hour == "" or semester_type == "None" or how_many_groups == "":
+            fail_message = "Plans cannot be create with this values "
+        else:
+            #max_hour=int(max_hour), min_hour=int(min_hour), semester=int(semester_type), number_of_groups=int(how_many_groups)
+            create_plans(max_hour=int(max_hour), min_hour=int(min_hour), semester=int(semester_type), number_of_groups=int(how_many_groups))
+            s_message = "Everything goes fine, check plans in AllPlans tab"
+
+    return render(request,'admin/generate.html', {"fail_message": fail_message, "s_message":s_message } )
 
 def show_edit_timetable(request):
-    pass
+    plans = get_plans()
+    plan_title = ""
+    if request.method == 'POST':
+        value = request.POST.get('plan_id', None)
+        print("Which value was taken: " + value)
+        parameters, plan_title = create_table(value)
+    else:
+        parameters = { "values": [] }
+    return render(request, 'admin/edit_timetables.html',{"values": parameters['values'], "plans": plans, "plan_title":plan_title})
 
 """ ::: VIEWS FOR STUDENT AND TEACHER ONLY ::: """
 
