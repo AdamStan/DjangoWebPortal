@@ -71,16 +71,48 @@ class ImprovementManagerQuerySets:
                 print("LEC, it is LEC")
                 # 4.1.1 losujemy nowe wartosci
                 new_whenStart = time(randint(min_hour, max_hour), 0, 0)
-                fin = subject_to_change.whenStart.hour + subject_to_change.how_long
+                fin = new_whenStart.hour + subject_to_change.how_long
                 new_whenFinnish = time(fin, 0, 0)
                 new_dayOfWeek = choice(self.day_of_week)
                 # 4.1.2 check new value
                 # subject_to_change.save()
                 # ImprovementManagerQuerySets.show_subject(subject_to_change)
 
-                others_lectures = ScheduledSubject.objects.filter(subject=subject_to_change.subject)
+                others_lectures = ScheduledSubject.objects.filter(subject=subject_to_change.subject,
+                                                                  type=subject_to_change.type)
+                values_after = []
+                values_before = []
                 for sub in others_lectures:
                     ImprovementManagerQuerySets.show_subject(sub)
+                    value = self.value_for_plan(subjects_in_plan=self.scheduled_subjects.filter(plan=sub.plan))
+                    values_before.append(value)
+                    sub.whenStart = new_whenStart
+                    sub.whenFinnish = new_whenFinnish
+                    sub.dayOfWeek = new_dayOfWeek
+                    print(value)
+
+                #others_lectures = ScheduledSubject.objects.filter(subject=subject_to_change.subject,
+                #                                                  type=subject_to_change.type)
+                print(":::AFTER:::")
+                for sub in others_lectures:
+                    ImprovementManagerQuerySets.show_subject(sub)
+                    value = self.value_for_plan(subjects_in_plan=self.scheduled_subjects.filter(plan=sub.plan))
+                    values_after.append(value)
+                    print(value)
+                    sub.save() # to chyba nie działa
+
+                all_cases = True
+                for sub in others_lectures:
+                    case1 = check_room_is_not_taken(sub, sub.room)
+                    case2 = check_teacher_can_teach(sub, sub.teacher)
+                    case3 = check_subject_to_subject_time(sub,
+                                                          self.scheduled_subjects.filter(plan=sub.plan))
+                    all_cases = all_cases and case1 and case2 and case3
+
+
+                if all_cases:
+                    print("PASS")
+
                 #value_after = self.value_for_plan(subjects_in_plan=self.scheduled_subjects.filter(plan=plan_to_change))
                 #print("New value:" + str(value_after))
 
@@ -105,7 +137,11 @@ class ImprovementManagerQuerySets:
             raise e
 
     def value_for_plan(self, subjects_in_plan):
-        # wzor: liczba dni niepustych + (poczotek + koniec - czas trwania przedmiotow) <- dla kazdego dnia
+        """
+        formula: days - empty days +  (end - start - all how long)
+        :param subjects_in_plan:
+        :return:
+        """
         value = 5
 
         for day in self.day_of_week:
