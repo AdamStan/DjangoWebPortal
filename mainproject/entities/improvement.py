@@ -21,7 +21,6 @@ class ImprovementManager:
             plan_ids_list.append(p.id)
             scheduled_subjects = subjects.filter(plan=p)
             for i in range(1, self.day_of_week.size + 1):  # 1 2 3 4 5 6 7
-                #self.data[row][i-1] = []
                 self.data[row][i-1] = list(scheduled_subjects.filter(dayOfWeek=i))
             row = row + 1
 
@@ -30,7 +29,6 @@ class ImprovementManager:
             rooms_list.append(r)
             scheduled_subjects = subjects.filter(room=r)
             for i in range(1, self.day_of_week.size + 1):  # 1 2 3 4 5 6 7
-                #self.data_rooms[row][i - 1] = []
                 self.data_rooms[row][i - 1] = list(scheduled_subjects.filter(dayOfWeek=i))
             row = row + 1
 
@@ -39,7 +37,6 @@ class ImprovementManager:
             teachers_list.append(t)
             scheduled_subjects = subjects.filter(teacher=t)
             for i in range(1, self.day_of_week.size + 1):  # 1 2 3 4 5 6 7
-                #self.data_teachers[row][i - 1] = []
                 self.data_teachers[row][i - 1] = list(scheduled_subjects.filter(dayOfWeek=i))
             row = row + 1
 
@@ -54,14 +51,7 @@ class ImprovementManager:
         which_plan_will_be_mutated = randint(0,number_of_plans-1)
         # for i in range(0,number_of_plans):
         buff = self.data[which_plan_will_be_mutated]
-        print("+++ ONE PLAN +++")
-        print(self.plans_ids[which_plan_will_be_mutated])
-        print("RANDOM PLAN:")
-        for list_sch in buff:
-            print(list_sch)
-        print("DAY:")
         which_day = choice(self.day_of_week) - 1 # because curva
-        print(buff[which_day])
 
         if not buff[which_day]:
             print("Empty day was chosen")
@@ -69,56 +59,51 @@ class ImprovementManager:
         try:
             which_subject_index = randint(0, len(buff[which_day]) - 1)
         except ValueError:
-            # randint(0,0) but what if randint(0,-1)????
             which_subject_index = 0
 
         subject_before = buff[which_day][which_subject_index]
         # workaround xD
         if subject_before.type == "LEC":
             print("I will try make improvement on lecture in future version, I swear")
-            return
-
-        subject_after = deepcopy(subject_before)
-        # modification for one subject
-        subject_after.dayOfWeek = choice(self.day_of_week)
-        new_hour = randint(min_time_start, max_time_start)
-        subject_after.whenStart = time(new_hour,0,0)
-        subject_after.whenFinnish = time(new_hour + subject_after.how_long, 0, 0)
-
-        ImprovementManager.show_subject(subject_before)
-        ImprovementManager.show_subject(subject_after)
-
-        # checks that changes don't create any conflicts
-        what_return = self.check_subject_to_subjects(subject=subject_after, plan_one=buff[subject_after.dayOfWeek - 1])
-        print(what_return)
-        what_return = what_return and \
-                      self.check_subject_to_teacher(subject=subject_after, which_day=subject_after.dayOfWeek - 1)
-        print(what_return)
-        what_return = what_return and \
-                      self.check_subject_to_rooms(subject=subject_after, which_day=subject_after.dayOfWeek - 1)
-        print(what_return)
-
-        if not what_return:
-            print("SOME CASE HAVE NOT PASSED")
-            return
-
-        # counts value for old plan
-        value_before = self.value_for_plan(plan_position=which_plan_will_be_mutated)
-        print("VALUE BEFORE:: " + str(value_before))
-
-        # set new subject to plan
-        new_buff = self.changed_piece_of_plan(subject_after, subject_before, which_plan_will_be_mutated)
-        for list_subjects in new_buff:
-            ImprovementManager.show_subject_list(list_of_subject=list_subjects)
-        # count value for new plan
-        value_after = self.value_for_plan(plan=new_buff)
-        print("VALUE AFTER:: " + str(value_after))
-
-        if value_after < value_before:
-            self.data[which_plan_will_be_mutated] = new_buff
-            self.change_teachers_and_rooms_plan(subject_after=subject_after, subject_before=subject_before)
         else:
-            self.data[which_plan_will_be_mutated] = buff
+            subject_after = deepcopy(subject_before)
+            # modification for one subject
+            subject_after.dayOfWeek = choice(self.day_of_week)
+            new_hour = randint(min_time_start, max_time_start)
+            subject_after.whenStart = time(new_hour,0,0)
+            subject_after.whenFinnish = time(new_hour + subject_after.how_long, 0, 0)
+
+            ImprovementManager.show_subject(subject_before)
+            ImprovementManager.show_subject(subject_after)
+
+            # checks that changes don't create any conflicts
+            what_return = self.check_subject_to_subjects(subject=subject_after, plan_one=buff[subject_after.dayOfWeek - 1])
+            what_return = what_return and \
+                          self.check_subject_to_teacher(subject=subject_after, which_day=subject_after.dayOfWeek - 1)
+            what_return = what_return and \
+                          self.check_subject_to_rooms(subject=subject_after, which_day=subject_after.dayOfWeek - 1)
+
+            if not what_return:
+                print("SOME CASE HAVE NOT PASSED")
+                return
+
+            # counts value for old plan
+            value_before = self.value_for_plan(plan_position=which_plan_will_be_mutated)
+
+            # set new subject to plan
+            new_buff = self.changed_piece_of_plan(subject_after, subject_before, which_plan_will_be_mutated)
+            for list_subjects in new_buff:
+                ImprovementManager.show_subject_list(list_of_subject=list_subjects)
+            # count value for new plan
+            value_after = self.value_for_plan(plan=new_buff)
+
+            if value_after < value_before:
+                self.data[which_plan_will_be_mutated] = new_buff
+                self.change_teachers_and_rooms_plan(subject_after=subject_after, subject_before=subject_before)
+                print("Great job")
+            else:
+                self.data[which_plan_will_be_mutated] = buff
+                print("Value after is the same or bigger")
 
     def value_for_plan(self, plan_position = -1, plan = array([])):
         # wzor: liczba dni niepustych + (poczotek + koniec - czas trwania przedmiotow) <- dla kazdego dnia

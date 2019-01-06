@@ -256,16 +256,15 @@ def create_plans(number_of_groups=3, semester=1, min_hour=8, max_hour=19):
         print(str(e))
         raise e
 
-def make_improvement():
+def make_improvement(how_many):
     scheduled_subjects = ScheduledSubject.objects.all()
     rooms = Room.objects.all().order_by("id")
     teachers = Teacher.objects.all().order_by("user_id")
     plans = Plan.objects.all().order_by("id")
 
     instance = ImprovementManager(plans=plans, subjects=scheduled_subjects, teachers=teachers, rooms=rooms)
-    instance.make_improvement(100)
-    # instance.generation()
-    # instance.pass_to_database()
+    instance.make_improvement(how_many)
+    instance.pass_to_database()
 
 def show_scheduled_subject(scheduled_subjects):
     for ss in scheduled_subjects:

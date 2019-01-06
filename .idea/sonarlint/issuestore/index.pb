@@ -33,3 +33,11 @@ i
 9mainproject/entities/templates/admin/edit_timetables.html,9\d\9de7ed25254fa03ca1e8ffde586451eef6d77102
 e
 5mainproject/assets/fullcalendar-3.9.0/fullcalendar.js,1\b\1bed5544c14ec1f2dacb47d18f425f04c88495d4
+L
+mainproject/accounts/urls.py,8\a\8a8d0a69dbf1982ed1ad91678dab37b909876f1c
+P
+ mainproject/mainproject/views.py,5\6\56fcc90860b721e13eba1fc96dc809670698e17d
+]
+-mainproject/entities/templates/forbidden.html,f\1\f13bea05f5424e28f9be5784a1ada38a53c36335
+^
+.mainproject/entities/templates/error_page.html,8\d\8da04591c0fdac205d3d9d4569f49a7982565114
