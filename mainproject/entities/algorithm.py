@@ -150,7 +150,7 @@ def check_subject_to_subject_time(sch_sub, scheduled_subjects):
     :param scheduled_subjects:
     :return: None
     """
-    scheduled_subjects_in_plan = scheduled_subjects.filter(plan=sch_sub.plan).exclude(id=sch_sub.id)
+    scheduled_subjects_in_plan = scheduled_subjects.filter(plan=sch_sub.plan)
     for scheduled in scheduled_subjects_in_plan:
         if scheduled.dayOfWeek == sch_sub.dayOfWeek and scheduled.whenStart != None:
             difference_between_starts = abs(sch_sub.whenStart.hour - scheduled.whenStart.hour)
@@ -183,7 +183,7 @@ def set_teacher_to_subjects(s):
 
 
 def check_teacher_can_teach(scheduled_subject, teacher):
-    subjects_in_plan = ScheduledSubject.objects.all().filter(teacher=teacher).exclude(id=scheduled_subject.id)
+    subjects_in_plan = ScheduledSubject.objects.all().filter(teacher=teacher)
     for scheduled in subjects_in_plan:
         if scheduled.dayOfWeek == scheduled_subject.dayOfWeek:
             difference_between_starts = abs(scheduled_subject.whenStart.hour - scheduled.whenStart.hour)
@@ -217,7 +217,7 @@ def set_rooms_to_subjects(scheduled_subjects):
 
 
 def check_room_is_not_taken(scheduled_subject, room):
-    subjects_in_this_room = ScheduledSubject.objects.all().filter(room=room).exclude(id=scheduled_subject.id)
+    subjects_in_this_room = ScheduledSubject.objects.all().filter(room=room)
     for s in subjects_in_this_room:
         if s.dayOfWeek == scheduled_subject.dayOfWeek and scheduled_subject.whenStart != None:
             difference_between_starts = abs(scheduled_subject.whenStart.hour - s.whenStart.hour)
@@ -241,13 +241,7 @@ def create_plans(number_of_groups=3, semester=1, min_hour=8, max_hour=19):
     sid = transaction.savepoint()
     # in this moment we have to create plans
     try:
-        # create new skeleton
         create_skeleton(number_of_group=number_of_groups, semester=semester)
-        plans = Plan.objects.all()
-        scheduled_subject_qs = ScheduledSubject.objects.all()
-        # create first plan
-        # for p in plans:
-            # show_scheduled_subject(temp_subject_list)
         create_first_plan(min_hour=min_hour, max_hour=max_hour)
 
         transaction.savepoint_commit(sid)
