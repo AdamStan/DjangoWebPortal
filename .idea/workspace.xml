@@ -2,14 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="40654973-2854-4e42-8ca8-d5e536ff6365" name="Default Changelist" comment="Users works correctly">
-      <change afterPath="$PROJECT_DIR$/mainproject/entities/templates/error_page.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mainproject/entities/templates/forbidden.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mainproject/accounts/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/mainproject/accounts/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mainproject/accounts/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/mainproject/accounts/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mainproject/entities/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/mainproject/entities/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mainproject/entities/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/mainproject/entities/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mainproject/mainproject/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/mainproject/mainproject/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mainproject/templates/base_layout.html" beforeDir="false" afterPath="$PROJECT_DIR$/mainproject/templates/base_layout.html" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -47,7 +40,7 @@
         <counts>
           <entry key="css" value="19" />
           <entry key="gitignore" value="1" />
-          <entry key="html" value="78" />
+          <entry key="html" value="79" />
           <entry key="js" value="6" />
           <entry key="py" value="188" />
         </counts>
@@ -55,7 +48,7 @@
       <usages-collector id="statistics.file.types.open">
         <counts>
           <entry key="CSS" value="11" />
-          <entry key="HTML" value="78" />
+          <entry key="HTML" value="79" />
           <entry key="JavaScript" value="6" />
           <entry key="PLAIN_TEXT" value="9" />
           <entry key="Python" value="188" />
@@ -66,7 +59,7 @@
           <entry key="Python Console" value="92" />
           <entry key="css" value="621" />
           <entry key="dummy" value="10" />
-          <entry key="html" value="8672" />
+          <entry key="html" value="8756" />
           <entry key="py" value="42080" />
           <entry key="txt" value="21" />
         </counts>
@@ -75,7 +68,7 @@
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="CSS" value="123" />
-          <entry key="HTML" value="8672" />
+          <entry key="HTML" value="8756" />
           <entry key="PLAIN_TEXT" value="529" />
           <entry key="Python" value="42172" />
         </counts>
@@ -127,16 +120,25 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/mainproject/entities/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="177">
-              <caret line="295" column="4" selection-start-line="295" selection-start-column="4" selection-end-line="295" selection-end-column="4" />
+            <state relative-caret-position="228">
+              <caret line="268" column="50" lean-forward="true" selection-start-line="268" selection-start-column="50" selection-end-line="268" selection-end-column="50" />
               <folding>
                 <element signature="e#0#25#0" expanded="true" />
                 <marker date="1546787145507" expanded="true" signature="569:798" ph="..." />
                 <marker date="1546787145507" expanded="true" signature="5999:6047" ph="..." />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/mainproject/templates/base_layout.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="885">
+              <caret line="92" column="18" lean-forward="true" selection-start-line="92" selection-start-column="18" selection-end-line="92" selection-end-column="18" />
             </state>
           </provider>
         </entry>
@@ -251,7 +253,6 @@
         <option value="$PROJECT_DIR$/mainproject/entities/add_data.py" />
         <option value="$PROJECT_DIR$/mainproject/entities/models.py" />
         <option value="$PROJECT_DIR$/mainproject/entities/improvement.py" />
-        <option value="$PROJECT_DIR$/mainproject/templates/base_layout.html" />
         <option value="$PROJECT_DIR$/mainproject/entities/templates/admin/timetables.html" />
         <option value="$PROJECT_DIR$/mainproject/entities/templates/teacher/myplan.html" />
         <option value="$PROJECT_DIR$/mainproject/entities/templates/student/myplans.html" />
@@ -265,6 +266,7 @@
         <option value="$PROJECT_DIR$/mainproject/entities/urls.py" />
         <option value="$PROJECT_DIR$/mainproject/entities/templates/error_page.html" />
         <option value="$PROJECT_DIR$/mainproject/entities/views.py" />
+        <option value="$PROJECT_DIR$/mainproject/templates/base_layout.html" />
       </list>
     </option>
   </component>
@@ -366,6 +368,12 @@
               <item name="WebPortal" type="462c0819:PsiDirectoryNode" />
               <item name="mainproject" type="462c0819:PsiDirectoryNode" />
               <item name="mainproject" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="WebPortal" type="b2602c69:ProjectViewProjectNode" />
+              <item name="WebPortal" type="462c0819:PsiDirectoryNode" />
+              <item name="mainproject" type="462c0819:PsiDirectoryNode" />
+              <item name="templates" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -495,12 +503,12 @@
     <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.2504957" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.2504957" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="0" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Run" order="1" visible="true" weight="0.2917847" />
-      <window_info anchor="bottom" id="Terminal" order="2" sideWeight="0.49966952" weight="0.24220963" />
+      <window_info active="true" anchor="bottom" id="Run" order="1" visible="true" weight="0.2917847" />
+      <window_info anchor="bottom" id="Terminal" order="2" sideWeight="0.49966952" weight="0.25212464" />
       <window_info anchor="bottom" id="Python Console" order="3" weight="0.3286119" />
       <window_info anchor="bottom" id="Event Log" order="4" sideWeight="0.50033045" side_tool="true" weight="0.24220963" />
       <window_info anchor="bottom" id="Message" order="5" />
@@ -735,13 +743,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/mainproject/templates/base_layout.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="438">
-          <caret line="32" column="81" selection-start-line="32" selection-start-column="81" selection-end-line="32" selection-end-column="81" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/mainproject/entities/templates/teacher/myplan.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="280">
@@ -871,13 +872,20 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/mainproject/entities/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="177">
-          <caret line="295" column="4" selection-start-line="295" selection-start-column="4" selection-end-line="295" selection-end-column="4" />
+        <state relative-caret-position="228">
+          <caret line="268" column="50" lean-forward="true" selection-start-line="268" selection-start-column="50" selection-end-line="268" selection-end-column="50" />
           <folding>
             <element signature="e#0#25#0" expanded="true" />
             <marker date="1546787145507" expanded="true" signature="569:798" ph="..." />
             <marker date="1546787145507" expanded="true" signature="5999:6047" ph="..." />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/mainproject/templates/base_layout.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="885">
+          <caret line="92" column="18" lean-forward="true" selection-start-line="92" selection-start-column="18" selection-end-line="92" selection-end-column="18" />
         </state>
       </provider>
     </entry>
