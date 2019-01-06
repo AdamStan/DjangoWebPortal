@@ -48,6 +48,9 @@
                             <li class="nav-item">
                                 <a class="nav-link" href="{% url 'entities:edittimetables' %}"> Edit plans </a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/admin"> Admin panel </a>
+                            </li>
                         {% endif %}
                         {% if user.student %}
                             <li class="nav-item">
@@ -69,25 +72,25 @@
                 </ul>
                 <div class="form-inline mt-2 mt-md-0">
                     {% if user.is_authenticated %}
-                    <form action="{% url 'accounts:myprofile' %}" method="get">
-                        {% csrf_token %}
-                        <button class="nav-item btn background-second" type="submit">
-                            My account: {{ user.username }}
-                        </button>
-                    </form>
-                    <form action="{% url 'accounts:logout' %}" method="post">
-                        {% csrf_token %}
-                        <button class="nav-item btn background-second" type="submit">
-                            Logout
-                        </button>
-                    </form>
+                            <form action="{% url 'accounts:myprofile' %}" method="get">
+                            {% csrf_token %}
+                            <button class="nav-item btn background-second button-margin" type="submit">
+                                My account: {{ user.username }}
+                            </button>
+                        </form>
+                        <form action="{% url 'accounts:logout' %}" method="post">
+                            {% csrf_token %}
+                            <button class="nav-item btn background-second button-margin" type="submit">
+                                Logout
+                            </button>
+                        </form>
                     {% else %}
-                    <form action="{% url 'accounts:login' %}" method="GET">
-                        {% csrf_token %}
-                        <button class="nav-item btn background-second" type="submit">
-                            Login
-                        </button>
-                    </form>
+                        <form action="{% url 'accounts:login' %}" method="GET">
+                            {% csrf_token %}
+                            <button class="nav-item btn background-second" type="submit">
+                                Login
+                            </button>
+                        </form>
                     {% endif %}
                 </div>
             </div>

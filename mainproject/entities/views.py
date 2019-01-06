@@ -1,11 +1,10 @@
 from datetime import time
-
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render
 from accounts.models import User
 from .models import *
-from .algorithm import create_plans, check_subject_to_subject_time, check_teacher_can_teach, \
-    check_room_is_not_taken, make_improvement
+from .algorithm import create_plans, check_subject_to_subject_time, check_teacher_can_teach, check_room_is_not_taken
+from .improvement import make_improvement
 from django.http import HttpResponse
 
 forbidden = "/entities/forbidden/"

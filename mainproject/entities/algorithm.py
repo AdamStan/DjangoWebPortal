@@ -2,7 +2,6 @@ from .models import ScheduledSubject, Plan, FieldOfStudy, Subject, Room, Teacher
 from random import randint, choice
 from datetime import time
 from django.db import transaction
-from .improvement import ImprovementManager
 '''
 For every Scheduled Subject we have to add single teacher
     We get this teacher from subject.teachers.
@@ -216,6 +215,7 @@ def set_rooms_to_subjects(scheduled_subjects):
 
         ss.save()
 
+
 def check_room_is_not_taken(scheduled_subject, room):
     subjects_in_this_room = ScheduledSubject.objects.all().filter(room=room).exclude(id=scheduled_subject.id)
     for s in subjects_in_this_room:
@@ -255,16 +255,6 @@ def create_plans(number_of_groups=3, semester=1, min_hour=8, max_hour=19):
         transaction.savepoint_rollback(sid)
         print(str(e))
         raise e
-
-def make_improvement(how_many):
-    scheduled_subjects = ScheduledSubject.objects.all()
-    rooms = Room.objects.all().order_by("id")
-    teachers = Teacher.objects.all().order_by("user_id")
-    plans = Plan.objects.all().order_by("id")
-
-    instance = ImprovementManager(plans=plans, subjects=scheduled_subjects, teachers=teachers, rooms=rooms)
-    instance.make_improvement(how_many)
-    instance.pass_to_database()
 
 def show_scheduled_subject(scheduled_subjects):
     for ss in scheduled_subjects:

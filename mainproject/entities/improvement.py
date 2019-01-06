@@ -1,7 +1,144 @@
+from django.db import transaction
 from numpy import array, nditer, zeros
 from random import randint, choice
 from datetime import time
 from copy import deepcopy
+from .algorithm import check_room_is_not_taken, check_teacher_can_teach, check_subject_to_subject_time
+from .models import Room, Teacher, ScheduledSubject, Plan
+
+class ImprovementManagerQuerySets:
+
+    def __init__(self, plans, sch_subjects, teachers, rooms):
+        self.scheduled_subjects = sch_subjects
+        self.plans = plans
+        self.day_of_week = [1, 2, 3, 4, 5, ]  # I've deleted 6 and 7 because we don't have saturday
+
+    @transaction.atomic
+    def generation(self, min_hour=8, max_hour=19):
+        sid = transaction.savepoint()
+        try:
+            # 1. losujemy plan
+            plan_to_change = choice(self.plans)
+            print("Plan to change = " + str(plan_to_change))
+            # 2. losujemy dzien do poki dzien nie jest pusty
+            day = choice(self.day_of_week)
+            while True:
+                subjects_in_day = self.scheduled_subjects.filter(dayOfWeek=day, plan=plan_to_change)
+                print("Przedmioty w dniu:" + str(subjects_in_day.count()))
+                if subjects_in_day.count() == 0:
+                    day = choice(self.day_of_week)
+                else:
+                    break
+            # 3. z tego dnia wybieramy przedmiot
+            subject_to_change = choice(subjects_in_day)
+            ImprovementManagerQuerySets.show_subject(subject_to_change)
+            # 4. liczymy wartosc planu
+            value_before = self.value_for_plan(subjects_in_plan=self.scheduled_subjects.filter(plan=plan_to_change))
+            value_after = 9999
+            print("Value before: " + str(value_before))
+            # 4.0.1 zapisujemy stare dane
+            old = {
+                "start_hour": subject_to_change.whenStart,
+                "finish_hour": subject_to_change.whenFinnish,
+                "day": subject_to_change.dayOfWeek,
+            }
+            # 4.1 jesli jest to lab
+            if subject_to_change.type == "LAB":
+                print("LAB, it is LAB")
+                # 4.1.1 losujemy nowe wartosci
+                subject_to_change.whenStart = time(randint(min_hour, max_hour),0,0)
+                fin = subject_to_change.whenStart.hour + subject_to_change.how_long
+                subject_to_change.whenFinnish = time(fin,0,0)
+                subject_to_change.dayOfWeek = choice(self.day_of_week)
+                # 4.1.2 check new value
+                subject_to_change.save()
+                ImprovementManagerQuerySets.show_subject(subject_to_change)
+
+                value_after = self.value_for_plan(subjects_in_plan=self.scheduled_subjects.filter(plan=plan_to_change))
+                print("New value:" + str(value_after))
+
+                case1 = check_room_is_not_taken(subject_to_change, subject_to_change.room)
+                case2 = check_teacher_can_teach(subject_to_change, subject_to_change.teacher)
+                case3 = check_subject_to_subject_time(subject_to_change, self.scheduled_subjects.filter(plan=plan_to_change))
+                if case1 and case2 and case3 and value_before > value_after:
+                    print("Improving can be performed...")
+                    transaction.savepoint_commit(sid)
+                else:
+                    print("Improving do not improve plans")
+                    transaction.savepoint_rollback(sid)
+            # 4.2 jesli jest to lec
+            elif subject_to_change.type == "LEC":
+                print("LEC, it is LEC")
+                # 4.1.1 losujemy nowe wartosci
+                new_whenStart = time(randint(min_hour, max_hour), 0, 0)
+                fin = subject_to_change.whenStart.hour + subject_to_change.how_long
+                new_whenFinnish = time(fin, 0, 0)
+                new_dayOfWeek = choice(self.day_of_week)
+                # 4.1.2 check new value
+                # subject_to_change.save()
+                # ImprovementManagerQuerySets.show_subject(subject_to_change)
+
+                others_lectures = ScheduledSubject.objects.filter(subject=subject_to_change.subject)
+                for sub in others_lectures:
+                    ImprovementManagerQuerySets.show_subject(sub)
+                #value_after = self.value_for_plan(subjects_in_plan=self.scheduled_subjects.filter(plan=plan_to_change))
+                #print("New value:" + str(value_after))
+
+
+                #case1 = check_room_is_not_taken(subject_to_change, subject_to_change.room)
+                #case2 = check_teacher_can_teach(subject_to_change, subject_to_change.teacher)
+                #case3 = check_subject_to_subject_time(subject_to_change,
+                #                                      self.scheduled_subjects.filter(plan=plan_to_change))
+                #if case1 and case2 and case3 and value_before > value_after:
+                #    print("Improving can be performed...")
+                #    transaction.savepoint_commit(sid)
+                #else:
+                #    print("Improving do not improve plans")
+
+                transaction.savepoint_rollback(sid)
+            # 3.1.3 losujemy te wartosci
+            # 3.2 jesli jest to lec
+            # transaction.savepoint_commit(sid)
+        except Exception as e:
+            transaction.savepoint_rollback(sid)
+            print(str(e))
+            raise e
+
+    def value_for_plan(self, subjects_in_plan):
+        # wzor: liczba dni niepustych + (poczotek + koniec - czas trwania przedmiotow) <- dla kazdego dnia
+        value = 5
+
+        for day in self.day_of_week:
+            subjects_how_long, first_hour, last_hour = 0, 24, 0
+            list_of_subjects_in_one_day = subjects_in_plan.filter(dayOfWeek=day)
+            for subject in list_of_subjects_in_one_day:
+                if subject.whenStart.hour < first_hour:
+                    first_hour = subject.whenStart.hour
+                if subject.whenFinnish.hour > last_hour:
+                    last_hour = subject.whenFinnish.hour
+                subjects_how_long += subject.how_long
+
+            if not list_of_subjects_in_one_day:  # checks that list is empty
+                value -= 1
+            else:
+                value += last_hour - first_hour - subjects_how_long
+
+        return value
+
+    def show_subject(subject):
+        print("[Subject:: " + str(subject.subject.name) + str(subject.dayOfWeek) + " " + str(subject.whenStart) + " " + str(subject.whenFinnish) + "]")
+
+
+def make_improvement(how_many=1):
+    scheduled_subjects = ScheduledSubject.objects.all()
+    rooms = Room.objects.all().order_by("id")
+    teachers = Teacher.objects.all().order_by("user_id")
+    plans = Plan.objects.all().order_by("id")
+
+    instance = ImprovementManagerQuerySets(plans=plans, sch_subjects=scheduled_subjects, teachers=teachers, rooms=rooms)
+    for i in range(0,1):
+        instance.generation()
+
 
 class ImprovementManager:
 
