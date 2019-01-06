@@ -1,9 +1,12 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from .forms import MyAccountUpdate
 from .models import User
 # Create your views here.
+
+
 def show_login(request):
     if request.method == 'POST':
         form = AuthenticationForm(data = request.POST)
@@ -18,12 +21,15 @@ def show_login(request):
         form = AuthenticationForm()
     return render(request, 'login.html',{'form':form})
 
+
 def show_logout(request):
     if request.method == 'POST':
         logout(request)
         return redirect('homepage')
     return redirect('homepage')
 
+
+@login_required
 def show_my_profile(request):
     user = request.user
     if request.POST:

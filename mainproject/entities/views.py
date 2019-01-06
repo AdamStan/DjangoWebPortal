@@ -1,11 +1,14 @@
 from datetime import time
 
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render
 from accounts.models import User
 from .models import *
 from .algorithm import create_plans, check_subject_to_subject_time, check_teacher_can_teach, check_room_is_not_taken
 from django.http import HttpResponse
-import re
+
+forbidden = "/entities/forbidden/"
+
 
 class SubjectExample:
     id = 0
@@ -20,6 +23,18 @@ class SubjectExample:
 class TeacherBox:
     id = 0
     title = ""
+
+""" --- TESTS FOR USER --- """
+def test_user_is_student(user):
+    return user.student
+
+
+def test_user_is_teacher(user):
+    return user.teacher
+
+
+def test_user_is_admin(user):
+    return user.admin
 
 
 def create_table_example():
@@ -118,9 +133,11 @@ def create_table_for_teacher(teacher_id):
 
     return {"values": values}, teacher.user.id
 
+
 def get_plans_for_rooms():
     rooms = Room.objects.all()
     return rooms
+
 
 def create_table_for_room(room_id):
     room = Room.objects.get(id=room_id)
@@ -145,6 +162,7 @@ def create_table_for_room(room_id):
 
 def show_timetables(request):
     return render(request, 'admin/timetable_intro.html');
+
 
 def show_student_plans(request):
     plans = get_plans()
@@ -176,6 +194,7 @@ def show_teachers_plans(request):
         teachers_boxes[-1].title = t.user.surname + ", " + t.user.name
     return render(request, 'admin/timetables.html', {"values": parameters['values'], "plans": teachers_boxes , "plan_title":plan_title, "type": "teacher"});
 
+
 def show_rooms_plans(request):
     plans = get_plans_for_rooms()
     plan_title = "Example"
@@ -187,6 +206,12 @@ def show_rooms_plans(request):
         parameters = create_table_example()
     return render(request, 'admin/timetables.html',{"values": parameters['values'], "plans": plans, "plan_title": plan_title, "type":"room"});
 
+
+def show_forbidden(request):
+    return render(request, 'forbidden.html')
+
+
+@user_passes_test(test_user_is_admin, login_url=forbidden)
 def show_generate_page(request):
     fail_message = ""
     s_message = ""
@@ -204,6 +229,7 @@ def show_generate_page(request):
 
     return render(request,'admin/generate.html', {"fail_message": fail_message, "s_message":s_message } )
 
+@user_passes_test(test_user_is_admin, login_url="/entities/forbidden/")
 def show_edit_timetable(request):
     plans = get_plans()
     plan_title = ""
@@ -242,18 +268,31 @@ def show_edit_timetable(request):
 
 """ ::: VIEWS FOR STUDENT AND TEACHER ONLY ::: """
 
-def show_user_plan(request):
+
+@user_passes_test(test_user_is_teacher, login_url=forbidden)
+def show_teacher_plan(request):
     user_id = request.user.id
-    parameters, plan_title = create_table_for_teacher(25) # add user_id
-    print(parameters)
+    parameters, plan_title = create_table_for_teacher(user_id) # add user_id
     return render(request, 'teacher/myplan.html', { "values": parameters['values'], "plan_title": plan_title })
 
+
+@user_passes_test(test_user_is_student, login_url=forbidden)
+def show_student_plan(request):
+    student_id = request.user.id
+    student = Student.objects.get(user_id=student_id)
+    if student.plan is None:
+        return render(request, 'error_page.html', {"message": "You didn't choose plan, yet"})
+    parameters, plan_title = create_table(student.plan.id)
+    return render(request, 'teacher/myplan.html', { "values": parameters['values'], "plan_title": plan_title })
+
+
+@user_passes_test(test_user_is_student, login_url=forbidden)
 def show_choose_plan(request):
-    # student_id = request.user.id
-    # student = Student.objects.get(id=student_id) # add student id
-    # plans = Plan.objects.filter(fieldOfStudy = student.fieldOfStudy, semester = student.semester)
-    temp_field = FieldOfStudy.objects.get(id=7)
-    plans = Plan.objects.filter(fieldOfStudy=temp_field, semester=1)
+    student_id = request.user.id
+    student = Student.objects.get(user_id=student_id) # add student id
+    plans = Plan.objects.filter(fieldOfStudy = student.fieldOfStudy, semester = student.semester)
+    #temp_field = FieldOfStudy.objects.get(id=7)
+    #plans = Plan.objects.filter(fieldOfStudy=temp_field, semester=1)
     plan_id = plans.first().id
     parameters, plan_title = create_table(plans.first().id)
 

@@ -11,7 +11,8 @@ urlpatterns = [
     path('timetables/', views.show_timetables, name='timetables'),
     path('edittimetables', views.show_edit_timetable, name='edittimetables'),
     path('studentplans/', views.show_choose_plan, name='studentplans'),
-    path('studentplan/', views.show_user_plan, name="studentplan"),
-    path('teacherplan/', views.show_user_plan, name='teacherplan'),
-    path('generate/', views.show_generate_page, name='generate')
+    path('studentplan/', views.show_student_plan, name="studentplan"),
+    path('teacherplan/', views.show_teacher_plan, name='teacherplan'),
+    path('generate/', views.show_generate_page, name='generate'),
+    path('forbidden/', views.show_forbidden, name='forbidden')
 ]
