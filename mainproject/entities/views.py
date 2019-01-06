@@ -231,8 +231,10 @@ def show_edit_timetable(request):
             case2 = check_teacher_can_teach(subject_to_edit, teacher= subject_to_edit.teacher)
             case3 = check_room_is_not_taken(subject_to_edit, room=subject_to_edit.room)
             if case1 and case2 and case3:
-                 subject_to_edit.save()
-            return HttpResponse('')
+                subject_to_edit.save()
+                return HttpResponse('')
+            else:
+                raise Exception("I cannot set this subject to database, conflict with plan")
     else:
         parameters = { "values": [] }
     return render(request, 'admin/edit_timetables.html',{"values": parameters['values'], "actual_plan":value,

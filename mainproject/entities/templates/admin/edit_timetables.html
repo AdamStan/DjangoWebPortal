@@ -133,10 +133,11 @@
                     },
                     type: 'POST',
                     success:function(){
-                        alert("You've change and back know that");
+                        alert("You've change plan successful");
                     },
                     error: function(XMLHttpRequest, textStatus, errorThrown) {
                         alert("Status: " + textStatus + " " + errorThrown);
+                        alert("Probably cannot set this subject to database, conflict with plan ");
                     }
                 })
             }

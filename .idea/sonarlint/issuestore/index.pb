@@ -31,3 +31,5 @@ c
 3mainproject/entities/templates/student/myplans.html,3\1\31918d61b9bd62eda00337fe8cd3fa4545556efa
 i
 9mainproject/entities/templates/admin/edit_timetables.html,9\d\9de7ed25254fa03ca1e8ffde586451eef6d77102
+e
+5mainproject/assets/fullcalendar-3.9.0/fullcalendar.js,1\b\1bed5544c14ec1f2dacb47d18f425f04c88495d4
