@@ -1,4 +1,4 @@
-from .models import ScheduledSubject, Plan, FieldOfStudy, Subject, Room, Teacher
+from .models import ScheduledSubject, Plan, FieldOfStudy, Subject, Room, Teacher, Student
 from random import randint, choice
 from datetime import time
 from django.db import transaction
@@ -61,6 +61,9 @@ def clean_plans():
     Cleans all scheduled_subjects and plans from database
     :return: None
     """
+    for student in Student.objects.all():
+        student.plan = None
+        student.save()
     clean_scheduled_subjects_all()
     Plan.objects.all().delete()
 
@@ -196,6 +199,20 @@ def check_teacher_can_teach(scheduled_subject, teacher):
             continue
     return True
 
+def check_teacher_can_teach_exclude(scheduled_subject, teacher):
+    subjects_in_plan = ScheduledSubject.objects.all().filter(teacher=teacher).exclude(id=scheduled_subject.id)
+    for scheduled in subjects_in_plan:
+        if scheduled.dayOfWeek == scheduled_subject.dayOfWeek:
+            difference_between_starts = abs(scheduled_subject.whenStart.hour - scheduled.whenStart.hour)
+            difference_between_ends = abs(scheduled_subject.whenFinnish.hour - scheduled.whenFinnish.hour)
+            if (difference_between_starts + difference_between_ends) >= (scheduled_subject.how_long + scheduled.how_long):
+                continue
+            else:
+                return False
+        else:
+            continue
+    return True
+
 def set_rooms_to_subjects(scheduled_subjects):
     all_rooms = []
     for room in Room.objects.all():
@@ -218,6 +235,20 @@ def set_rooms_to_subjects(scheduled_subjects):
 
 def check_room_is_not_taken(scheduled_subject, room):
     subjects_in_this_room = ScheduledSubject.objects.all().filter(room=room)
+    for s in subjects_in_this_room:
+        if s.dayOfWeek == scheduled_subject.dayOfWeek and scheduled_subject.whenStart != None:
+            difference_between_starts = abs(scheduled_subject.whenStart.hour - s.whenStart.hour)
+            difference_between_ends = abs(scheduled_subject.whenFinnish.hour - s.whenFinnish.hour)
+            if (difference_between_starts + difference_between_ends) >= (scheduled_subject.how_long + s.how_long):
+                continue
+            else:
+                return False
+        else:
+            continue
+    return True
+
+def check_room_is_not_taken_exclude(scheduled_subject, room):
+    subjects_in_this_room = ScheduledSubject.objects.all().filter(room=room).exclude(id=scheduled_subject.id)
     for s in subjects_in_this_room:
         if s.dayOfWeek == scheduled_subject.dayOfWeek and scheduled_subject.whenStart != None:
             difference_between_starts = abs(scheduled_subject.whenStart.hour - s.whenStart.hour)

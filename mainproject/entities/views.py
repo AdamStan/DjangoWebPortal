@@ -226,7 +226,7 @@ def show_generate_page(request):
             else:
                 #max_hour=int(max_hour), min_hour=int(min_hour), semester=int(semester_type), number_of_groups=int(how_many_groups)
                 create_plans(max_hour=int(max_hour), min_hour=int(min_hour), semester=int(semester_type), number_of_groups=int(how_many_groups))
-                s_message = "Everything goes fine, check plans in AllPlans tab"
+                s_message = "Everything went well, check plans in AllPlans tab"
         elif request.POST.get('action') == "improve":
             number_of_generations = request.POST.get('number_of_generation')
             make_improvement(int(number_of_generations))
@@ -283,13 +283,14 @@ def show_teacher_plan(request):
 
 @user_passes_test(test_user_is_student, login_url=forbidden)
 def show_student_plan(request):
+    #try:
     student_id = request.user.id
     student = Student.objects.get(user_id=student_id)
     if student.plan is None:
         return render(request, 'error_page.html', {"message": "You didn't choose plan, yet"})
     parameters, plan_title = create_table(student.plan.id)
     return render(request, 'teacher/myplan.html', { "values": parameters['values'], "plan_title": plan_title })
-
+    #expect
 
 @user_passes_test(test_user_is_student, login_url=forbidden)
 def show_choose_plan(request):
@@ -313,13 +314,13 @@ def show_choose_plan(request):
             plan_id = request.POST.get('which_plan', None)
             print("add student")
             parameters, plan_title = create_table(plan_id)
-            student_buff = Student.objects.get(user_id=15)
+            student_buff = Student.objects.get(user_id=student_id)
             student_buff.plan = plans.get(id=plan_id)
             student_buff.save()
             message = "You were added to this plan"
         elif action == "delete":
             print("delete student")
-            student_buff = Student.objects.get(user_id=15)
+            student_buff = Student.objects.get(user_id=student_id)
             student_buff.plan = None
             student_buff.save()
             message = "You were deleted from your plan, now you don't have a group"

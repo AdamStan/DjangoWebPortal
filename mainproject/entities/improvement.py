@@ -3,7 +3,7 @@ from numpy import array, nditer, zeros
 from random import randint, choice
 from datetime import time
 from copy import deepcopy
-from .algorithm import check_room_is_not_taken, check_teacher_can_teach, check_subject_to_subject_time
+from .algorithm import check_room_is_not_taken_exclude, check_teacher_can_teach_exclude, check_subject_to_subject_time
 from .models import Room, Teacher, ScheduledSubject, Plan
 
 class ImprovementManagerQuerySets:
@@ -12,6 +12,10 @@ class ImprovementManagerQuerySets:
         self.scheduled_subjects = sch_subjects
         self.plans = plans
         self.day_of_week = [1, 2, 3, 4, 5, ]  # I've deleted 6 and 7 because we don't have saturday
+        self.how_many_laboratory = 0
+        self.how_many_lecture = 0
+        self.success_lab = 0
+        self.success_lec = 0
 
     @transaction.atomic
     def generation(self, min_hour=8, max_hour=19):
@@ -44,6 +48,7 @@ class ImprovementManagerQuerySets:
             }
             # 4.1 jesli jest to lab
             if subject_to_change.type == "LAB":
+                self.how_many_laboratory += 1
                 print("LAB, it is LAB")
                 # 4.1.1 losujemy nowe wartosci
                 subject_to_change.whenStart = time(randint(min_hour, max_hour),0,0)
@@ -57,27 +62,28 @@ class ImprovementManagerQuerySets:
                 value_after = self.value_for_plan(subjects_in_plan=self.scheduled_subjects.filter(plan=plan_to_change))
                 print("New value:" + str(value_after))
 
-                case1 = check_room_is_not_taken(subject_to_change, subject_to_change.room)
-                case2 = check_teacher_can_teach(subject_to_change, subject_to_change.teacher)
-                case3 = check_subject_to_subject_time(subject_to_change, self.scheduled_subjects.filter(plan=plan_to_change))
+                case1 = check_room_is_not_taken_exclude(subject_to_change, subject_to_change.room)
+                case2 = check_teacher_can_teach_exclude(subject_to_change, subject_to_change.teacher)
+                case3 = check_subject_to_subject_time(subject_to_change, self.scheduled_subjects.filter(
+                    plan=plan_to_change).exclude(id=subject_to_change.id))
                 if case1 and case2 and case3 and value_before > value_after:
                     print("Improving can be performed...")
+                    self.success_lab += 1
                     transaction.savepoint_commit(sid)
                 else:
-                    print("Improving do not improve plans")
+                    print("Improving cannot be performed " + str(case1) + str(case2) + str(case3))
                     transaction.savepoint_rollback(sid)
             # 4.2 jesli jest to lec
             elif subject_to_change.type == "LEC":
                 print("LEC, it is LEC")
+                self.how_many_lecture += 1
                 # 4.1.1 losujemy nowe wartosci
                 new_whenStart = time(randint(min_hour, max_hour), 0, 0)
                 fin = new_whenStart.hour + subject_to_change.how_long
                 new_whenFinnish = time(fin, 0, 0)
                 new_dayOfWeek = choice(self.day_of_week)
-                # 4.1.2 check new value
-                # subject_to_change.save()
-                # ImprovementManagerQuerySets.show_subject(subject_to_change)
 
+                # 4.1.2 check new value
                 others_lectures = ScheduledSubject.objects.filter(subject=subject_to_change.subject,
                                                                   type=subject_to_change.type)
                 values_after = []
@@ -90,47 +96,35 @@ class ImprovementManagerQuerySets:
                     sub.whenFinnish = new_whenFinnish
                     sub.dayOfWeek = new_dayOfWeek
                     print(value)
+                    sub.save()  # to chyba nie działa
 
-                #others_lectures = ScheduledSubject.objects.filter(subject=subject_to_change.subject,
-                #                                                  type=subject_to_change.type)
                 print(":::AFTER:::")
                 for sub in others_lectures:
                     ImprovementManagerQuerySets.show_subject(sub)
                     value = self.value_for_plan(subjects_in_plan=self.scheduled_subjects.filter(plan=sub.plan))
                     values_after.append(value)
                     print(value)
-                    sub.save() # to chyba nie działa
+
+                value_case = all(value_a <= value_b for value_b, value_a in zip(values_before, values_after))
+                if value_case:
+                    print("Zmiana jest dobra dla każdego planu")
 
                 all_cases = True
                 for sub in others_lectures:
-                    case1 = check_room_is_not_taken(sub, sub.room)
-                    case2 = check_teacher_can_teach(sub, sub.teacher)
-                    case3 = check_subject_to_subject_time(sub,
-                                                          self.scheduled_subjects.filter(plan=sub.plan))
+                    case1 = check_room_is_not_taken_exclude(sub, sub.room)
+                    case2 = check_teacher_can_teach_exclude(sub, sub.teacher)
+                    case3 = check_subject_to_subject_time(
+                        sub,self.scheduled_subjects.filter(plan=sub.plan).exclude(id=subject_to_change.id))
                     all_cases = all_cases and case1 and case2 and case3
 
-
                 if all_cases:
-                    print("PASS")
+                    print("kejsy spelnione")
 
-                #value_after = self.value_for_plan(subjects_in_plan=self.scheduled_subjects.filter(plan=plan_to_change))
-                #print("New value:" + str(value_after))
-
-
-                #case1 = check_room_is_not_taken(subject_to_change, subject_to_change.room)
-                #case2 = check_teacher_can_teach(subject_to_change, subject_to_change.teacher)
-                #case3 = check_subject_to_subject_time(subject_to_change,
-                #                                      self.scheduled_subjects.filter(plan=plan_to_change))
-                #if case1 and case2 and case3 and value_before > value_after:
-                #    print("Improving can be performed...")
-                #    transaction.savepoint_commit(sid)
-                #else:
-                #    print("Improving do not improve plans")
-
-                transaction.savepoint_rollback(sid)
-            # 3.1.3 losujemy te wartosci
-            # 3.2 jesli jest to lec
-            # transaction.savepoint_commit(sid)
+                if all_cases and value_case:
+                    self.success_lec += 1
+                    transaction.savepoint_commit(sid)
+                else:
+                    transaction.savepoint_rollback(sid)
         except Exception as e:
             transaction.savepoint_rollback(sid)
             print(str(e))
@@ -164,6 +158,11 @@ class ImprovementManagerQuerySets:
     def show_subject(subject):
         print("[Subject:: " + str(subject.subject.name) + str(subject.dayOfWeek) + " " + str(subject.whenStart) + " " + str(subject.whenFinnish) + "]")
 
+    def show_conclusion(self):
+        print("Tries for lab: " + str(self.how_many_laboratory))
+        print("Tries for lec: " + str(self.how_many_lecture))
+        print("Success (lab): " + str(self.success_lab))
+        print("Success (lec): " + str(self.success_lec))
 
 def make_improvement(how_many=1):
     scheduled_subjects = ScheduledSubject.objects.all()
@@ -172,9 +171,10 @@ def make_improvement(how_many=1):
     plans = Plan.objects.all().order_by("id")
 
     instance = ImprovementManagerQuerySets(plans=plans, sch_subjects=scheduled_subjects, teachers=teachers, rooms=rooms)
-    for i in range(0,1):
+    for i in range(0,how_many):
         instance.generation()
 
+    instance.show_conclusion()
 
 class ImprovementManager:
 
