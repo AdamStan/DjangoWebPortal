@@ -3,7 +3,7 @@
 <title> My profile </title>
 {% endblock %}
 {% block content %}
-    <div class="text-center">
+    <div class="">
         <h2> Hello {{ user.username }}  </h2>
     </div>
     <form action="{% url 'accounts:myprofile' %}" method="post">

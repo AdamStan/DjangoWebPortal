@@ -6,8 +6,11 @@ from copy import deepcopy
 from .algorithm import check_room_is_not_taken_exclude, check_teacher_can_teach_exclude, check_subject_to_subject_time
 from .models import Room, Teacher, ScheduledSubject, Plan
 
-class ImprovementManagerQuerySets:
 
+class ImprovementManagerQuerySets:
+    """
+    It can improve lectures too, but I doesn't work at all...
+    """
     def __init__(self, plans, sch_subjects, teachers, rooms):
         self.scheduled_subjects = sch_subjects
         self.plans = plans
@@ -19,6 +22,12 @@ class ImprovementManagerQuerySets:
 
     @transaction.atomic
     def generation(self, min_hour=8, max_hour=19):
+        """
+        One try to improve random plan
+        :param min_hour: min_hour when subject can start
+        :param max_hour: max hout when subject can start
+        :return: None
+        """
         sid = transaction.savepoint()
         try:
             # 1. losujemy plan

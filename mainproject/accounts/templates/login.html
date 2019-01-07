@@ -11,19 +11,25 @@
             Please try again.
         </p>
     {% endif %}
-    <form class="text-center" method="POST">
+    <form class="text-center my-own-table" method="POST">
         {% csrf_token %}
-        <div class="table-responsive">
-            <table>
-            <tr>
-                <td> Username </td>
-                <td><input class="form-control" type="text" name="username"></td>
-            </tr>
-            <tr>
-                <td> Password </td>
-                <td><input class="form-control" type="password" name="password"></td>
-            </tr>
-        </table>
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-6">
+                    Username
+                </div>
+                <div class="col-sm-4">
+                    <input class="form-control" type="text" name="username">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    Password
+                </div>
+                <div class="col-sm-4">
+                    <input class="form-control" type="password" name="password">
+                </div>
+            </div>
         </div>
         {% if request.GET.next %}
             <input type="hidden" name="next" value = "{{ request.GET.next }}">
