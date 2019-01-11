@@ -1,10 +1,17 @@
 .background-first{
+    color: white;
     background-color: green;
 }
 background-first:hover{
     background-color: green;
 }
 background-first:active{
+    background-color: green;
+}
+background-first:focus{
+    background-color: green;
+}
+background-first:click{
     background-color: green;
 }
 .background-second{

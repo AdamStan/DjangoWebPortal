@@ -25,6 +25,7 @@ tab_models_urls = [
     path('admin/models/plan', models_views.show_plan, name='model_plan'),
     path('admin/models/room', models_views.show_room, name='model_room'),
     path('admin/models/scheduledsubject', models_views.show_scheduledsubject, name='model_scheduledsubject'),
+    path('admin/models/scheduledsubject', models_views.show_scheduledsubject, name='model_subject'),
     path('admin/models/student', models_views.show_student, name='model_student'),
     path('admin/models/teacher', models_views.show_teacher, name='model_teacher'),
     path('admin/models/user', models_views.show_user, name='model_user'),

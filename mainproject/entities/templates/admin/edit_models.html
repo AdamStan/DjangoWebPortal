@@ -6,17 +6,17 @@
 {% block content %}
 <h1> Choose model to edit </h1>
 <div class="container">
-    <div class="row"><h2> Users </h2></div>
-    <div class="row top-buffer"><a href="" class="btn background-second">Admin</a></div>
-    <div class="row top-buffer"><a href="" class="btn background-second">Student</a></div>
-    <div class="row top-buffer"><a href="" class="btn background-second">Teacher</a></div>
-    <div class="row"><h2> Models </h2></div>
-    <div class="row"><a href="" class="btn background-second">Building</a></div>
-    <div class="row"><a href="" class="btn background-second">Faculty</a></div>
-    <div class="row"><a href="" class="btn background-second">Field Of Study</a></div>
-    <div class="row"><a href="" class="btn background-second">Plan</a></div>
-    <div class="row"><a href="" class="btn background-second">Room</a></div>
-    <div class="row"><a href="" class="btn background-second">Scheduled Subject</a></div>
-    <div class="row"><a href="" class="btn background-second">Subject</a></div>
+    <div class=""><h2> Users </h2></div>
+    <a href="{% url 'entities:model_user' %}" class="btn background-second">Admin</a>
+    <a href="{% url 'entities:model_student' %}" class="btn background-second">Student</a>
+    <a href="{% url 'entities:model_teacher' %}" class="btn background-second">Teacher</a>
+    <br/>
+    <br/>
+    <div class=""><h2> Models </h2></div>
+    {% for key, value in urls.items %}
+        {% with url_address="entities:"|add:value %}
+            <a href="{% url url_address %}" class="btn background-second"> {{ key }} </a>
+        {% endwith %}
+    {% endfor %}
 </div>
 {% endblock %}
