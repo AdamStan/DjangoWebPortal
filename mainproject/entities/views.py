@@ -269,7 +269,24 @@ def show_edit_timetable(request):
                 else:
                     raise Exception("I cannot set this subject to database, conflict with other plan")
             elif subject_to_edit.type == "LEC":
-                pass
+                diff_lectures = ScheduledSubject.objects.filter(subject=subject_to_edit.subject, type=subject_to_edit.type)
+                main_case = True
+                for sch_subject in diff_lectures:
+                    subjects = ScheduledSubject.objects.filter(plan=sch_subject.plan)
+                    sch_subject.whenStart = start_hour
+                    sch_subject.whenFinnish = end_hour
+                    sch_subject.dayOfWeek = day_of_week.weekday() + 1
+                    case1 = check_subject_to_subject_time_exclude(sch_subject, subjects)
+                    case2 = check_teacher_can_teach_exclude(sch_subject, teacher=sch_subject.teacher)
+                    case3 = check_room_is_not_taken_exclude(sch_subject, room=sch_subject.room)
+                    main_case = main_case and case1 and case2 and case3
+
+                if main_case:
+                    for sch_subject in diff_lectures:
+                        sch_subject.save()
+                    return HttpResponse('')
+                else:
+                    raise Exception("I cannot set this subject to database, conflict with other plans")
     else:
         parameters = { "values": [] }
     return render(request, 'admin/edit_timetables.html',{"values": parameters['values'], "actual_plan":value,
