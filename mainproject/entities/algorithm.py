@@ -81,7 +81,7 @@ def set_lectures_time(min_hour, max_hour, days, weeks):
     lectures = ScheduledSubject.objects.filter(type="LEC")
     for s in lectures:
         flag = True
-        diff_lectures = ScheduledSubject.objects.filter(subject=s.subject, type=s.type)
+        diff_lectures = ScheduledSubject.objects.filter(subject=s.subject, type=s.type).order_by("id")
         list_lectures = []
         for slecture in diff_lectures:
             list_lectures.append(slecture)
