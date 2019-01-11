@@ -1,9 +1,9 @@
-from datetime import time
+from datetime import time, datetime
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render
 from accounts.models import User
 from .models import *
-from .algorithm import create_plans, check_subject_to_subject_time, check_teacher_can_teach, check_room_is_not_taken
+from .algorithm import create_plans, check_subject_to_subject_time_exclude, check_teacher_can_teach_exclude, check_room_is_not_taken_exclude
 from .improvement import make_improvement
 from django.http import HttpResponse
 
@@ -250,22 +250,26 @@ def show_edit_timetable(request):
             start_hour=request.POST.get('event_d[event][start]', False)
             end_hour=request.POST.get('event_d[event][end]', False)
             print("Dane z ajaxa: " + event_id + ' ' + start_hour + ' ' + end_hour )
+            day_of_week = datetime(int(end_hour[0:4]), int(end_hour[5:7]), int(end_hour[8:10]))
             start_hour = time(int(start_hour[11:13]), 0, 0)
             end_hour = time(int(end_hour[11:13]), 0, 0)
-            print(start_hour)
-            print(end_hour)
             subject_to_edit = ScheduledSubject.objects.get(id=int(event_id))
-            subjects = ScheduledSubject.objects.filter(plan=subject_to_edit.plan)
-            subject_to_edit.whenStart = start_hour
-            subject_to_edit.whenFinnish = end_hour
-            case1 = check_subject_to_subject_time(subject_to_edit, subjects)
-            case2 = check_teacher_can_teach(subject_to_edit, teacher= subject_to_edit.teacher)
-            case3 = check_room_is_not_taken(subject_to_edit, room=subject_to_edit.room)
-            if case1 and case2 and case3:
-                subject_to_edit.save()
-                return HttpResponse('')
-            else:
-                raise Exception("I cannot set this subject to database, conflict with plan")
+            case1, case2, case3 = False, False, False
+            if subject_to_edit.type == "LAB":
+                subjects = ScheduledSubject.objects.filter(plan=subject_to_edit.plan)
+                subject_to_edit.whenStart = start_hour
+                subject_to_edit.whenFinnish = end_hour
+                subject_to_edit.dayOfWeek = day_of_week.weekday() + 1
+                case1 = check_subject_to_subject_time_exclude(subject_to_edit, subjects)
+                case2 = check_teacher_can_teach_exclude(subject_to_edit, teacher=subject_to_edit.teacher)
+                case3 = check_room_is_not_taken_exclude(subject_to_edit, room=subject_to_edit.room)
+                if case1 and case2 and case3:
+                    subject_to_edit.save()
+                    return HttpResponse('')
+                else:
+                    raise Exception("I cannot set this subject to database, conflict with other plan")
+            elif subject_to_edit.type == "LEC":
+                pass
     else:
         parameters = { "values": [] }
     return render(request, 'admin/edit_timetables.html',{"values": parameters['values'], "actual_plan":value,

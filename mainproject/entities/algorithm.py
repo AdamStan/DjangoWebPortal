@@ -166,6 +166,10 @@ def check_subject_to_subject_time(sch_sub, scheduled_subjects):
             continue
     return True
 
+def check_subject_to_subject_time_exclude(sch_sub, scheduled_subjects):
+    scheduled_subjects_in_plan = scheduled_subjects.filter(plan=sch_sub.plan).exclude(id=sch_sub.id)
+    return check_subject_to_subject_time(sch_sub, scheduled_subjects_in_plan)
+
 def set_teacher_to_subjects(s):
     teachers = s.subject.teachers.all()
     teachers_list = []
