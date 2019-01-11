@@ -1,6 +1,12 @@
 .background-first{
     background-color: green;
 }
+background-first:hover{
+    background-color: green;
+}
+background-first:active{
+    background-color: green;
+}
 .background-second{
     color: black;
     background-color: limegreen;

@@ -9,7 +9,12 @@ from django.http import HttpResponse
 
 @user_passes_test(test_user_is_admin, login_url=forbidden)
 def show_intro_edit_models(request):
-    models_list = []
+    models_list = [
+        "Building",
+        "Faculty",
+        "Field Of Study",
+        "",
+    ]
 
     return render(request, 'admin/edit_models.html')
 

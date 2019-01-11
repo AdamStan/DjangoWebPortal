@@ -160,9 +160,6 @@ def create_table_for_room(room_id):
 
 """ ::: VIEWS FOR ADMINS ::: """
 
-def show_timetables(request):
-    return render(request, 'admin/timetable_intro.html');
-
 
 def show_student_plans(request):
     plans = get_plans()
