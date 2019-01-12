@@ -71,6 +71,7 @@ def show_student(request):
             return render(request, 'admin/edit_models/forms/change_password.html', {"student_to_edit": student_to_edit[0], "model": "model_student"})
         elif action == "Delete":
             Student.objects.filter(user_id=user_id).delete()
+            User.objects.filter(id=user_id).delete()
             students = Student.objects.all()
             s_message = "User was deleted successfully "
         elif action == "Update":
@@ -152,16 +153,37 @@ def show_teacher(request):
         elif action == "Change_password":
             pass
         elif action == "Delete":
-            pass
+            Teacher.objects.filter(user_id=user_id).delete()
+            User.objects.filter(id=user_id).delete()
+            teachers = Teacher.objects.all()
+            s_message = "User was deleted successfully "
         elif action == "Update":
             pass
-        elif action == "Add_student":
-            pass
+        elif action == "Add_teacher":
+            faculties = Faculty.objects.all()
+            return render(request, 'admin/edit_models/forms/add_form_teacher.html', {"faculties": faculties})
         elif action == "Do_change_password":
             pass
-        elif action == "Do_add_user":
+        elif action == "Do_add_teacher":
+            username = request.POST.get("username")
+            name = request.POST.get("name")
+            second_name = request.POST.get("second_name")
+            surname = request.POST.get("surname")
+            password = request.POST.get("password")
+            faculty = request.POST.get('faculty')
+            manager = UserManager()
+            user = manager.create_teacher(username=username, password=password, active=True, name=name, surname=surname,
+                                     sname=second_name)
+            teacher = Teacher()
+            teacher.user = user
+            if faculty:
+                teacher.faculty = Faculty.objects.filter(id=faculty)[0]
+            teacher.save()
+            s_message = "Adding new teacher finished with success"
+            teachers = Teacher.objects.all()
+        elif action == "Add_to_subject":
             pass
-    return render(request, 'admin/edit_models/tab_teacher.html')
+    return render(request, 'admin/edit_models/tab_teacher.html', {"teachers": teachers, "s_message": s_message, "fail_message": fail_message})
 
 
 @user_passes_test(test_user_is_admin, login_url=forbidden)
