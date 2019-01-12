@@ -4,7 +4,6 @@ from django.contrib.auth.password_validation import MinimumLengthValidator
 from django.shortcuts import render
 from .views import test_user_is_admin, forbidden
 from accounts.models import User, UserManager
-from accounts.forms import MyAccountUpdate
 from .models import *
 from django.http import HttpResponse
 
@@ -56,11 +55,112 @@ def show_scheduledsubject(request):
 
 @user_passes_test(test_user_is_admin, login_url=forbidden)
 def show_student(request):
-    return render(request, 'admin/edit_models/tab_student.html')
+    students = Student.objects.all()
+    s_message = ""
+    fail_message = ""
+    if request.method == "POST":
+        action = request.POST.get("action")
+        user_id = request.POST.get('user_id')
+        if action == "Edit":
+            student_to_edit = Student.objects.filter(user_id=user_id)
+            fields_of_study = FieldOfStudy.objects.all().exclude(id=student_to_edit[0].fieldOfStudy.id)
+            plans = Plan.objects.filter(fieldOfStudy=student_to_edit[0].fieldOfStudy, semester=student_to_edit[0].semester)
+            return render(request, 'admin/edit_models/forms/edit_form_student.html', {"student": student_to_edit[0], "fields_of_study": fields_of_study, "plans": plans})
+        elif action == "Change_password":
+            student_to_edit = Student.objects.filter(user_id=user_id)
+            return render(request, 'admin/edit_models/forms/change_password.html', {"student_to_edit": student_to_edit[0], "model": "model_student"})
+        elif action == "Delete":
+            Student.objects.filter(user_id=user_id).delete()
+            students = Student.objects.all()
+            s_message = "User was deleted successfully "
+        elif action == "Update":
+            try:
+                username = request.POST.get("username")
+                name = request.POST.get("name")
+                second_name = request.POST.get("second_name")
+                surname = request.POST.get("surname")
+                field_of_study = request.POST.get("field_of_study")
+                semester = request.POST.get("semester")
+                plan = request.POST.get("plan_id")
+                student_to_edit = Student.objects.filter(user_id=user_id)
+                student_to_edit = student_to_edit[0]
+                student_to_edit.user.username = username
+                student_to_edit.user.name = name
+                student_to_edit.user.second_name = second_name
+                student_to_edit.user.surname = surname
+                student_to_edit.semester = semester
+                if plan:
+                    student_to_edit.plan = Plan.objects.filter(id=plan)[0]
+                if field_of_study:
+                    student_to_edit.fieldOfStudy = FieldOfStudy.objects.filter(id=field_of_study)[0]
+                student_to_edit.user.save()
+                student_to_edit.save()
+                students = Student.objects.all()
+                s_message = "Student was edited successfully"
+            except Exception:
+                fail_message = "Something went wrong"
+        elif action == "Add_student":
+            fields = FieldOfStudy.objects.all()
+            return render(request, 'admin/edit_models/forms/add_form_student.html', {"fields_of_study": fields})
+        elif action == "Do_change_password":
+            user_to_edit = User.objects.filter(id=user_id)
+            user_to_edit = user_to_edit[0]
+            new_password = request.POST.get("new_password")
+            confirm_new_password = request.POST.get("confirm_new_password")
+            if new_password == confirm_new_password:
+                user_to_edit.set_password(new_password)
+                user_to_edit.save()
+                s_message = "Password was changed successfully"
+                students = Student.objects.all()
+            else:
+                fail_message = "Passwords are not the same"
+        elif action == "Do_add_user":
+            try:
+                username = request.POST.get("username")
+                name = request.POST.get("name")
+                second_name = request.POST.get("second_name")
+                surname = request.POST.get("surname")
+                password = request.POST.get("password")
+                field_of_study = request.POST.get("field_of_study")
+                semester = request.POST.get("semester")
+                user = UserManager().create_student(username=username, password=password, active=True, name=name, sname=second_name, surname=surname)
+                user.save()
+                student_to_add = Student()
+                student_to_add.user = user
+                student_to_add.semester = semester
+                if field_of_study:
+                    student_to_add.fieldOfStudy = FieldOfStudy.objects.filter(id=field_of_study)[0]
+                student_to_add.user.save()
+                student_to_add.save()
+                students = Student.objects.all()
+                s_message = "Student was edited successful"
+            except Exception:
+                fail_message="Something went wrong"
+    return render(request, 'admin/edit_models/tab_student.html',{'students': students, "s_message": s_message, "fail_message": fail_message})
 
 
 @user_passes_test(test_user_is_admin, login_url=forbidden)
 def show_teacher(request):
+    teachers = Teacher.objects.all()
+    s_message = ""
+    fail_message = ""
+    if request.method == "POST":
+        action = request.POST.get("action")
+        user_id = request.POST.get('user_id')
+        if action == "Edit":
+            pass
+        elif action == "Change_password":
+            pass
+        elif action == "Delete":
+            pass
+        elif action == "Update":
+            pass
+        elif action == "Add_student":
+            pass
+        elif action == "Do_change_password":
+            pass
+        elif action == "Do_add_user":
+            pass
     return render(request, 'admin/edit_models/tab_teacher.html')
 
 
@@ -75,12 +175,11 @@ def show_user(request):
         user_id = request.POST.get('user_id')
         if action == "Edit":
             user_to_edit = User.objects.filter(id=user_id)
-            print("User: ")
             return render(request, 'admin/edit_models/forms/edit_form_admin.html', {"user_to_edit": user_to_edit[0]})
         elif action == "Change_password":
             print("CHANGE " + user_id)
             user_to_edit = User.objects.filter(id=user_id)
-            return render(request, 'admin/edit_models/forms/change_password.html', {"user_to_edit": user_to_edit[0]})
+            return render(request, 'admin/edit_models/forms/change_password.html', {"user_to_edit": user_to_edit[0], "model":"model_user"})
         elif action == "Delete":
             User.objects.filter(id=user_id).delete()
             users = User.objects.filter(admin=True)
@@ -101,7 +200,7 @@ def show_user(request):
             s_message = "User was updated successfully"
             users = User.objects.filter(admin=True)
         elif action == "Add_admin":
-            return render(request, 'admin/edit_models/forms/add_user.html')
+            return render(request, 'admin/edit_models/forms/add_form_user.html')
         elif action == "Do_change_password":
             user_to_edit = User.objects.filter(id=user_id)
             user_to_edit = user_to_edit[0]

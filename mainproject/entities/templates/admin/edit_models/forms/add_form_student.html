@@ -1,11 +1,11 @@
 {% extends 'base_layout.html' %}
 {% load static from staticfiles %}
 {% block title %}
-<title> Edit admin </title>
+<title> Add student </title>
 {% endblock %}
 {% block content %}
-<h1> Admin </h1>
-<form action="{% url 'entities:model_user' %}" method="post">
+<h1> Student </h1>
+<form action="{% url 'entities:model_student' %}" method="post">
     {% csrf_token %}
     <div class="table-responsive">
             <table>
@@ -29,8 +29,21 @@
                     <td> Password </td>
                     <td><input class="form-control" type="password" name="password" value=""></td>
                 </tr>
+                <tr>
+                    <td> Field of study: </td>
+                    <td><select class="btn background-second" name="field_of_study">
+                        <option value="None"> --- choose --- </option>
+                        {% for field in fields_of_study %}
+                            <option value="{{ field.id }}"> {{ field.name }} {{ field.degree }} {{ field.type }} </option>
+                        {% endfor %}
+                    </select></td>
+                </tr>
+                <tr>
+                    <td> Semester </td>
+                    <td><input class="form-control" type="number" name="semester" value="1"></td>
+                </tr>
             </table>
         </div>
-    <button type="submit" name="action" value="Do_add_user"> Add user </button>
+    <button class="btn background-second" type="submit" name="action" value="Do_add_user"> Add student </button>
 </form>
 {% endblock %}
