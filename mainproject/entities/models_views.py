@@ -1,11 +1,12 @@
 from datetime import time
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.password_validation import MinimumLengthValidator
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from .views import test_user_is_admin, forbidden
 from accounts.models import User, UserManager
 from .models import *
 from django.http import HttpResponse
+from . import forms
 
 
 @user_passes_test(test_user_is_admin, login_url=forbidden)
@@ -25,7 +26,41 @@ def show_intro_edit_models(request):
 
 @user_passes_test(test_user_is_admin, login_url=forbidden)
 def show_building(request):
-    return render(request, 'admin/edit_models/tab_building.html')
+    buildings = Building.objects.all()
+    s_message = ""
+    fail_message = ""
+    model_name = "Building"
+    columns = ['name','street','city','number','postal code']
+    if request.method == "POST":
+        action = request.POST.get("action")
+        if action == "Delete":
+            id = request.POST.get("object_id")
+            Building.objects.filter(id=id).delete()
+            buildings = Building.objects.all()
+            s_message = "Building was removed successfully"
+        elif action == "Edit":
+            id = request.POST.get("object_id")
+            instance = Building.objects.filter(id=id)[0]
+            form = forms.CreateBuilding(instance=instance)
+            return render(request,'admin/edit_models/forms_model/add_model.html', {"object_id": id, "model_name": model_name,
+                                                                                   "form_my": form, "act": "Update"})
+        elif action == "Add":
+            form = forms.CreateBuilding()
+            return render(request, 'admin/edit_models/forms_model/add_model.html', {"model_name": model_name,
+                                                                                    "form_my": form, "act": "Set"})
+        elif action == "Set":
+            form = forms.CreateBuilding(request.POST)
+            if form.is_valid():
+                form.save()
+            buildings = Building.objects.all()
+        elif action == "Update":
+            instance = get_object_or_404(Building, id=id)
+            form = forms.CreateBuilding(request.POST, instance=instance)
+            if form.is_valid():
+                form.save()
+            buildings = Building.objects.all()
+    return render(request, 'admin/edit_models/tab_building.html',{"objects": buildings, "columns": columns,
+                                                                  "s_message": s_message, "fail_message":fail_message})
 
 
 @user_passes_test(test_user_is_admin, login_url=forbidden)
