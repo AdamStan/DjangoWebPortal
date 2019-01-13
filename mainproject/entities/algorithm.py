@@ -218,14 +218,19 @@ def check_teacher_can_teach_exclude(scheduled_subject, teacher):
     return True
 
 def set_rooms_to_subjects(scheduled_subjects):
-    all_rooms = []
-    for room in Room.objects.all():
-        all_rooms.append(room)
+    all_rooms_lec = []
+    all_rooms_lab = []
+    for r in Room.objects.filter(room_type="LAB"):
+        all_rooms_lab.append(r)
+
+    for r in Room.objects.filter(room_type="LEC"):
+        all_rooms_lec.append(r)
 
     for ss in scheduled_subjects:
-        rooms = all_rooms.copy()
-        while len(rooms) > 0: # rooms is equal for this
-            if ss.type == "LEC":
+        rooms_lab = all_rooms_lab.copy()
+        rooms_lec = all_rooms_lec.copy()
+        if ss.type == "LEC":
+            while len(rooms_lec) > 0: # rooms is equal for this
                 lectures = ScheduledSubject.objects.filter(type=ss.type, subject=ss.subject).order_by('id')
                 list_lectures = []
                 for slecture in lectures:
@@ -235,19 +240,20 @@ def set_rooms_to_subjects(scheduled_subjects):
                     ss.room = list_lectures[0].room
                     break
                 else:
-                    room = choice(rooms)
+                    room = choice(rooms_lec)
                     if check_room_is_not_taken(ss, room):
                         ss.room = room
                         break
                     else:
-                        rooms.remove(room)
-            else:
-                room = choice(rooms)
+                        rooms_lec.remove(room)
+        else:
+            while len(rooms_lec) > 0:
+                room = choice(rooms_lab)
                 if check_room_is_not_taken(ss, room) :
                     ss.room = room
                     break
                 else:
-                    rooms.remove(room)
+                    rooms_lab.remove(room)
         if ss.room is None:
             raise Exception('There is no properly room for: ' + ss.subject.name + ", " + ss.plan.title)
 

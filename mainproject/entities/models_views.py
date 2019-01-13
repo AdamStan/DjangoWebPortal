@@ -12,7 +12,7 @@ def show_intro_edit_models(request):
     url_list = {
         "Building":"model_building",
         "Faculty":"model_faculty",
-        "Field Of Study":"model_fieldofstudy",
+        "Field Of Study":"model_field_of_study",
         "Plan":"model_plan",
         "Room":"model_room",
         "Scheduled Subject":"model_scheduledsubject",
@@ -63,27 +63,71 @@ def show_building(request):
 
 @user_passes_test(test_user_is_admin, login_url=forbidden)
 def show_faculty(request):
-    return render(request, 'admin/edit_models/tab_faculty.html')
+    faculties = Faculty.objects.all()
+    s_message = ""
+    fail_message = ""
+    model_name = "Faculty"
+    columns = ['name', 'description']
+    return render(request, 'admin/edit_models/tab_faculty.html', {"objects": faculties, "s_message": s_message,
+                                                                  "fail_message": fail_message, "model_name": model_name, "columns": columns})
 
 
 @user_passes_test(test_user_is_admin, login_url=forbidden)
 def show_fieldofstudy(request):
-    return render(request, 'admin/edit_models/tab_fieldofstudy.html')
+    fields_of_study = FieldOfStudy.objects.all()
+    s_message = ""
+    fail_message = ""
+    model_name = "Field_of_study"
+    columns = ['name', 'faculty name', 'degree', 'number of semesters', 'type']
+    return render(request, 'admin/edit_models/tab_fieldofstudy.html', {"objects": fields_of_study, "s_message": s_message,
+                                                                       "fail_message": fail_message, "model_name": model_name,
+                                                                       "columns": columns})
 
 
 @user_passes_test(test_user_is_admin, login_url=forbidden)
 def show_plan(request):
-    return render(request, 'admin/edit_models/tab_plan.html')
+    plans = Plan.objects.all()
+    s_message = ""
+    fail_message = ""
+    model_name = "Plan"
+    columns = ['title', 'fieldOfStudy', 'semester']
+    return render(request, 'admin/edit_models/tab_plan.html', {"objects": plans, "s_message": s_message,
+                                                                "fail_message": fail_message, "model_name": model_name,
+                                                                "columns": columns})
 
 
 @user_passes_test(test_user_is_admin, login_url=forbidden)
 def show_room(request):
-    return render(request, 'admin/edit_models/tab_room.html')
+    rooms = Room.objects.all()
+    s_message = ""
+    fail_message = ""
+    model_name = "Room"
+    columns = ['id','building','room_type']
+    return render(request, 'admin/edit_models/tab_room.html', {"objects": rooms, "s_message": s_message,
+                                                                "fail_message": fail_message, "model_name": model_name,
+                                                                "columns": columns})
 
 
 @user_passes_test(test_user_is_admin, login_url=forbidden)
 def show_scheduledsubject(request):
-    return render(request, 'admin/edit_models/tab_scheduledsubject.html')
+    sch_subjects = ScheduledSubject.objects.all()
+    s_message = ""
+    fail_message = ""
+    model_name = "Scheduledsubject"
+    columns = ['subject name', 'type', 'plan', 'room', 'teacher']
+    return render(request, 'admin/edit_models/tab_scheduledsubject.html', {"objects": sch_subjects, "s_message": s_message,
+                                                                           "fail_message": fail_message, "model_name": model_name,
+                                                                           "columns": columns})
+
+def show_subject(request):
+    subjects = Subject.objects.all()
+    s_message = ""
+    fail_message = ""
+    model_name = "Subject"
+    columns = ['name', 'fieldOfStudy', 'semester', 'lecture_hours', 'laboratory_hours', 'teachers',]
+    return render(request, 'admin/edit_models/tab_subject.html', {"objects": subjects, "s_message": s_message,
+                                                                  "fail_message": fail_message, "model_name": model_name,
+                                                                  "columns": columns})
 
 
 @user_passes_test(test_user_is_admin, login_url=forbidden)
