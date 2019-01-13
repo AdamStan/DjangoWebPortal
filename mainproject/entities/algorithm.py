@@ -225,12 +225,29 @@ def set_rooms_to_subjects(scheduled_subjects):
     for ss in scheduled_subjects:
         rooms = all_rooms.copy()
         while len(rooms) > 0: # rooms is equal for this
-            room = choice(rooms)
-            if check_room_is_not_taken(ss, room) :
-                ss.room = room
-                break
+            if ss.type == "LEC":
+                lectures = ScheduledSubject.objects.filter(type=ss.type, subject=ss.subject).order_by('id')
+                list_lectures = []
+                for slecture in lectures:
+                    list_lectures.append(slecture)
+
+                if list_lectures[0].room:
+                    ss.room = list_lectures[0].room
+                    break
+                else:
+                    room = choice(rooms)
+                    if check_room_is_not_taken(ss, room):
+                        ss.room = room
+                        break
+                    else:
+                        rooms.remove(room)
             else:
-                rooms.remove(room)
+                room = choice(rooms)
+                if check_room_is_not_taken(ss, room) :
+                    ss.room = room
+                    break
+                else:
+                    rooms.remove(room)
         if ss.room is None:
             raise Exception('There is no properly room for: ' + ss.subject.name + ", " + ss.plan.title)
 
