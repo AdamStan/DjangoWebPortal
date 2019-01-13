@@ -61,9 +61,43 @@
                             <li class="nav-item">
                                 <a class="nav-link" href="{% url 'entities:edittimetables' %}"> Edit plans </a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'entities:models' %}"> Admin panel </a>
-                            </li>
+                            <div class="dropdown ">
+                                <button class="btn dropdown-toggle background-first" type="button" id="dropdownMenu3" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Admin functions
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                                    <form action="{% url 'entities:model_student' %}" method="get">
+                                        <button class="dropdown-item" type="submit"> Students </button>
+                                    </form>
+                                    <form action="{% url 'entities:model_teacher' %}" method="get">
+                                        <button class="dropdown-item" type="submit"> Teachers </button>
+                                    </form>
+                                    <form action="{% url 'entities:model_user' %}" method="get">
+                                        <button class="dropdown-item" type="submit"> Admins </button>
+                                    </form>
+                                    <form action="{% url 'entities:model_building' %}" method="get">
+                                        <button class="dropdown-item" type="submit"> Buildings </button>
+                                    </form>
+                                    <form action="{% url 'entities:model_faculty' %}" method="get">
+                                        <button class="dropdown-item" type="submit"> Faculties </button>
+                                    </form>
+                                    <form action="{% url 'entities:model_field_of_study' %}" method="get">
+                                        <button class="dropdown-item" type="submit"> Fields of study </button>
+                                    </form>
+                                    <form action="{% url 'entities:model_plan' %}" method="get">
+                                        <button class="dropdown-item" type="submit"> Plans </button>
+                                    </form>
+                                    <form action="{% url 'entities:model_room' %}" method="get">
+                                        <button class="dropdown-item" type="submit"> Rooms </button>
+                                    </form>
+                                    <form action="{% url 'entities:model_scheduledsubject' %}" method="get">
+                                        <button class="dropdown-item" type="submit"> Scheduled subjects </button>
+                                    </form>
+                                    <form action="{% url 'entities:model_subject' %}" method="get">
+                                        <button class="dropdown-item" type="submit"> Subjects </button>
+                                    </form>
+                                </div>
+                            </div>
                         {% endif %}
                         {% if user.student %}
                             <li class="nav-item">

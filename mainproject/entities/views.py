@@ -39,7 +39,7 @@ def test_user_is_admin(user):
 
 def create_table_example():
     values = []
-
+    """
     subject1 = SubjectExample()
     subject1.id = 1
     subject1.name = "Subject1"
@@ -85,6 +85,7 @@ def create_table_example():
     subject5.day = 'friday'
 
     values.append(subject5.toJSON())
+    """
 
     return {'values': values}
 
@@ -130,8 +131,8 @@ def create_table_for_teacher(teacher_id):
         buff.day = days[ss.dayOfWeek-1]
 
         values.append(buff.toJSON())
-
-    return {"values": values}, teacher.user.id
+    plan_title = teacher.user.name + " " + teacher.user.surname
+    return {"values": values}, plan_title
 
 
 def get_plans_for_rooms():
@@ -301,14 +302,16 @@ def show_teacher_plan(request):
 
 @user_passes_test(test_user_is_student, login_url=forbidden)
 def show_student_plan(request):
-    #try:
-    student_id = request.user.id
-    student = Student.objects.get(user_id=student_id)
-    if student.plan is None:
-        return render(request, 'error_page.html', {"message": "You didn't choose plan, yet"})
-    parameters, plan_title = create_table(student.plan.id)
-    return render(request, 'teacher/myplan.html', { "values": parameters['values'], "plan_title": plan_title })
-    #expect
+    try:
+        student_id = request.user.id
+        student = Student.objects.get(user_id=student_id)
+        if student.plan is None:
+            return render(request, 'error_page.html', {"message": "You didn't choose plan, yet"})
+        parameters, plan_title = create_table(student.plan.id)
+        return render(request, 'teacher/myplan.html', { "values": parameters['values'], "plan_title": plan_title })
+    except Exception:
+        return render(request, 'error_page.html', {
+            "message": "Your student account doesn't exists, contact with administrator"})
 
 @user_passes_test(test_user_is_student, login_url=forbidden)
 def show_choose_plan(request):

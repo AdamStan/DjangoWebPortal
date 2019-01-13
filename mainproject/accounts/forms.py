@@ -67,4 +67,4 @@ class UserAdminChangeForm(forms.ModelForm):
 class MyAccountUpdate(forms.ModelForm):
     class Meta:
         model = User
-        fields = ['username', 'name','second_name', 'surname']
+        fields = ['username','password', 'name','second_name', 'surname']

@@ -46,7 +46,11 @@
                 <tr>
                     <td> Plan </td>
                     <td><select class="btn background-second" name="plan_id">
+                        {% if student.plan %}
                         <option value=" {{ student.plan.id }} "> {{student.plan.title }} </option>
+                        {% else %}
+                        <option value=""> --- no plan --- </option>
+                        {% endif %}
                         {% for plan in plans %}
                             <option value="{{ plan.id }}"> {{ plan.title }} </option>
                         {% endfor %}

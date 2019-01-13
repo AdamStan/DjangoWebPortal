@@ -142,41 +142,43 @@ def show_student(request):
             student_to_edit = Student.objects.filter(user_id=user_id)
             fields_of_study = FieldOfStudy.objects.all().exclude(id=student_to_edit[0].fieldOfStudy.id)
             plans = Plan.objects.filter(fieldOfStudy=student_to_edit[0].fieldOfStudy, semester=student_to_edit[0].semester)
-            return render(request, 'admin/edit_models/forms/edit_form_student.html', {"student": student_to_edit[0], "fields_of_study": fields_of_study, "plans": plans})
+            return render(request, 'admin/edit_models/forms/edit_form_student.html',
+                          {"student": student_to_edit[0], "fields_of_study": fields_of_study, "plans": plans})
         elif action == "Change_password":
             student_to_edit = Student.objects.filter(user_id=user_id)
-            return render(request, 'admin/edit_models/forms/change_password.html', {"student_to_edit": student_to_edit[0], "model": "model_student"})
+            return render(request, 'admin/edit_models/forms/change_password.html',
+                          {"student_to_edit": student_to_edit[0], "model": "model_student"})
         elif action == "Delete":
             Student.objects.filter(user_id=user_id).delete()
             User.objects.filter(id=user_id).delete()
             students = Student.objects.all()
             s_message = "User was deleted successfully "
         elif action == "Update":
-            try:
-                username = request.POST.get("username")
-                name = request.POST.get("name")
-                second_name = request.POST.get("second_name")
-                surname = request.POST.get("surname")
-                field_of_study = request.POST.get("field_of_study")
-                semester = request.POST.get("semester")
-                plan = request.POST.get("plan_id")
-                student_to_edit = Student.objects.filter(user_id=user_id)
-                student_to_edit = student_to_edit[0]
-                student_to_edit.user.username = username
-                student_to_edit.user.name = name
-                student_to_edit.user.second_name = second_name
-                student_to_edit.user.surname = surname
-                student_to_edit.semester = semester
-                if plan:
-                    student_to_edit.plan = Plan.objects.filter(id=plan)[0]
-                if field_of_study:
-                    student_to_edit.fieldOfStudy = FieldOfStudy.objects.filter(id=field_of_study)[0]
-                student_to_edit.user.save()
-                student_to_edit.save()
-                students = Student.objects.all()
-                s_message = "Student was edited successfully"
-            except Exception:
-                fail_message = "Something went wrong"
+            #try:
+            username = request.POST.get("username")
+            name = request.POST.get("name")
+            second_name = request.POST.get("second_name")
+            surname = request.POST.get("surname")
+            field_of_study = request.POST.get("field_of_study")
+            semester = request.POST.get("semester")
+            plan = request.POST.get("plan_id")
+            student_to_edit = Student.objects.filter(user_id=user_id)
+            student_to_edit = student_to_edit[0]
+            student_to_edit.user.username = username
+            student_to_edit.user.name = name
+            student_to_edit.user.second_name = second_name
+            student_to_edit.user.surname = surname
+            student_to_edit.semester = semester
+            if plan:
+                student_to_edit.plan = Plan.objects.filter(id=plan)[0]
+            if field_of_study:
+                student_to_edit.fieldOfStudy = FieldOfStudy.objects.filter(id=field_of_study)[0]
+            student_to_edit.user.save()
+            student_to_edit.save()
+            students = Student.objects.all()
+            s_message = "Student was edited successfully"
+            #except Exception:
+            #    fail_message = "Something went wrong"
         elif action == "Add_student":
             fields = FieldOfStudy.objects.all()
             return render(request, 'admin/edit_models/forms/add_form_student.html', {"fields_of_study": fields})

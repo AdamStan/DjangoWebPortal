@@ -129,7 +129,11 @@
         <select class="btn background-second" name="plan_id">
             <option value="None"> -- choose plan -- </option>
             {% for p in plans %}
-            <option value="{{ p.id }}">{{ p.title }} id:{{ p.id }}</option>
+            {% if p.title %}
+            <option value="{{ p.id }}">{{ p.title }} </option>
+            {% else %}
+            <option value="{{ p.id }}">{{ p.id }} </option>
+            {% endif %}
             {% endfor %}
         </select>
         <button class="btn background-second" type="submit"> Search </button>
@@ -139,7 +143,4 @@
     <!-- <div class="container" id="timetable_values" style="height: 500px"></div> -->
     <h1> Plan {{ plan_title }} </h1>
     <div id='calendar'></div>
-    <div>
-        <button class="btn background-second"> EDIT </button>
-    </div>
 {% endblock %}
