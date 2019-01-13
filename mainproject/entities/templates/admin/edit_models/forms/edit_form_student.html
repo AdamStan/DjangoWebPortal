@@ -19,10 +19,10 @@
                 </tr>
                 <tr>
                     <td> Second Name </td>
-                    {% if user_to_edit.second_name == None %}
-                    <td><input class="form-control" type="text" name="second_name" value=""></td>
-                    {% else %}
+                    {% if student.user.second_name %}
                     <td><input class="form-control" type="text" name="second_name" value="{{ student.user.second_name }}"></td>
+                    {% else %}
+                    <td><input class="form-control" type="text" name="second_name" value=""></td>
                     {% endif %}
                 </tr>
                 <tr>

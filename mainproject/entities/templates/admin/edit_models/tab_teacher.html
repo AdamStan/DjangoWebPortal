@@ -21,7 +21,7 @@
         </tr>
         {% for teacher in teachers %}
         <tr>
-            <td> <input type="radio" name="user_id" value="{{ user.id }}" /></td>
+            <td> <input type="radio" name="user_id" value="{{ teacher.user.id }}" /></td>
             <td> {{ teacher.user.name }} </td>
             <td> {{ teacher.user.second_name }} </td>
             <td> {{ teacher.user.surname }} </td>

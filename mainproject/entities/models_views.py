@@ -1,11 +1,9 @@
 from datetime import time
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.contrib.auth.password_validation import MinimumLengthValidator
 from django.shortcuts import render, get_object_or_404
 from .views import test_user_is_admin, forbidden
 from accounts.models import User, UserManager
 from .models import *
-from django.http import HttpResponse
 from . import forms
 
 
@@ -184,21 +182,49 @@ def show_teacher(request):
         action = request.POST.get("action")
         user_id = request.POST.get('user_id')
         if action == "Edit":
-            pass
+            teacher = Teacher.objects.filter(user_id=user_id)[0]
+            faculties = Faculty.objects.exclude(id=teacher.faculty.id)
+            return render(request, 'admin/edit_models/forms/edit_form_teacher.html', {"faculties": faculties, "teacher": teacher})
         elif action == "Change_password":
-            pass
+            teacher = Teacher.objects.filter(user_id=user_id)
+            return render(request, 'admin/edit_models/forms/change_password.html', {"teacher": teacher[0], "model": "model_teacher"})
         elif action == "Delete":
             Teacher.objects.filter(user_id=user_id).delete()
             User.objects.filter(id=user_id).delete()
             teachers = Teacher.objects.all()
             s_message = "User was deleted successfully "
         elif action == "Update":
-            pass
+            username = request.POST.get("username")
+            name = request.POST.get("name")
+            second_name = request.POST.get("second_name")
+            surname = request.POST.get("surname")
+            faculty = request.POST.get('faculty')
+            teacher = Teacher.objects.filter(user_id=user_id)[0]
+            teacher.user.username = username
+            teacher.user.name = name
+            teacher.user.second_name = second_name
+            teacher.user.surname = surname
+            teacher.user.save()
+            if faculty:
+                teacher.faculty = Faculty.objects.filter(id=faculty)[0]
+            teacher.save()
+            s_message = "Editing teacher finished with success"
+            teachers = Teacher.objects.all()
         elif action == "Add_teacher":
             faculties = Faculty.objects.all()
             return render(request, 'admin/edit_models/forms/add_form_teacher.html', {"faculties": faculties})
         elif action == "Do_change_password":
-            pass
+            user_to_edit = User.objects.filter(id=user_id)
+            user_to_edit = user_to_edit[0]
+            new_password = request.POST.get("new_password")
+            confirm_new_password = request.POST.get("confirm_new_password")
+            if new_password == confirm_new_password:
+                user_to_edit.set_password(new_password)
+                user_to_edit.save()
+                s_message = "Password was changed successfully"
+                teachers = Teacher.objects.all()
+            else:
+                fail_message = "Passwords are not the same"
         elif action == "Do_add_teacher":
             username = request.POST.get("username")
             name = request.POST.get("name")
