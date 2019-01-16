@@ -32,30 +32,37 @@ def show_logout(request):
 @login_required
 def show_my_profile(request):
     user = request.user
+    s_message = None
+    fail_message = None
     if request.POST:
-        old_form = [
-            request.POST.get('username'),
-            request.POST.get('password'),
-            request.POST.get('name'),
-            request.POST.get('second_name'),
-            request.POST.get('surname'),
-        ]
-        print(old_form)
-        user = User.objects.get(username=request.user.username)
-        user.username = old_form[0]
-        if old_form[1] != None and old_form[1][7:13] != "sha256" and old_form[1] != "":
-            user.set_password(old_form[1])
-            print(old_form[1][7:13])
-        user.name  = old_form[2]
-        user.second_name = old_form[3]
-        user.surname = old_form[4]
-        user.save()
+        action = request.POST.get("action")
+        if action == "Update":
+            username = request.POST.get('username')
+            name = request.POST.get('name')
+            second_name = request.POST.get('second_name')
+            surname = request.POST.get('surname')
+            user.username = username
+            user.name = name
+            user.second_name = second_name
+            user.surname = surname
+            user.save()
+            print("Update")
+        elif action == "Change":
+            print("Change")
+            password = request.POST.get('password')
+            new_password = request.POST.get('new_password')
+            confirm_new_password =request.POST.get('confirm_new_password')
+            print(new_password)
+            print(password)
+            if user.check_password(password):
+                if new_password == confirm_new_password:
+                    user.set_password(new_password)
+                    s_message = "Your password was changed with success"
+                    user.save()
+                else:
+                    fail_message = "Your passwords don't match"
+            else:
+                fail_message = "Your password don't match"
 
-    form = MyAccountUpdate({
-        'username': user.username,
-        'password': user.password,
-        'name': user.name,
-        'second_name': user.second_name,
-        'surname': user.surname
-    })
-    return render(request, 'myprofile.html', {'current_user': user, 'form': form} )
+    return render(request, 'myprofile.html', {'current_user': user, "s_message": s_message,
+                                              "fail_message": fail_message} )

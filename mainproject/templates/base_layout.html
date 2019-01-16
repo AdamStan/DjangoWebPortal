@@ -121,7 +121,6 @@
                 <div class="form-inline mt-2 mt-md-0">
                     {% if user.is_authenticated %}
                         <form action="{% url 'accounts:myprofile' %}" method="get">
-                            {% csrf_token %}
                             <button class="nav-item btn background-second button-margin" type="submit">
                                 My account: {{ user.username }}
                             </button>
