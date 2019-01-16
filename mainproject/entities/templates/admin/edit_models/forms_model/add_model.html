@@ -10,7 +10,7 @@
     {% csrf_token %}
     {{ form_my.as_p }}
     <input type="text" name="object_id" value="{{ object_id }} " hidden>
-    <input class="btn background-second" name="action" value="{{ act }} " type="submit">
+    <input class="btn background-second" name="action" value="{{ act }}" type="submit">
 </form>
 {% endwith %}
 {% endblock %}

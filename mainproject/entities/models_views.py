@@ -31,13 +31,12 @@ def show_building(request):
     columns = ['name','street','city','number','postal code']
     if request.method == "POST":
         action = request.POST.get("action")
-        if action == "Delete":
-            id = request.POST.get("object_id")
+        id = request.POST.get("object_id")
+        if action == "Delete" and id:
             Building.objects.filter(id=id).delete()
             buildings = Building.objects.all()
             s_message = "Building was removed successfully"
-        elif action == "Edit":
-            id = request.POST.get("object_id")
+        elif action == "Edit" and id:
             instance = Building.objects.filter(id=id)[0]
             form = forms.CreateBuilding(instance=instance)
             return render(request,'admin/edit_models/forms_model/add_model.html', {"object_id": id, "model_name": model_name,
@@ -51,12 +50,16 @@ def show_building(request):
             if form.is_valid():
                 form.save()
             buildings = Building.objects.all()
-        elif action == "Update":
+        elif action == "Update" and id:
             instance = get_object_or_404(Building, id=id)
-            form = forms.CreateBuilding(request.POST, instance=instance)
+            form = forms.CreateBuilding(request.POST)
             if form.is_valid():
-                form.save()
+                new_building = form.save(commit=False)
+                new_building.id = instance.id
+                new_building.save()
             buildings = Building.objects.all()
+        else:
+            fail_message = "You have to choose row"
     return render(request, 'admin/edit_models/tab_building.html',{"objects": buildings, "columns": columns,
                                                                   "s_message": s_message, "fail_message":fail_message})
 
@@ -79,6 +82,23 @@ def show_fieldofstudy(request):
     fail_message = ""
     model_name = "Field_of_study"
     columns = ['name', 'faculty name', 'degree', 'number of semesters', 'type']
+
+    if request.method == "POST":
+        action = request.POST.get('action')
+        id = request.POST.get('object_id')
+        if action == "Add":
+            pass
+        elif action == "Edit" and id:
+            pass
+        elif action == "Delete" and if:
+            pass
+        elif action == "Set":
+            pass
+        elif action == "Update":
+            pass
+        else:
+            fail_message = "You have to choose field of study to " + action.lower()
+
     return render(request, 'admin/edit_models/tab_fieldofstudy.html', {"objects": fields_of_study, "s_message": s_message,
                                                                        "fail_message": fail_message, "model_name": model_name,
                                                                        "columns": columns})
@@ -91,6 +111,23 @@ def show_plan(request):
     fail_message = ""
     model_name = "Plan"
     columns = ['title', 'fieldOfStudy', 'semester']
+
+    if request.method == "POST":
+        action = request.POST.get('action')
+        id = request.POST.get('object_id')
+        if action == "Add":
+            pass
+        elif action == "Edit" and id:
+            pass
+        elif action == "Delete" and if:
+            pass
+        elif action == "Set":
+            pass
+        elif action == "Update":
+            pass
+        else:
+            fail_message = "You have to choose field of study to " + action.lower()
+
     return render(request, 'admin/edit_models/tab_plan.html', {"objects": plans, "s_message": s_message,
                                                                 "fail_message": fail_message, "model_name": model_name,
                                                                 "columns": columns})
@@ -103,6 +140,23 @@ def show_room(request):
     fail_message = ""
     model_name = "Room"
     columns = ['id','building','room_type']
+
+    if request.method == "POST":
+        action = request.POST.get('action')
+        id = request.POST.get('object_id')
+        if action == "Add":
+            pass
+        elif action == "Edit" and id:
+            pass
+        elif action == "Delete" and if:
+            pass
+        elif action == "Set":
+            pass
+        elif action == "Update":
+            pass
+        else:
+            fail_message = "You have to choose field of study to " + action.lower()
+
     return render(request, 'admin/edit_models/tab_room.html', {"objects": rooms, "s_message": s_message,
                                                                 "fail_message": fail_message, "model_name": model_name,
                                                                 "columns": columns})
@@ -115,6 +169,18 @@ def show_scheduledsubject(request):
     fail_message = ""
     model_name = "Scheduledsubject"
     columns = ['subject name', 'type', 'plan', 'room', 'teacher']
+
+    if request.method == "POST":
+        action = request.POST.get('action')
+        id = request.POST.get('object_id')
+
+        if action == "Edit" and id:
+            pass
+        elif action == "Update":
+            pass
+        else:
+            fail_message = "You have to choose field of study to " + action.lower()
+
     return render(request, 'admin/edit_models/tab_scheduledsubject.html', {"objects": sch_subjects, "s_message": s_message,
                                                                            "fail_message": fail_message, "model_name": model_name,
                                                                            "columns": columns})
@@ -125,6 +191,23 @@ def show_subject(request):
     fail_message = ""
     model_name = "Subject"
     columns = ['name', 'fieldOfStudy', 'semester', 'lecture_hours', 'laboratory_hours', 'teachers',]
+
+    if request.method == "POST":
+        action = request.POST.get('action')
+        id = request.POST.get('object_id')
+        if action == "Add":
+            pass
+        elif action == "Edit" and id:
+            pass
+        elif action == "Delete" and if:
+            pass
+        elif action == "Set":
+            pass
+        elif action == "Update":
+            pass
+        else:
+            fail_message = "You have to choose field of study to " + action.lower()
+
     return render(request, 'admin/edit_models/tab_subject.html', {"objects": subjects, "s_message": s_message,
                                                                   "fail_message": fail_message, "model_name": model_name,
                                                                   "columns": columns})
@@ -138,22 +221,22 @@ def show_student(request):
     if request.method == "POST":
         action = request.POST.get("action")
         user_id = request.POST.get('user_id')
-        if action == "Edit":
+        if action == "Edit" and user_id:
             student_to_edit = Student.objects.filter(user_id=user_id)
             fields_of_study = FieldOfStudy.objects.all().exclude(id=student_to_edit[0].fieldOfStudy.id)
             plans = Plan.objects.filter(fieldOfStudy=student_to_edit[0].fieldOfStudy, semester=student_to_edit[0].semester)
             return render(request, 'admin/edit_models/forms/edit_form_student.html',
                           {"student": student_to_edit[0], "fields_of_study": fields_of_study, "plans": plans})
-        elif action == "Change_password":
+        elif action == "Change_password" and user_id:
             student_to_edit = Student.objects.filter(user_id=user_id)
             return render(request, 'admin/edit_models/forms/change_password.html',
                           {"student_to_edit": student_to_edit[0], "model": "model_student"})
-        elif action == "Delete":
+        elif action == "Delete" and user_id:
             Student.objects.filter(user_id=user_id).delete()
             User.objects.filter(id=user_id).delete()
             students = Student.objects.all()
             s_message = "User was deleted successfully "
-        elif action == "Update":
+        elif action == "Update" and user_id:
             #try:
             username = request.POST.get("username")
             name = request.POST.get("name")
@@ -216,6 +299,8 @@ def show_student(request):
                 s_message = "Student was edited successful"
             except Exception:
                 fail_message="Something went wrong"
+        else:
+            fail_message = "You should choose student before " + action.lower()
     return render(request, 'admin/edit_models/tab_student.html',{'students': students, "s_message": s_message, "fail_message": fail_message})
 
 
