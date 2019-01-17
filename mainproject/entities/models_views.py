@@ -181,15 +181,37 @@ def show_plan(request):
         action = request.POST.get('action')
         id = request.POST.get('object_id')
         if action == "Add":
-            pass
+            form = forms.CreatePlan()
+            return render(request, 'admin/edit_models/forms_model/add_model.html', {"model_name": model_name,
+                                                                                    "form_my": form, "act": "Set"})
         elif action == "Edit" and id:
-            pass
+            instance = Plan.objects.get(id=id)
+            form = forms.CreatePlan(instance=instance)
+            return render(request, 'admin/edit_models/forms_model/add_model.html', {"object_id":id, "model_name": model_name,
+                                                                                    "form_my": form, "act": "Update"})
         elif action == "Delete" and id:
-            pass
+            plan_to_delete = Plan.objects.get(id=id)
+            students = Student.objects.filter(plan=plan_to_delete)
+            for std in students:
+                std.plan = None
+                std.save()
+            ScheduledSubject.objects.filter(plan=plan_to_delete).delete()
+            plan_to_delete.delete()
+            plans = Plan.objects.all()
         elif action == "Set":
-            pass
+            form = forms.CreatePlan(request.POST)
+            if form.is_valid():
+                form.save()
+            plans = Plan.objects.all()
+            s_message = "You've added plan successfully"
         elif action == "Update":
-            pass
+            instance = get_object_or_404(Plan, id=id)
+            form = forms.CreatePlan(request.POST)
+            if form.is_valid():
+                temp = form.save(commit=False)
+                temp.id = instance.id
+                temp.save()
+            s_message = "You've updated plan"
         else:
             fail_message = "You have to choose field of study to " + action.lower()
 

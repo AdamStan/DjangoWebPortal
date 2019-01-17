@@ -21,7 +21,7 @@
         <tr>
             <td> <input type="radio" name="object_id" value="{{ object.id }}" /></td>
             <td> {{ object.title }} </td>
-            <td> {{ object.fieldOfStudy.name }} </td>
+            <td> {{ object.fieldOfStudy.name }} {{ object.fieldOfStudy.degree }} {{ object.fieldOfStudy.type }} </td>
             <td> {{ object.semester }} </td>
         </tr>
         {% endfor %}

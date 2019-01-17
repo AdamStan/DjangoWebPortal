@@ -20,3 +20,9 @@ class CreateFieldOfStudy(forms.ModelForm):
         model = FieldOfStudy
         fields = '__all__'
 
+
+class CreatePlan(forms.ModelForm):
+    class Meta:
+        model = Plan
+        fields = '__all__'
+
