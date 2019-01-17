@@ -8,8 +8,12 @@ var_on_delete = models.SET_NULL = True
 class Faculty(models.Model):
     name = models.CharField(max_length=64)
     description = models.CharField(max_length=256, default=None, null=True)
+
     def toJSON(self):
         return json.dumps(self.__dict__)
+
+    def __str__(self):
+        return self.name
 
 class FieldOfStudy(models.Model):
     name = models.CharField(max_length=64)
@@ -25,8 +29,12 @@ class FieldOfStudy(models.Model):
     degree = models.CharField(max_length=12, choices=DEGREE_CHOICES, default=BACHELOR)
     howManySemesters = models.IntegerField(default=0)
     type = models.CharField(max_length=32, default='full-time')
+
     def toJSON(self):
         return json.dumps(self.__dict__)
+
+    def __str__(self):
+        return self.name + ", " + str(self.faculty)
 
 class Teacher(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True, related_name='professor_to_user')

@@ -14,3 +14,9 @@ class CreateFaculty(forms.ModelForm):
         fields = '__all__'
 
 
+
+class CreateFieldOfStudy(forms.ModelForm):
+    class Meta:
+        model = FieldOfStudy
+        fields = '__all__'
+

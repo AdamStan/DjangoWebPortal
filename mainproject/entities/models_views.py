@@ -130,15 +130,37 @@ def show_fieldofstudy(request):
         action = request.POST.get('action')
         id = request.POST.get('object_id')
         if action == "Add":
-            pass
+            form = forms.CreateFieldOfStudy()
+            return render(request, 'admin/edit_models/forms_model/add_model.html', {"model_name": model_name,
+                                                                                    "form_my": form, "act": "Set"})
         elif action == "Edit" and id:
-            pass
+            instance = FieldOfStudy.objects.get(id=id)
+            form = forms.CreateFieldOfStudy(instance=instance)
+            return render(request, 'admin/edit_models/forms_model/add_model.html', {"object_id": id, "model_name": model_name,
+                                                                                    "form_my": form, "act": "Update"})
         elif action == "Delete" and id:
-            pass
+            field_of_study = FieldOfStudy.objects.get(id=id)
+            students = Student.objects.filter(fieldOfStudy=field_of_study)
+            if students:
+                fail_message = "You cannot drop this, there are students for this field"
+            else:
+                field_of_study.delete()
+                s_message = "Chosen field was deleted"
+                fields_of_study = FieldOfStudy.objects.all()
         elif action == "Set":
-            pass
+            form = forms.CreateFieldOfStudy(request.POST)
+            if form.is_valid():
+                form.save()
+            s_message = "You've add new field of study"
         elif action == "Update":
-            pass
+            instance = get_object_or_404(FieldOfStudy, id=id)
+            form = forms.CreateFieldOfStudy(request.POST)
+            if form.is_valid():
+                field_of_study = form.save(commit=False)
+                field_of_study.id = instance.id
+                field_of_study.save()
+                s_message = "Changes were saved"
+            fields_of_study = FieldOfStudy.objects.all()
         else:
             fail_message = "You have to choose field of study to " + action.lower()
 
