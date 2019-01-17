@@ -1,6 +1,8 @@
 from datetime import time
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render, get_object_or_404
+from setuptools.command.rotate import rotate
+
 from .views import test_user_is_admin, forbidden
 from accounts.models import User, UserManager
 from .models import *
@@ -232,15 +234,20 @@ def show_room(request):
         action = request.POST.get('action')
         id = request.POST.get('object_id')
         if action == "Add":
-            pass
-        elif action == "Edit" and id:
-            pass
+            form = forms.CreateRoom()
+            return render(request, 'admin/edit_models/forms_model/add_model.html', {"model_name": model_name,
+                                                                                    "form_my": form, "act": "Set"})
         elif action == "Delete" and id:
-            pass
+            try:
+                room_to_delete = Room.objects.get(id=id)
+                room_to_delete.delete()
+            except:
+                fail_message = "In this room are some classes"
         elif action == "Set":
-            pass
-        elif action == "Update":
-            pass
+            form = forms.CreateRoom(request.POST)
+            if form.is_valid():
+                form.save()
+            s_message = "You've add new room"
         else:
             fail_message = "You have to choose field of study to " + action.lower()
 
@@ -262,9 +269,18 @@ def show_scheduledsubject(request):
         id = request.POST.get('object_id')
 
         if action == "Edit" and id:
-            pass
+            instance = ScheduledSubject.objects.get(id=id)
+            form = forms.CreateScheduledSubject(instance=instance)
+            return render(request, 'admin/edit_models/forms_model/add_model.html',
+                          {"object_id": id, "model_name": model_name,
+                           "form_my": form, "act": "Update"})
         elif action == "Update":
-            pass
+            form = forms.CreateScheduledSubject(request.POST)
+            if form.is_valid():
+                buff = form.save(commit=False)
+                buff.id = id
+                buff.save()
+            s_message = "You've changed classes successfully"
         else:
             fail_message = "You have to choose field of study to " + action.lower()
 

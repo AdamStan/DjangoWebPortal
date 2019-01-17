@@ -14,7 +14,6 @@ class CreateFaculty(forms.ModelForm):
         fields = '__all__'
 
 
-
 class CreateFieldOfStudy(forms.ModelForm):
     class Meta:
         model = FieldOfStudy
@@ -25,4 +24,16 @@ class CreatePlan(forms.ModelForm):
     class Meta:
         model = Plan
         fields = '__all__'
+
+
+class CreateRoom(forms.ModelForm):
+    class Meta:
+        model = Room
+        fields = '__all__'
+
+
+class CreateScheduledSubject(forms.ModelForm):
+    class Meta:
+        model = ScheduledSubject
+        fields = ['room', 'teacher']
 

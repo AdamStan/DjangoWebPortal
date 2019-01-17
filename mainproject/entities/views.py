@@ -219,11 +219,15 @@ def show_generate_page(request):
             max_hour = request.POST.get("last_hour")
             semester_type = request.POST.get("semester_type")
             how_many_groups = request.POST.get("how_many_groups")
+            delete_on = request.POST.get('if_delete')
             if max_hour == "" or min_hour == "" or semester_type == "None" or how_many_groups == "":
                 fail_message = "Plans cannot be create with this values "
             else:
                 #max_hour=int(max_hour), min_hour=int(min_hour), semester=int(semester_type), number_of_groups=int(how_many_groups)
-                create_plans(max_hour=int(max_hour), min_hour=int(min_hour), semester=int(semester_type), number_of_groups=int(how_many_groups))
+                if delete_on:
+                    create_plans(max_hour=int(max_hour), min_hour=int(min_hour), semester=int(semester_type), number_of_groups=int(how_many_groups))
+                else:
+                    pass # create_plans_without_delete
                 s_message = "Everything went well, check plans in AllPlans tab"
         elif request.POST.get('action') == "improve":
             number_of_generations = request.POST.get('number_of_generation')

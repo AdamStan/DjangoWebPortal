@@ -39,8 +39,13 @@ class FieldOfStudy(models.Model):
 class Teacher(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True, related_name='professor_to_user')
     faculty = models.ForeignKey(Faculty, on_delete=var_on_delete)
+
     def toJSON(self):
         return json.dumps(self.__dict__)
+
+    def __str__(self):
+        return self.user.name + ', ' + self.user.surname
+
 
 class Subject(models.Model):
     name = models.CharField(max_length=128)
@@ -59,8 +64,12 @@ class Building(models.Model):
     city = models.CharField(max_length=32)
     numberOfBuilding = models.CharField(max_length=8)
     postalCode = models.CharField(max_length=8)
+
     def toJSON(self):
         return json.dumps(self.__dict__)
+
+    def __str__(self):
+        return self.name + ", " + self.street + ", " + self.city + ", " + self.numberOfBuilding + ", " + self.postalCode
 
 class Room(models.Model):
     id = models.CharField(primary_key=True, max_length=8)
@@ -77,8 +86,12 @@ class Room(models.Model):
         default=None,
         null=True,
     )
+
     def toJSON(self):
         return json.dumps(self.__dict__)
+
+    def __str__(self):
+        return self.id
 
 class Plan(models.Model):
     title = models.CharField(max_length=32)
