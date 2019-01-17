@@ -8,7 +8,9 @@
 {% with url_address="entities:model_"|add:model_name.lower %}
 <form action="{% url url_address %}" method="post">
     {% csrf_token %}
-    {{ form_my.as_p }}
+    <table>
+        {{ form_my.as_table }}
+    </table>
     <input type="text" name="object_id" value="{{ object_id }} " hidden>
     <input class="btn background-second" name="action" value="{{ act }}" type="submit">
 </form>

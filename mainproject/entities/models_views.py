@@ -71,6 +71,49 @@ def show_faculty(request):
     fail_message = ""
     model_name = "Faculty"
     columns = ['name', 'description']
+
+    if request.method == "POST":
+        action = request.POST.get('action')
+        id = request.POST.get('object_id')
+        if action == "Add":
+            form = forms.CreateFaculty()
+            return render(request, 'admin/edit_models/forms_model/add_model.html', {"model_name": model_name,
+                                                                                    "form_my": form, "act": "Set"})
+        elif action == "Edit" and id:
+            instance = Faculty.objects.filter(id=id)[0]
+            form = forms.CreateFaculty(instance=instance)
+            return render(request, 'admin/edit_models/forms_model/add_model.html', {"object_id": id, "model_name": model_name,
+                                                                             "form_my": form, "act": "Update"})
+        elif action == "Delete" and id:
+            faculty_to_delete = Faculty.objects.filter(id=id)
+            fields = FieldOfStudy.objects.filter(faculty=faculty_to_delete[0])
+            for field in fields:
+                field.faculty = None
+                field.save()
+            teachers = Teacher.objects.filter(faculty=faculty_to_delete[0])
+            for teacher in teachers:
+                teacher.faculty = None
+                teacher.save()
+            faculty_to_delete[0].delete()
+
+            faculties = Faculty.objects.all()
+            s_message = "Faculty was deleted"
+        elif action == "Set":
+            form = forms.CreateFaculty(request.POST)
+            if form.is_valid():
+                form.save()
+            faculties = Faculty.objects.all()
+        elif action == "Update":
+            instance = get_object_or_404(Faculty, id=id)
+            form = forms.CreateFaculty(request.POST)
+            if form.is_valid():
+                new_faculty = form.save(commit=False)
+                new_faculty.id = instance.id
+                new_faculty.save()
+            faculties = Faculty.objects.all()
+        else:
+            fail_message = "You have to choose field of study to " + action.lower()
+
     return render(request, 'admin/edit_models/tab_faculty.html', {"objects": faculties, "s_message": s_message,
                                                                   "fail_message": fail_message, "model_name": model_name, "columns": columns})
 
@@ -90,7 +133,7 @@ def show_fieldofstudy(request):
             pass
         elif action == "Edit" and id:
             pass
-        elif action == "Delete" and if:
+        elif action == "Delete" and id:
             pass
         elif action == "Set":
             pass
@@ -119,7 +162,7 @@ def show_plan(request):
             pass
         elif action == "Edit" and id:
             pass
-        elif action == "Delete" and if:
+        elif action == "Delete" and id:
             pass
         elif action == "Set":
             pass
@@ -148,7 +191,7 @@ def show_room(request):
             pass
         elif action == "Edit" and id:
             pass
-        elif action == "Delete" and if:
+        elif action == "Delete" and id:
             pass
         elif action == "Set":
             pass
@@ -199,7 +242,7 @@ def show_subject(request):
             pass
         elif action == "Edit" and id:
             pass
-        elif action == "Delete" and if:
+        elif action == "Delete" and id:
             pass
         elif action == "Set":
             pass
