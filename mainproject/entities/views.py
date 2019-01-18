@@ -225,7 +225,8 @@ def show_generate_page(request):
             else:
                 #max_hour=int(max_hour), min_hour=int(min_hour), semester=int(semester_type), number_of_groups=int(how_many_groups)
                 if delete_on:
-                    create_plans(max_hour=int(max_hour), min_hour=int(min_hour), semester=int(semester_type), number_of_groups=int(how_many_groups))
+                    create_plans(max_hour=int(max_hour), min_hour=int(min_hour), semester=int(semester_type),
+                                 number_of_groups=int(how_many_groups))
                 else:
                     pass # create_plans_without_delete
                 s_message = "Everything went well, check plans in AllPlans tab"

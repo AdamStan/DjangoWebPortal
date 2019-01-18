@@ -125,6 +125,9 @@ class ScheduledSubject(models.Model):
     def toJSON(self):
         return json.dumps(self.__dict__)
 
+    def __str__(self):
+        return self.plan.title + ", " + self.subject.name
+
 class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True, related_name='student_to_user')
     fieldOfStudy = models.ForeignKey(FieldOfStudy, on_delete=var_on_delete)

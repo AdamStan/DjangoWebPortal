@@ -270,16 +270,28 @@ def show_scheduledsubject(request):
 
         if action == "Edit" and id:
             instance = ScheduledSubject.objects.get(id=id)
-            form = forms.CreateScheduledSubject(instance=instance)
-            return render(request, 'admin/edit_models/forms_model/add_model.html',
-                          {"object_id": id, "model_name": model_name,
-                           "form_my": form, "act": "Update"})
+            rooms = Room.objects.filter(room_type=instance.type)
+            teachers = instance.subject.teachers.exclude(user_id=instance.teacher.user.id)
+            return render(request, 'admin/edit_models/forms_model/update_schsubject.html',
+                          {"object_id": id, "model_name": model_name, "rooms": rooms, "teachers": teachers,
+                           "subject": instance, "act": "Update"})
         elif action == "Update":
-            form = forms.CreateScheduledSubject(request.POST)
-            if form.is_valid():
-                buff = form.save(commit=False)
-                buff.id = id
-                buff.save()
+            room_id = request.POST.get('room_id')
+            teacher_id = request.POST.get('teacher_id')
+            object_id = request.POST.get('object_id')
+            new_room = Room.objects.get(id=room_id)
+            new_teacher = Teacher.objects.get(user_id=teacher_id)
+            sch_subject = ScheduledSubject.objects.get(id=object_id)
+            if sch_subject.type == "LEC":
+                sch_subjects_to_edit = ScheduledSubject.objects.filter(subject=sch_subject.subject, type="LEC")
+                for ss in sch_subjects_to_edit:
+                    ss.room = new_room
+                    ss.teacher = new_teacher
+                    ss.save()
+            else:
+                sch_subject.room = new_room
+                sch_subject.teacher = new_teacher
+                sch_subject.save()
             s_message = "You've changed classes successfully"
         else:
             fail_message = "You have to choose field of study to " + action.lower()
