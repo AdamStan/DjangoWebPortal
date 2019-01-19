@@ -3,7 +3,8 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render
 from accounts.models import User
 from .models import *
-from .algorithm import create_plans, check_subject_to_subject_time_exclude, check_teacher_can_teach_exclude, check_room_is_not_taken_exclude
+from .algorithm import create_plans, check_subject_to_subject_time_exclude, \
+    check_teacher_can_teach_exclude, check_room_is_not_taken_exclude, create_plans_without_delete
 from .improvement import make_improvement
 from django.http import HttpResponse
 
@@ -224,12 +225,18 @@ def show_generate_page(request):
                 fail_message = "Plans cannot be create with this values "
             else:
                 #max_hour=int(max_hour), min_hour=int(min_hour), semester=int(semester_type), number_of_groups=int(how_many_groups)
-                if delete_on:
-                    create_plans(max_hour=int(max_hour), min_hour=int(min_hour), semester=int(semester_type),
-                                 number_of_groups=int(how_many_groups))
-                else:
-                    pass # create_plans_without_delete
-                s_message = "Everything went well, check plans in AllPlans tab"
+                print(delete_on)
+                try:
+                    if delete_on:
+                        create_plans(max_hour=int(max_hour), min_hour=int(min_hour), semester=int(semester_type),
+                                     number_of_groups=int(how_many_groups))
+                    else:
+                        # create_plans_without_delete
+                        create_plans_without_delete(min_hour=int(min_hour), max_hour=int(max_hour))
+                    s_message = "Everything went well, check plans in AllPlans tab"
+                except:
+                    fail_message = "Something went wrong, please try again"
+
         elif request.POST.get('action') == "improve":
             number_of_generations = request.POST.get('number_of_generation')
             make_improvement(int(number_of_generations))

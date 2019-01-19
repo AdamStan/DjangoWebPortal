@@ -308,6 +308,30 @@ def create_plans(number_of_groups=3, semester=1, min_hour=8, max_hour=19):
         print(str(e))
         raise e
 
+
+@transaction.atomic
+def create_plans_without_delete(number_of_groups=3, semester=1, min_hour=8, max_hour=19):
+    sid = transaction.savepoint()
+    # in this moment we have to create plans
+    try:
+        clean_hours_and_teacher()
+        create_first_plan(min_hour=min_hour, max_hour=max_hour)
+
+        transaction.savepoint_commit(sid)
+    except Exception as e:
+        transaction.savepoint_rollback(sid)
+        print(str(e))
+        raise e
+
+def clean_hours_and_teacher():
+    for ss in ScheduledSubject.objects.all():
+        ss.dayOfWeek = None
+        ss.whenStart = None
+        ss.whenFinnish = None
+        ss.teacher = None
+        ss.room = None
+        ss.save()
+
 def show_scheduled_subject(scheduled_subjects):
     for ss in scheduled_subjects:
         print("Subject's name: " + ss.subject.name)

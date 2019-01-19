@@ -200,10 +200,25 @@ def show_plan(request):
             ScheduledSubject.objects.filter(plan=plan_to_delete).delete()
             plan_to_delete.delete()
             plans = Plan.objects.all()
+            s_message = "Plan was deleted successfully"
         elif action == "Set":
             form = forms.CreatePlan(request.POST)
             if form.is_valid():
-                form.save()
+                plan_saved = form.save()
+                subjects = Subject.objects.filter(fieldOfStudy=plan_saved.fieldOfStudy, semester=plan_saved.semester)
+                for s in subjects:
+                    if s.lecture_hours:
+                        buff = ScheduledSubject()
+                        buff.subject = s
+                        buff.plan = plan_saved
+                        buff.type = ScheduledSubject.LECTURE
+                        buff.save()
+                    if s.laboratory_hours:
+                        buff = ScheduledSubject()
+                        buff.subject = s
+                        buff.plan = plan_saved
+                        buff.type = ScheduledSubject.LABORATORY
+                        buff.save()
             plans = Plan.objects.all()
             s_message = "You've added plan successfully"
         elif action == "Update":
@@ -362,7 +377,6 @@ def show_teacher_to_subject(request, subject=None):
             subject = Subject.objects.get(id=subject_id)
             subject.teachers.remove(teacher_to_delete)
             subject.save()
-            s_message = "Deleted"
         elif action == "Add":
             subject_id = request.POST.get("subject_id")
             subject = Subject.objects.get(id=subject_id)
