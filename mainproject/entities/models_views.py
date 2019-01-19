@@ -1,6 +1,6 @@
 from datetime import time
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from setuptools.command.rotate import rotate
 
 from .views import test_user_is_admin, forbidden
@@ -300,6 +300,7 @@ def show_scheduledsubject(request):
                                                                            "fail_message": fail_message, "model_name": model_name,
                                                                            "columns": columns})
 
+@user_passes_test(test_user_is_admin, login_url=forbidden)
 def show_subject(request):
     subjects = Subject.objects.all()
     s_message = ""
@@ -311,21 +312,70 @@ def show_subject(request):
         action = request.POST.get('action')
         id = request.POST.get('object_id')
         if action == "Add":
-            pass
+            form = forms.CreateSubject()
+            return render(request, 'admin/edit_models/forms_model/add_model.html', {"model_name": model_name,
+                                                                                    "form_my": form, "act": "Set"})
         elif action == "Edit" and id:
-            pass
+            instance = Subject.objects.get(id=id)
+            return render(request, 'admin/edit_models/forms_model/update_subject.html', {"model_name": model_name, "object_id": id,
+                                                                                    "object": instance, "act": "Update"})
+        elif action == "Edit_teachers" and id:
+            instance = Subject.objects.get(id=id)
+            return render(request, 'admin/edit_models/forms_model/edit_teacher_to_subject.html', {"subject": instance})
         elif action == "Delete" and id:
-            pass
+            try:
+                Subject.objects.filter(id=id).delete()
+                s_message = "Subject was successfully deleted"
+            except:
+                fail_message = "First delete plans!"
         elif action == "Set":
-            pass
+            form = forms.CreateSubject(request.POST)
+            if form.is_valid():
+                form.save()
+                s_message = "Subject was added successfully"
         elif action == "Update":
-            pass
+            lecture_hours = request.POST.get('lecture_hours')
+            laboratory_hours = request.POST.get('laboratory_hours')
+            semester = request.POST.get('semester')
+            temp = Subject.objects.get(id=id)
+            temp.lecture_hours = lecture_hours
+            temp.laboratory_hours = laboratory_hours
+            temp.semester = semester
+            temp.save()
+            subjects = Subject.objects.all()
         else:
-            fail_message = "You have to choose field of study to " + action.lower()
+            fail_message = "You have to choose subject to " + action.lower()
 
     return render(request, 'admin/edit_models/tab_subject.html', {"objects": subjects, "s_message": s_message,
                                                                   "fail_message": fail_message, "model_name": model_name,
                                                                   "columns": columns})
+
+
+@user_passes_test(test_user_is_admin, login_url=forbidden)
+def show_teacher_to_subject(request, subject=None):
+    if request.POST:
+        action = request.POST.get("action")
+        id = request.POST.get("user_id")
+        if action == "Delete":
+            teacher_to_delete = Teacher.objects.get(user_id=id)
+            subject_id = request.POST.get("subject_id")
+            subject = Subject.objects.get(id=subject_id)
+            subject.teachers.remove(teacher_to_delete)
+            subject.save()
+            s_message = "Deleted"
+        elif action == "Add":
+            subject_id = request.POST.get("subject_id")
+            subject = Subject.objects.get(id=subject_id)
+            teachers = Teacher.objects.all()
+            return render(request, 'admin/edit_models/forms_model/add_teacher_to_subject.html', {"teachers": teachers, "subject": subject})
+        elif action == "Save":
+            teacher_id = request.POST.get("teacher_id")
+            teacher = Teacher.objects.get(user_id=teacher_id)
+            subject_id = request.POST.get("subject_id")
+            subject = Subject.objects.get(id=subject_id)
+            subject.teachers.add(teacher)
+            subject.save()
+        return render(request, 'admin/edit_models/forms_model/edit_teacher_to_subject.html', {"subject": subject})
 
 
 @user_passes_test(test_user_is_admin, login_url=forbidden)

@@ -111,3 +111,11 @@ L
 mainproject/entities/apps.py,3\7\376439693c0b41dae6777cf365483a056ffc3bb1
 M
 mainproject/entities/admin.py,2\7\27ba20ad14aa130739d30c29795b1fabd69fa3fe
+ƒ
+Smainproject/entities/templates/admin/edit_models/forms_model/update_schsubject.html,b\7\b7ec1dcce466f916d72bdb55a2e0887a38bf297f
+€
+Pmainproject/entities/templates/admin/edit_models/forms_model/update_subject.html,9\d\9d118c237753854366c9c97986a856e0662e0733
+‰
+Ymainproject/entities/templates/admin/edit_models/forms_model/edit_teacher_to_subject.html,b\9\b9b25722c1c7e6a35e0924b9919780e79763c4d1
+ˆ
+Xmainproject/entities/templates/admin/edit_models/forms_model/add_teacher_to_subject.html,b\f\bfe70cd6873d0d1f1d0c5567513a6e6b7c43afe3

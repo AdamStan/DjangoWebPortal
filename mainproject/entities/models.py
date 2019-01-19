@@ -34,7 +34,7 @@ class FieldOfStudy(models.Model):
         return json.dumps(self.__dict__)
 
     def __str__(self):
-        return self.name + ", " + str(self.faculty)
+        return self.name + ", " + str(self.faculty) + ", " + self.degree
 
 class Teacher(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True, related_name='professor_to_user')
@@ -57,6 +57,9 @@ class Subject(models.Model):
 
     def toJSON(self):
         return json.dumps(self.__dict__)
+
+    def __str__(self):
+        return self.name + ", " + self.fieldOfStudy.name
 
 class Building(models.Model):
     name = models.CharField(max_length=64)

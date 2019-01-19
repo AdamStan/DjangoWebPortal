@@ -37,3 +37,9 @@ class CreateScheduledSubject(forms.ModelForm):
         model = ScheduledSubject
         fields = ['room', 'teacher']
 
+
+class CreateSubject(forms.ModelForm):
+    class Meta:
+        model = Subject
+        fields = '__all__'
+

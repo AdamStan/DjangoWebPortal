@@ -29,6 +29,7 @@ tab_models_urls = [
     path('admin/models/student', models_views.show_student, name='model_student'),
     path('admin/models/teacher', models_views.show_teacher, name='model_teacher'),
     path('admin/models/user', models_views.show_user, name='model_user'),
+    path('admin/models/teacher_to_subject', models_views.show_teacher_to_subject, name="model_teachertosubject")
 ]
 
 urlpatterns += tab_models_urls
