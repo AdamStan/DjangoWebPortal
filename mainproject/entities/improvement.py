@@ -3,7 +3,7 @@ from numpy import array, nditer, zeros
 from random import randint, choice
 from datetime import time
 from copy import deepcopy
-from .algorithm import check_room_is_not_taken_exclude, check_teacher_can_teach_exclude, check_subject_to_subject_time
+from .algorithm import AlgorithmManager
 from .models import Room, Teacher, ScheduledSubject, Plan
 
 
@@ -71,9 +71,9 @@ class ImprovementManagerQuerySets:
                 value_after = self.value_for_plan(subjects_in_plan=self.scheduled_subjects.filter(plan=plan_to_change))
                 print("New value:" + str(value_after))
 
-                case1 = check_room_is_not_taken_exclude(subject_to_change, subject_to_change.room)
-                case2 = check_teacher_can_teach_exclude(subject_to_change, subject_to_change.teacher)
-                case3 = check_subject_to_subject_time(subject_to_change, self.scheduled_subjects.filter(
+                case1 = AlgorithmManager.check_room_is_not_taken_exclude(subject_to_change, subject_to_change.room)
+                case2 = AlgorithmManager.check_teacher_can_teach_exclude(subject_to_change, subject_to_change.teacher)
+                case3 = AlgorithmManager.check_subject_to_subject_time(subject_to_change, self.scheduled_subjects.filter(
                     plan=plan_to_change).exclude(id=subject_to_change.id))
                 if case1 and case2 and case3 and value_before > value_after:
                     print("Improving can be performed...")
@@ -120,9 +120,9 @@ class ImprovementManagerQuerySets:
 
                 all_cases = True
                 for sub in others_lectures:
-                    case1 = check_room_is_not_taken_exclude(sub, sub.room)
-                    case2 = check_teacher_can_teach_exclude(sub, sub.teacher)
-                    case3 = check_subject_to_subject_time(
+                    case1 = AlgorithmManager.check_room_is_not_taken_exclude(sub, sub.room)
+                    case2 = AlgorithmManager.check_teacher_can_teach_exclude(sub, sub.teacher)
+                    case3 = AlgorithmManager.check_subject_to_subject_time(
                         sub,self.scheduled_subjects.filter(plan=sub.plan).exclude(id=subject_to_change.id))
                     all_cases = all_cases and case1 and case2 and case3
 
@@ -434,3 +434,4 @@ class ImprovementManager:
             show_list += "[Subject:: " + str(subject.dayOfWeek) + " " + \
                          str(subject.whenStart) + " " + str(subject.whenFinnish) + "]"
         print(show_list)
+
