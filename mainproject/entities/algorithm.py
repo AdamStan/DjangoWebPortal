@@ -10,16 +10,25 @@ How_long will be calculated from lecture_hours/laboratory
 We will have to put as parameter, date for first day of teaching
 We also have to choose rooms, I know how to do it, but I am so scary about it
 3 functions:
-check it can be with other subjects in plans <- FIRST, not done yet
+check it can be with other subjects in plans 
 check it can be with other teacher's subjects
 check it can be with other room's subjects
 '''
 
-class AlgorithmManager:
+
+class Singleton(type):
+    _instances = {}
+
+    def __call__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
+        return cls._instances[cls]
+
+
+class AlgorithmManager(metaclass=Singleton):
     bachelor_semesters = [1, 2, 3, 4, 5, 6, 7]
     master_semesters = [1, 2, 3]
     only_master_semesters = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-    plans_classification = []
 
 def create_skeleton(number_of_group = 3, semester = 1):
     """ Creates plans with empty (without hours) scheduled_subjects
@@ -115,6 +124,14 @@ def set_lectures_time(min_hour, max_hour, days, weeks):
                 continue
 
 def set_laboratory_time(min_hour, max_hour, days, weeks):
+    """
+    it schedules laboratories
+    :param min_hour: first hour when event can take place
+    :param max_hour: last hour ...
+    :param days: days when event can set, days as list for example: [1, 2, 3, 4, 5] where 1 = monday
+    :param weeks: how many weeks semester will take.
+    :return: nothing
+    """
     laboratories = ScheduledSubject.objects.filter(type="LAB")
     for s in laboratories:
         s.how_long = int(s.subject.laboratory_hours / weeks)
