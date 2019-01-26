@@ -226,16 +226,16 @@ def show_generate_page(request):
             else:
                 #max_hour=int(max_hour), min_hour=int(min_hour), semester=int(semester_type), number_of_groups=int(how_many_groups)
                 print(delete_on)
-                try:
-                    if delete_on:
-                        create_plans(max_hour=int(max_hour), min_hour=int(min_hour), semester=int(semester_type),
-                                     number_of_groups=int(how_many_groups))
-                    else:
-                        # create_plans_without_delete
-                        create_plans_without_delete(min_hour=int(min_hour), max_hour=int(max_hour))
-                    s_message = "Everything went well, check plans in AllPlans tab"
-                except:
-                    fail_message = "Something went wrong, please try again"
+                # try:
+                if delete_on:
+                    create_plans(max_hour=int(max_hour), min_hour=int(min_hour), semester=int(semester_type),
+                                 number_of_groups=int(how_many_groups))
+                else:
+                    # create_plans_without_delete
+                    create_plans_without_delete(min_hour=int(min_hour), max_hour=int(max_hour))
+                s_message = "Everything went well, check plans in AllPlans tab"
+                # except:
+                #    fail_message = "Something went wrong, please try again"
 
         elif request.POST.get('action') == "improve":
             number_of_generations = request.POST.get('number_of_generation')

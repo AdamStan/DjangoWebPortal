@@ -87,18 +87,19 @@ def set_lectures_time(min_hour, max_hour, days, weeks):
             list_lectures.append(slecture)
 
         s.how_long = int(s.subject.lecture_hours / weeks)
-
-        if list_lectures[0].whenStart is not None:
-            print(str(list_lectures[0].dayOfWeek) + " " + str(list_lectures[0].subject.semester) + " " + str(
-                list_lectures[0].whenStart) + " " + list_lectures[0].teacher.user.surname + " " + list_lectures[0].subject.name)
-            s.dayOfWeek = list_lectures[0].dayOfWeek
-            s.whenStart = list_lectures[0].whenStart
-            s.whenFinnish = list_lectures[0].whenFinnish
-            s.teacher = list_lectures[0].teacher
+        # print("::LECTURES::")
+        # show_scheduled_subjects(list_lectures)
+        i = search_first_not_null_hour(list_lectures)
+        # print(i)
+        if i is not None:
+            s.dayOfWeek = list_lectures[i].dayOfWeek
+            s.whenStart = list_lectures[i].whenStart
+            s.whenFinnish = list_lectures[i].whenFinnish
+            s.teacher = list_lectures[i].teacher
             s.save()
             flag = False
 
-        scheduled_subjects_in_plan = ScheduledSubject.objects.filter(plan=s.plan)
+        scheduled_subjects_in_plan = ScheduledSubject.objects.filter(plan=s.plan).order_by("plan__id")
         while flag:
             try:
                 when_start = randint(min_hour, max_hour)
@@ -187,7 +188,21 @@ def set_teacher_to_subjects(s):
 
     raise Exception('Properly teacher was not found for scheduled subject: ' + s.subject.name + " - " + s.type + ", from: " + s.plan.title)
 
+def search_first_not_null_hour(lectures_list):
+    i = 0
+    for sub in lectures_list:
+        if sub.whenStart:
+            return i
+        i += 1
+    return None
 
+def search_first_not_null_room(lectures_list):
+    i = 0
+    for sub in lectures_list:
+        if sub.room:
+            return i
+        i += 1
+    return None
 
 def check_teacher_can_teach(scheduled_subject, teacher):
     subjects_in_plan = ScheduledSubject.objects.all().filter(teacher=teacher)
@@ -236,13 +251,18 @@ def set_rooms_to_subjects(scheduled_subjects):
                 for slecture in lectures:
                     list_lectures.append(slecture)
 
-                if list_lectures[0].room:
-                    ss.room = list_lectures[0].room
+                show_scheduled_subjects(list_lectures)
+                i = search_first_not_null_room(list_lectures)
+                print(i)
+                if i is not None:
+                    ss.room = list_lectures[i].room
+                    ss.save()
                     break
                 else:
                     room = choice(rooms_lec)
                     if check_room_is_not_taken(ss, room):
                         ss.room = room
+                        ss.save()
                         break
                     else:
                         rooms_lec.remove(room)
@@ -251,11 +271,12 @@ def set_rooms_to_subjects(scheduled_subjects):
                 room = choice(rooms_lab)
                 if check_room_is_not_taken(ss, room) :
                     ss.room = room
+                    ss.save()
                     break
                 else:
                     rooms_lab.remove(room)
         if ss.room is None:
-            raise Exception('There is no properly room for: ' + ss.subject.name + ", " + ss.plan.title)
+            raise Exception('There is no properly room for: ' + ss.subject.name + ", " + ss.plan.title + ", " + ss.type)
 
         ss.save()
 
@@ -332,10 +353,9 @@ def clean_hours_and_teacher():
         ss.room = None
         ss.save()
 
-def show_scheduled_subject(scheduled_subjects):
+
+def show_scheduled_subjects(scheduled_subjects):
     for ss in scheduled_subjects:
-        print("Subject's name: " + ss.subject.name)
-        print("When started: " + str(ss.whenStart))
-        print("Which day: " + str(ss.dayOfWeek))
-        print("Plan: " + ss.plan.title)
-        print("How long: " + str(ss.how_long))
+        print(ss.subject.name + " " + str(ss.whenStart) + " " + str(ss.dayOfWeek) + " " + ss.plan.title +
+              "p_id_" + str(ss.plan.id) + " " + str(ss.teacher) + " " + str(ss.room))
+
