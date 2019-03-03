@@ -90,17 +90,20 @@ class AlgorithmManager(metaclass=Singleton):
         lectures = ScheduledSubject.objects.filter(type="LEC")
         for s in lectures:
             flag = True
+            # wyszukanie wszystkich wykładów z danego przedmiotu
             diff_lectures = ScheduledSubject.objects.filter(subject=s.subject, type=s.type).order_by("id")
             list_lectures = []
-            for slecture in diff_lectures:
-                list_lectures.append(slecture)
+            for s_lecture in diff_lectures:
+                list_lectures.append(s_lecture)
 
             s.how_long = int(s.subject.lecture_hours / weeks)
-            # print("::LECTURES::")
-            # show_scheduled_subjects(list_lectures)
+            # wyszukanie wykładu ktory ma juz godzine rozpoczecia, zwraca jego indeks na liscie
+            # jesli nie to zwrocony zostaje None
             i = AlgorithmManager.search_first_not_null_hour(list_lectures)
-            # print(i)
+
             if i is not None:
+                # przepisanie danych wykładu zapisanego wczesniej, z tego samego przedmiotu
+                # czyli tez z roku studiow i semestru
                 s.dayOfWeek = list_lectures[i].dayOfWeek
                 s.whenStart = list_lectures[i].whenStart
                 s.whenFinnish = list_lectures[i].whenFinnish
@@ -108,6 +111,7 @@ class AlgorithmManager(metaclass=Singleton):
                 s.save()
                 flag = False
 
+            # jesli to jest pierwszy wyklad to zostanie mu przypisana godzina rozpoczecia, zakonczenia oraz prowadzacy
             scheduled_subjects_in_plan = ScheduledSubject.objects.filter(plan=s.plan).order_by("plan__id")
             while flag:
                 try:

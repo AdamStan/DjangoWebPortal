@@ -53,15 +53,7 @@
           result.setDate(result.getDate() + days);
           return result;
         }
-        days = {
-            "monday": 0,
-            "tuesday": 1,
-            "wednesday": 2,
-            "thursday": 3,
-            "friday": 4,
-            "saturday": 5,
-            "sunday": 6,
-        }
+        days = {"monday": 0, "tuesday": 1, "wednesday": 2, "thursday": 3, "friday": 4, "saturday": 5, "sunday": 6}
 
         for(var object of array_of_objects){
             var date = getMonday(new Date("2018-12-03"));
@@ -74,8 +66,8 @@
 
             if(dd<10) { dd = '0'+dd }
             if(mm<10) { mm = '0'+mm }
-            if(hh<10){ hh = '0'+hh; }
-            if(hh_finish<10){ hh_finish = '0'+hh_finish; }
+            if(hh<10) { hh = '0'+hh }
+            if(hh_finish<10) { hh_finish = '0' + hh_finish }
 
             date_str1 = yyyy + '-' + mm + '-' + dd + ' ' + hh +':00:00';
             date_str2 = yyyy + '-' + mm + '-' + dd + ' ' + hh_finish +':00:00';
@@ -89,9 +81,6 @@
                 }
             );
         }
-        for(var o of event_list){
-            console.log(o);
-        }
 
         $('#calendar').fullCalendar({
             allDaySlot: false,
@@ -104,13 +93,13 @@
             },
             businessHours: {
                 // days of week. an array of zero-based day of week integers (0=Sunday)
-                start: '8:00', // a start time (10am in this example)
-                end: '21:00', // an end time (6pm in this example)
+                start: '8:00', // a start time (8am in this example)
+                end: '21:00', // an end time (9pm in this example)
             },
             minTime: "8:00",
             maxTime: "21:00",
             defaultDate: '2018-12-02',
-            navLinks: false, // can click day/week names to navigate views
+            navLinks: false, // can not click day/week names to navigate views
             editable: true,
             eventLimit: false, // allow "more" link when too many events
             events: event_list,

@@ -2,8 +2,18 @@ from django.test import TestCase
 from ..models import *
 from accounts.models import User
 
+
 # Create your tests here.
 class TestEntities(TestCase):
+    subjects_names = [
+        "Mathematics 1",
+        "Safety at Work and Ergonomics",
+        "Physics",
+        "Introduction to Computer Science",
+        "Scripting Languages",
+        "Algorithms and Data Structures"
+    ]
+
     def setUp(self):
         faculty1 = Faculty(name="EEIA")
         faculty1.save()
@@ -23,22 +33,22 @@ class TestEntities(TestCase):
         subject_list = []
         # 1st semester - field_of_study1
         subject_list.append(
-            Subject(name="Mathematics 1", semester=1, fieldOfStudy=field_of_study, lecture_hours=30,laboratory_hours=30)
+            Subject(name=TestEntities.subjects_names[0], semester=1, fieldOfStudy=field_of_study, lecture_hours=30,laboratory_hours=30)
         )
         subject_list.append(
-            Subject(name="Safety at Work and Ergonomics", semester=1, fieldOfStudy=field_of_study, lecture_hours=30,laboratory_hours=30)
+            Subject(name=TestEntities.subjects_names[1], semester=1, fieldOfStudy=field_of_study, lecture_hours=30,laboratory_hours=30)
         )
         subject_list.append(
-            Subject(name="Physics", semester=1, fieldOfStudy=field_of_study, lecture_hours=30, laboratory_hours=30)
+            Subject(name=TestEntities.subjects_names[2], semester=1, fieldOfStudy=field_of_study, lecture_hours=30, laboratory_hours=30)
         )
         subject_list.append(
-            Subject(name="Introduction to Computer Science", semester=1, fieldOfStudy=field_of_study, lecture_hours=30,laboratory_hours=30)
+            Subject(name=TestEntities.subjects_names[3], semester=1, fieldOfStudy=field_of_study, lecture_hours=30,laboratory_hours=30)
         )
         subject_list.append(
-            Subject(name="Scripting Languages", semester=1, fieldOfStudy=field_of_study, lecture_hours=30,laboratory_hours=30)
+            Subject(name=TestEntities.subjects_names[4], semester=1, fieldOfStudy=field_of_study, lecture_hours=30,laboratory_hours=30)
         )
         subject_list.append(
-            Subject(name="Algorithms and Data Structures", semester=1, fieldOfStudy=field_of_study, lecture_hours=30,laboratory_hours=3)
+            Subject(name=TestEntities.subjects_names[5], semester=1, fieldOfStudy=field_of_study, lecture_hours=30,laboratory_hours=3)
         )
 
         for sub in subject_list:
@@ -91,3 +101,13 @@ class TestEntities(TestCase):
             faculty = Faculty.objects.get(name="Does not exist")
         except Exception:
             self.assertEquals(True, True)
+
+    def test_teacher(self):
+        teacher = Teacher.objects.get(user__username="teacher_x")
+        self.assertIsNotNone(teacher)
+
+    def test_subjects(self):
+        for name in TestEntities.subjects_names:
+            subject = Subject.objects.get(name=name)
+            self.assertIsNotNone(subject)
+

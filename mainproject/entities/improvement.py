@@ -8,9 +8,6 @@ from .models import Room, Teacher, ScheduledSubject, Plan
 
 
 class ImprovementManagerQuerySets:
-    """
-    It can improve lectures too, but I doesn't work at all...
-    """
     def __init__(self, plans, sch_subjects, teachers, rooms):
         self.scheduled_subjects = sch_subjects
         self.plans = plans
@@ -49,12 +46,6 @@ class ImprovementManagerQuerySets:
             value_before = self.value_for_plan(subjects_in_plan=self.scheduled_subjects.filter(plan=plan_to_change))
             value_after = 9999
             print("Value before: " + str(value_before))
-            # 4.0.1 zapisujemy stare dane
-            old = {
-                "start_hour": subject_to_change.whenStart,
-                "finish_hour": subject_to_change.whenFinnish,
-                "day": subject_to_change.dayOfWeek,
-            }
             # 4.1 jesli jest to lab
             if subject_to_change.type == "LAB":
                 self.how_many_laboratory += 1
@@ -105,7 +96,7 @@ class ImprovementManagerQuerySets:
                     sub.whenFinnish = new_whenFinnish
                     sub.dayOfWeek = new_dayOfWeek
                     print(value)
-                    sub.save()  # to chyba nie działa
+                    sub.save()
 
                 print(":::AFTER:::")
                 for sub in others_lectures:
