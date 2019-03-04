@@ -1,11 +1,11 @@
 from datetime import time, datetime
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render
-from accounts.models import User
-from .models import *
+from .models import Student, Teacher, Plan, ScheduledSubject, Room
 from .algorithm import AlgorithmManager
 from .improvement import make_improvement
 from django.http import HttpResponse
+import json
 
 forbidden = "/entities/forbidden/"
 
@@ -39,54 +39,6 @@ def test_user_is_admin(user):
 
 def create_table_example():
     values = []
-    """
-    subject1 = SubjectExample()
-    subject1.id = 1
-    subject1.name = "Subject1"
-    subject1.whenStart = 9
-    subject1.how_long = 2
-    subject1.day = 'monday'
-
-    print(subject1.toJSON())
-    values.append(subject1.toJSON())
-
-    subject2 = SubjectExample()
-    subject2.id = 2
-    subject2.name = "Subject2"
-    subject2.whenStart = 11
-    subject2.how_long = 2
-    subject2.day = 'tuesday'
-
-    values.append(subject2.toJSON())
-
-    subject3 = SubjectExample()
-    subject3.id = 3
-    subject3.name = "Subject3"
-    subject3.whenStart = 13
-    subject3.how_long = 2
-    subject3.day = 'wednesday'
-
-    values.append(subject3.toJSON())
-
-    subject4 = SubjectExample()
-    subject4.id = 4
-    subject4.name = "Subject4"
-    subject4.whenStart = 15
-    subject4.how_long = 2
-    subject4.day = 'thursday'
-
-    values.append(subject4.toJSON())
-
-    subject5 = SubjectExample()
-    subject5.id = 5
-    subject5.name = "Subject5"
-    subject5.whenStart = 17
-    subject5.how_long = 2
-    subject5.day = 'friday'
-
-    values.append(subject5.toJSON())
-    """
-
     return {'values': values}
 
 def get_plans():
@@ -172,7 +124,7 @@ def show_student_plans(request):
     else:
         parameters = create_table_example()
 
-    return render(request, 'admin/timetables.html', {"values": parameters['values'], "plans": plans, "plan_title":plan_title,"type":"student"});
+    return render(request, 'admin/timetables.html', {"values": parameters['values'], "plans": plans, "plan_title":plan_title,"type":"student"})
 
 
 def show_teachers_plans(request):
@@ -190,7 +142,7 @@ def show_teachers_plans(request):
         teachers_boxes.append(TeacherBox())
         teachers_boxes[-1].id = t.user.id
         teachers_boxes[-1].title = t.user.surname + ", " + t.user.name
-    return render(request, 'admin/timetables.html', {"values": parameters['values'], "plans": teachers_boxes , "plan_title":plan_title, "type": "teacher"});
+    return render(request, 'admin/timetables.html', {"values": parameters['values'], "plans": teachers_boxes , "plan_title":plan_title, "type": "teacher"})
 
 
 def show_rooms_plans(request):
@@ -202,7 +154,7 @@ def show_rooms_plans(request):
         parameters, plan_title = create_table_for_room(value)
     else:
         parameters = create_table_example()
-    return render(request, 'admin/timetables.html',{"values": parameters['values'], "plans": plans, "plan_title": plan_title, "type":"room"});
+    return render(request, 'admin/timetables.html',{"values": parameters['values'], "plans": plans, "plan_title": plan_title, "type":"room"})
 
 
 def show_forbidden(request):
@@ -360,4 +312,4 @@ def show_choose_plan(request):
 
     print(parameters)
     return render(request, 'student/myplans.html',
-                  {"values": parameters['values'], "plans": plans, "plan_title": plan_title, "which_plan": plan_id, "message": message});
+                  {"values": parameters['values'], "plans": plans, "plan_title": plan_title, "which_plan": plan_id, "message": message})
