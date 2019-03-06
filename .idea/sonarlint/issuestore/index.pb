@@ -119,3 +119,22 @@ Pmainproject/entities/templates/admin/edit_models/forms_model/update_subject.htm
 Ymainproject/entities/templates/admin/edit_models/forms_model/edit_teacher_to_subject.html,b\9\b9b25722c1c7e6a35e0924b9919780e79763c4d1
 ˆ
 Xmainproject/entities/templates/admin/edit_models/forms_model/add_teacher_to_subject.html,b\f\bfe70cd6873d0d1f1d0c5567513a6e6b7c43afe3
+_
+/mainproject/entities/tests/test_models_views.py,f\b\fb3d4e6114fc4d2fd7aa57f687757e751047d9cd
+E
+mainproject/manage.py,5\a\5a27dec9fc6a31d57852bfaf9e16f4fb2f7f3d75
+S
+#mainproject/mainproject/__init__.py,0\9\09ce181c41006e8532bfe80e2fe9b7c1491c970e
+:
+
+.gitignore,a\5\a5cc2925ca8258af241be7e5b0381edf30266302
+[
++mainproject/entities/tests/test_settings.py,2\5\25e28789cc1e6b752ccd5566e1537677999541c5
+L
+mainproject/accounts/apps.py,1\f\1fc380262b1d610bc041c419716ab479a24d9e0a
+P
+ mainproject/entities/__init__.py,2\4\248e5c4c857abfa5a07225560ecc1cdf1394e3de
+[
++mainproject/entities/tests/test_entities.py,5\a\5ab2c1e327161eb7fe5d455c9942bc95e90f8a1d
+X
+(mainproject/entities/tests/test_views.py,b\d\bdd5b68acab998b274ea41efabbd9c3d79990de7

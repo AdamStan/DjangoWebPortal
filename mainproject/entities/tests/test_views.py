@@ -84,3 +84,20 @@ class TestViews(AbstractTestEntities):
         response = self.client.get('/entities/timetables/teacher')
         self.assertEqual(response.status_code, AbstractTestEntities.status_ok)
 
+    # TESTS FOR SHOW_PLANS: POST REQUESTS
+    def test_show_student_plans_get_plan(self):
+        plan = Plan.objects.get(title="CS1_01")
+        response = self.client.post('/entities/timetables/student', {"plan_id": plan.id})
+        self.assertEqual(response.status_code, AbstractTestEntities.status_ok)
+
+    def test_show_teacher_plans_get_plan(self):
+        teacher = Teacher.objects.get(user__username="teacher_x")
+        response = self.client.post('/entities/timetables/teacher', {"plan_id": teacher.user.id})
+        self.assertEqual(response.status_code, AbstractTestEntities.status_ok)
+
+    def test_show_room_plans_get_plan(self):
+        room = Room.objects.get(id="r001")
+        response = self.client.post('/entities/timetables/room', {"plan_id": room.id})
+        self.assertEqual(response.status_code, AbstractTestEntities.status_ok)
+
+    # TESTS FOR CHOOSING PLANS

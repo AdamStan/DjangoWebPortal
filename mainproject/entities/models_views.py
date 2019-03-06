@@ -389,7 +389,7 @@ def show_teacher_to_subject(request, subject=None):
             subject = Subject.objects.get(id=subject_id)
             subject.teachers.add(teacher)
             subject.save()
-        return render(request, 'admin/edit_models/forms_model/edit_teacher_to_subject.html', {"subject": subject})
+    return render(request, 'admin/edit_models/forms_model/edit_teacher_to_subject.html', {"subject": subject})
 
 
 @user_passes_test(test_user_is_admin, login_url=forbidden)

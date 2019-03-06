@@ -119,7 +119,6 @@ def show_student_plans(request):
     plan_title = ""
     if request.method == 'POST':
         value = request.POST.get('plan_id', None)
-        print("Which value was taken: " + value)
         parameters, plan_title = create_table(value)
     else:
         parameters = create_table_example()
@@ -132,7 +131,6 @@ def show_teachers_plans(request):
     plan_title = "Example"
     if request.method == 'POST':
         value = request.POST.get('plan_id', None)
-        print("Which value was taken: " + value)
         parameters, plan_title = create_table_for_teacher(value)
     else:
         parameters = create_table_example()
@@ -150,7 +148,6 @@ def show_rooms_plans(request):
     plan_title = "Example"
     if request.method == 'POST':
         value = request.POST.get('plan_id', None)
-        print("Which value was taken: " + value)
         parameters, plan_title = create_table_for_room(value)
     else:
         parameters = create_table_example()
