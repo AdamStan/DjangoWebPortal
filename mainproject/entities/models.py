@@ -4,6 +4,7 @@ from accounts.models import User # it works, really
 
 var_on_delete = models.SET_NULL = True
 
+
 # Create your models here.
 class Faculty(models.Model):
     name = models.CharField(max_length=64)
@@ -14,6 +15,7 @@ class Faculty(models.Model):
 
     def __str__(self):
         return self.name
+
 
 class FieldOfStudy(models.Model):
     name = models.CharField(max_length=64)
@@ -29,12 +31,24 @@ class FieldOfStudy(models.Model):
     degree = models.CharField(max_length=12, choices=DEGREE_CHOICES, default=BACHELOR)
     howManySemesters = models.IntegerField(default=0)
     type = models.CharField(max_length=32, default='full-time')
+    WINTER = "W"
+    SUMMER = "S"
+    SEMESTER_TYPES = {
+        (WINTER, 'winter'),
+        (SUMMER, 'summer')
+    }
+    whenDoesItStarts = models.CharField(
+        max_length=1,
+        choices=SEMESTER_TYPES,
+        default=WINTER
+    )
 
     def toJSON(self):
         return json.dumps(self.__dict__)
 
     def __str__(self):
         return self.name + ", " + str(self.faculty) + ", " + self.degree
+
 
 class Teacher(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True, related_name='professor_to_user')
@@ -61,6 +75,7 @@ class Subject(models.Model):
     def __str__(self):
         return self.name + ", " + self.fieldOfStudy.name
 
+
 class Building(models.Model):
     name = models.CharField(max_length=64)
     street = models.CharField(max_length=64)
@@ -73,6 +88,7 @@ class Building(models.Model):
 
     def __str__(self):
         return self.name + ", " + self.street + ", " + self.city + ", " + self.numberOfBuilding + ", " + self.postalCode
+
 
 class Room(models.Model):
     id = models.CharField(primary_key=True, max_length=8)
@@ -96,12 +112,15 @@ class Room(models.Model):
     def __str__(self):
         return self.id
 
+
 class Plan(models.Model):
     title = models.CharField(max_length=32)
     fieldOfStudy = models.ForeignKey(FieldOfStudy, on_delete=var_on_delete, default=None)
     semester = models.IntegerField(default=1)
+
     def toJSON(self):
         return json.dumps(self.__dict__)
+
 
 class ScheduledSubject(models.Model):
     subject = models.ForeignKey(Subject, on_delete=var_on_delete, default=None)
@@ -131,10 +150,24 @@ class ScheduledSubject(models.Model):
     def __str__(self):
         return self.plan.title + ", " + self.subject.name
 
+
 class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True, related_name='student_to_user')
     fieldOfStudy = models.ForeignKey(FieldOfStudy, on_delete=var_on_delete)
     semester = models.IntegerField(default=1)
     plan = models.ForeignKey(Plan, on_delete=var_on_delete, default=None, null=True)
+    indexNumber = models.IntegerField(unique=True, default=1)
+
+    def save(self, *args, **kwargs):
+        if self._state.adding:
+            last_id = self.objects.all().aggregate(largest=models.Max('indexNumber'))['largest']
+
+            # aggregate can return None! Check it first.
+            # If it isn't none, just use the last ID specified (which should be the greatest) and add one to it
+            if last_id is not None:
+                self.indexNumber = last_id + 1
+
+        super(Student, self).save(*args, **kwargs)
+
     def toJSON(self):
         return json.dumps(self.__dict__)
