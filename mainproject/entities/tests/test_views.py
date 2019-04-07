@@ -101,7 +101,3 @@ class TestViews(AbstractTestEntities):
         room = Room.objects.get(id="r001")
         response = self.client.post('/entities/timetables/room', {"plan_id": room.id})
         self.assertEqual(response.status_code, AbstractTestEntities.status_ok)
-
-    # TESTS FOR CHOOSING PLANS
-    def test_choose_plan(self):
-        plan = Plan.objects.post(title="CS1_01")

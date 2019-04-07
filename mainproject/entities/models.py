@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Max
 import json
 from accounts.models import User # it works, really
 
@@ -15,6 +16,10 @@ class Faculty(models.Model):
 
     def __str__(self):
         return self.name
+
+    def __eq__(self, other):
+        return self.name == other.name and \
+               self.description == other.description
 
 
 class FieldOfStudy(models.Model):
@@ -42,6 +47,14 @@ class FieldOfStudy(models.Model):
         choices=SEMESTER_TYPES,
         default=WINTER
     )
+
+    def __eq__(self, other):
+        return self.name == other.name and \
+               self.faculty == other.faculty and \
+               self.degree == other.degree and \
+               self.type == other.type and \
+               self.howManySemesters == other.howManySemesters and \
+               self.whenDoesItStarts == other.whenDoesItStarts
 
     def toJSON(self):
         return json.dumps(self.__dict__)
@@ -75,6 +88,11 @@ class Subject(models.Model):
     def __str__(self):
         return self.name + ", " + self.fieldOfStudy.name
 
+    def __eq__(self, other):
+        return self.name == other.name and \
+               self.fieldOfStudy == other.fieldOfStudy and \
+               self.semester == other.semester
+
 
 class Building(models.Model):
     name = models.CharField(max_length=64)
@@ -88,6 +106,13 @@ class Building(models.Model):
 
     def __str__(self):
         return self.name + ", " + self.street + ", " + self.city + ", " + self.numberOfBuilding + ", " + self.postalCode
+
+    def __eq__(self, other):
+        return self.name == other.name and \
+               self.street == other.street and \
+               self.city == other.city and \
+               self.numberOfBuilding == other.numberOfBuilding and \
+               self.postalCode == other.postalCode
 
 
 class Room(models.Model):
@@ -112,6 +137,9 @@ class Room(models.Model):
     def __str__(self):
         return self.id
 
+    def __eq__(self, other):
+        return self.id == other.id
+
 
 class Plan(models.Model):
     title = models.CharField(max_length=32)
@@ -120,6 +148,14 @@ class Plan(models.Model):
 
     def toJSON(self):
         return json.dumps(self.__dict__)
+
+    def __str__(self):
+        return self.title + ", " + self.fieldOfStudy.name + ", " + str(self.semester)
+
+    def __eq__(self, other):
+        return self.title == other.title and \
+               self.fieldOfStudy == other.fieldOfStudy and \
+               self.semester == other.semester
 
 
 class ScheduledSubject(models.Model):
@@ -148,7 +184,15 @@ class ScheduledSubject(models.Model):
         return json.dumps(self.__dict__)
 
     def __str__(self):
-        return self.plan.title + ", " + self.subject.name
+        return self.plan.title + ", " + self.subject.name + ", " + type
+
+    def __eq__(self, other):
+        return self.subject == other.subject and \
+               self.plan == other.plan and \
+               self.room == other.room and \
+               self.whenStart == other.whenStart and \
+               self.whenFinnish == other.whenFinnish and \
+               self.dayOfWeek == other.dayOfWeek
 
 
 class Student(models.Model):
@@ -158,16 +202,14 @@ class Student(models.Model):
     plan = models.ForeignKey(Plan, on_delete=var_on_delete, default=None, null=True)
     indexNumber = models.IntegerField(unique=True, default=1)
 
-    def save(self, *args, **kwargs):
-        if self._state.adding:
-            last_id = self.objects.all().aggregate(largest=models.Max('indexNumber'))['largest']
-
-            # aggregate can return None! Check it first.
-            # If it isn't none, just use the last ID specified (which should be the greatest) and add one to it
-            if last_id is not None:
-                self.indexNumber = last_id + 1
-
-        super(Student, self).save(*args, **kwargs)
+    def __str__(self):
+        return self.user.name + " " + self.user.surname + ", " + str(self.indexNumber)
 
     def toJSON(self):
         return json.dumps(self.__dict__)
+
+    @staticmethod
+    def add_student(student):
+        max_index = Student.objects.all().aggregate(Max('indexNumber'))
+        student.indexNumber = max_index
+        student.save()

@@ -3,6 +3,7 @@ from ..models import *
 from accounts.models import User
 from datetime import time
 
+
 """
 Adds instant data
 """
@@ -117,6 +118,7 @@ class AbstractTestEntities(TestCase):
         user_buff.save()
         # adding student
         Student(user=user_buff, fieldOfStudy=field_of_study, semester=1).save()
+
 
 # Create your tests here.
 class TestEntities(AbstractTestEntities):

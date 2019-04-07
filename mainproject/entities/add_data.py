@@ -13,8 +13,10 @@ def add_entities():
         for t in teachers:
             teachers_list.append(Teacher(user=t, faculty=faculty1))
             teachers_list[-1].save()
-        field_of_study1 = FieldOfStudy(name="Computer Science", degree = FieldOfStudy.BACHELOR, faculty=faculty1, howManySemesters=7)
-        field_of_study2 = FieldOfStudy(name="Computer Science", degree = FieldOfStudy.MASTER, faculty=faculty1, howManySemesters=3)
+        field_of_study1 = FieldOfStudy(name="Computer Science", degree = FieldOfStudy.BACHELOR, faculty=faculty1,
+                                       howManySemesters=7, whenDoesItStarts=FieldOfStudy.WINTER)
+        field_of_study2 = FieldOfStudy(name="Computer Science", degree = FieldOfStudy.MASTER, faculty=faculty1,
+                                       howManySemesters=3, whenDoesItStarts=FieldOfStudy.SUMMER)
         field_of_study1.save()
         field_of_study2.save()
 
@@ -90,8 +92,8 @@ def add_entities():
         subject_list.append(Subject(name="User Interface Programming", semester=3, fieldOfStudy=field_of_study2,lecture_hours=30, laboratory_hours=30))
 
         #counter = 0
-        #for sub in subject_list:
-        #    sub.save()
+        for sub in subject_list:
+            sub.save()
         #    for x in range(counter, counter+2):
         #        sub.teachers.add(teachers_list[x])
         #        if x >= len(teachers_list):
@@ -187,9 +189,12 @@ def add_students():
             break
         students = User.objects.filter(student=True)
         student_list = []
+        i = 1
         for std in students:
-            student_list.append(Student(user=std, fieldOfStudy=field, semester=1))
+            student_list.append(Student(user=std, fieldOfStudy=field, semester=1, indexNumber=i))
+            i += 1
             student_list[-1].save()
+
         transaction.savepoint_commit(sid)
     except Exception as e:
         transaction.savepoint_rollback(sid)
