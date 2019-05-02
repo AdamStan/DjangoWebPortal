@@ -184,7 +184,7 @@ class ScheduledSubject(models.Model):
         return json.dumps(self.__dict__)
 
     def __str__(self):
-        return self.plan.title + ", " + self.subject.name + ", " + type
+        return self.plan.title + ", " + self.subject.name + ", " + self.type
 
     def __eq__(self, other):
         return self.subject == other.subject and \
