@@ -200,7 +200,8 @@ def add_students():
         transaction.savepoint_rollback(sid)
         print(str(e))
 
-def add_many_to_many(amount = 3):
+
+def add_many_to_many(amount = 6):
     teachers = Teacher.objects.all()
     subjects = Subject.objects.all()
 
@@ -217,3 +218,11 @@ def add_many_to_many(amount = 3):
         else:
             counter += amount
         sub.save()
+
+
+def add_more_laboratories()
+    building = Building.objects.all()[0]
+    room1 = Room(id='r016', building=building, room_type=Room.LABORATORY)
+    room2 = Room(id='r017', building=building, room_type=Room.LABORATORY)
+    room1.save()
+    room2.save()

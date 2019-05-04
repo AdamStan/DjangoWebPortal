@@ -135,7 +135,7 @@ class Room(models.Model):
         return json.dumps(self.__dict__)
 
     def __str__(self):
-        return self.id
+        return str(self.id) + " " + str(self.room_type)
 
     def __eq__(self, other):
         return self.id == other.id

@@ -1,13 +1,12 @@
 from entities.models import Subject, ScheduledSubject, Teacher, Plan, Room, FieldOfStudy
 from random import randint, choice
-import threading
-import multiprocessing as mp
 from datetime import time
 
 # :::STATIC VALUES:::
 HOW_MANY_TRIES = 100
 
 ''' 
+IN TEST PURPOSE ONLY
 It will be request function:
 '''
 def run_it_in_shell(winterOrSummer=FieldOfStudy.WINTER, how_many_plans=3):
@@ -17,19 +16,10 @@ def run_it_in_shell(winterOrSummer=FieldOfStudy.WINTER, how_many_plans=3):
 
     plans = OnePlanGenerator.create_empty_plans(fields_of_study, how_many_plans, winterOrSummer)
 
-    show_objects(plans)
+    OnePlanGenerator.show_objects(plans)
     # in test purpose only!!!
     OnePlanGenerator(teachers, plans, rooms).generate_plan()
 
-
-def show_objects(objects):
-    for obj in objects:
-        print(str(obj))
-
-def show_subjects(scheduled_subjects):
-    for sch in scheduled_subjects:
-        print(str(sch) + ", " + str(sch.whenStart) + ", " + str(sch.whenFinnish) + ", day:" + str(sch.dayOfWeek)
-              + ", how_long: " + str(sch.how_long))
 
 class OnePlanGenerator:
     def __init__(self, teachers, plans, rooms, weeks=15):
@@ -38,18 +28,18 @@ class OnePlanGenerator:
         self.rooms = list(rooms)
         # there will be the same index as in plans, teachers, rooms
         self.subjects_in_plans = []
-        self.subjects_for_teachers = []
-        self.subjects_in_room = []
+        self.subjects_for_teachers = {}
+        self.subjects_in_room = {}
 
         for plan in self.plans:
             scheduled_subjects = OnePlanGenerator.create_scheduled_subjects(plan, weeks)
             self.subjects_in_plans.append(scheduled_subjects)
 
         for room in self.rooms:
-            self.subjects_in_room.append([])
+            self.subjects_in_room[room] = []
 
         for teacher in self.teachers:
-            self.subjects_for_teachers.append([])
+            self.subjects_for_teachers[teacher] = []
 
     @staticmethod
     def create_empty_plans(fields_of_study, how_many_plans, winter_or_summer):
@@ -107,24 +97,8 @@ class OnePlanGenerator:
         :param weeks: how many weeks semester can be
         :return None:
         """
-        dict_lectures = {}
-        for list_index in range(0, len(self.subjects_in_plans)):
-            for subject_index in range(len(self.subjects_in_plans[list_index])):
-                if self.subjects_in_plans[list_index][subject_index].type == ScheduledSubject.LECTURE:
-                    new_id = str(list_index) + "|||" + str(subject_index)
-                    dict_lectures[new_id] = self.subjects_in_plans[list_index][subject_index]
-
         print("--- set lectures time ---")
-        dict_group_lectures = {}
-
-        for sch_subject in dict_lectures.values():
-            dict_group_lectures[sch_subject.subject] = []
-
-        print(dict_group_lectures.__len__())
-        print(dict_lectures.__len__())
-
-        for sch_subject in dict_lectures.values():
-            dict_group_lectures[sch_subject.subject].append(sch_subject)
+        dict_lectures, dict_group_lectures = self.prepare_lectures()
 
         for sch_subject_list in dict_group_lectures.values():
             tries = HOW_MANY_TRIES
@@ -149,8 +123,6 @@ class OnePlanGenerator:
             if tries == 0:
                 raise Exception("lectures cannot be set!")
 
-        show_subjects(dict_lectures.values())
-
     def set_laboratory_time(self, min_hour=8, max_hour=19, days=[1,2,3,4,5]):
         """
         Randomizes days of week and hours when lectures will take place
@@ -161,20 +133,7 @@ class OnePlanGenerator:
         :param weeks: how many weeks semester can be
         :return None:
         """
-        # dictionary for all laboratories
-        dict_laboratories = {}
-        for list_index in range(0, len(self.subjects_in_plans)):
-            for subject_index in range(len(self.subjects_in_plans[list_index])):
-                if self.subjects_in_plans[list_index][subject_index].type == ScheduledSubject.LABORATORY:
-                    new_id = str(list_index) + "|||" + str(subject_index)
-                    dict_laboratories[new_id] = self.subjects_in_plans[list_index][subject_index]
-
-        # dictionary for all events
-        dict_all = {}
-        for list_index in range(0, len(self.subjects_in_plans)):
-            for subject_index in range(len(self.subjects_in_plans[list_index])):
-                new_id = str(list_index) + "|||" + str(subject_index)
-                dict_all[new_id] = self.subjects_in_plans[list_index][subject_index]
+        dict_laboratories, dict_all = self.prepare_laboratories()
 
         print("--- set laboratories time ---")
         for key, subject in dict_laboratories.items():
@@ -191,51 +150,160 @@ class OnePlanGenerator:
                 if tries == 0:
                     raise Exception("Laboratories cannot be set!")
 
-        show_subjects(dict_laboratories.values())
-
     def set_rooms_to_subjects(self):
         self.set_rooms_for_lectures()
         self.set_rooms_for_laboratories()
 
     def set_rooms_for_lectures(self):
-        pass
+        dict_lectures, dict_group_lectures = self.prepare_lectures()
+        for sch_subject_list in dict_group_lectures.values():
+            rooms = list(filter(lambda x: (x.room_type == Room.LECTURE), self.rooms))
+            while rooms:
+                room = choice(rooms)
+                sch_subject_list[0].room = room
+                if self.check_room_can_be_set(room, sch_subject_list[0]):
+                    for sch_subject in sch_subject_list:
+                        sch_subject.room = room
+                        self.subjects_in_room[room].append(sch_subject)
+                    break
+                rooms.remove(room)
+            if len(rooms) == 0:
+                OnePlanGenerator.show_subjects(list(filter(lambda x: (x.room_type == Room.LECTURE), self.rooms)))
+                raise Exception("lectures cannot be set!")
 
     def set_rooms_for_laboratories(self):
-        pass
+        dict_laboratories, dict_all = self.prepare_laboratories()
+        for sch_subject in dict_laboratories.values():
+            rooms = list(filter(lambda x: (x.room_type == Room.LABORATORY), self.rooms))
+            while rooms:
+                room = choice(rooms)
+                sch_subject.room = room
+                if self.check_room_can_be_set(room, sch_subject):
+                    print("===")
+                    sch_subject.room = room
+                    self.subjects_in_room[room].append(sch_subject)
+                    break
+                rooms.remove(room)
+            if len(rooms) == 0:
+                for key, list_dupa in self.subjects_in_room.items():
+                    if key.room_type == Room.LABORATORY:
+                        print("***")
+                        print(key)
+                        OnePlanGenerator.show_subjects(list_dupa)
+                print("Chujowy przedmiot:")
+                OnePlanGenerator.show_subjects([sch_subject])
+                raise Exception("laboratories cannot be set!")
 
     def set_teachers_to_class(self):
         self.teachers_to_lectures()
         self.teachers_to_labs()
 
     def teachers_to_lectures(self):
-        pass
+        dict_lectures, dict_group_lectures = self.prepare_lectures()
+        for sch_subject_list in dict_group_lectures.values():
+            teachers = list(sch_subject_list[0].subject.teachers.all())
+            while teachers:
+                teacher = choice(teachers)
+                sch_subject_list[0].teacher = teacher
+                if self.check_teacher_can_teach(teacher, sch_subject_list[0]):
+                    for sch_subject in sch_subject_list:
+                        sch_subject.teacher = teacher
+                        self.subjects_for_teachers[teacher].append(sch_subject)
+                    break
+                teachers.remove(teacher)
+            if len(teachers) == 0:
+                OnePlanGenerator.show_subjects(sch_subject_list[0].subject.teachers.all())
+                raise Exception("lectures cannot be set!")
 
     def teachers_to_labs(self):
-        pass
+        dict_laboratories, dict_all = self.prepare_laboratories()
+        for sch_subject in dict_laboratories.values():
+            teachers = list(sch_subject.subject.teachers.all())
+            while teachers:
+                teacher = choice(teachers)
+                sch_subject.teacher = teacher
+                if self.check_teacher_can_teach(teacher, sch_subject):
+                    self.subjects_for_teachers[teacher].append(sch_subject)
+                    break
+                teachers.remove(teacher)
+            if len(teachers) == 0:
+                OnePlanGenerator.show_objects(sch_subject.subject.teachers.all())
+                raise Exception("laboratories cannot be set!")
 
-    def check_teacher_can_teach(self, teacher):
-        pass
+    def check_teacher_can_teach(self, teacher, sch_subject):
+        teachers_subjects = self.subjects_for_teachers[teacher]
+        for event in teachers_subjects:
+            difference_between_starts = abs(event.whenStart.hour - sch_subject.whenStart.hour)
+            difference_between_ends = abs(event.whenFinnish.hour - sch_subject.whenFinnish.hour)
+            is_the_same_day = event.dayOfWeek == sch_subject.dayOfWeek
+            if is_the_same_day and \
+                    (difference_between_starts + difference_between_ends) < (event.how_long + sch_subject.how_long):
+                return False
 
-    def check_room_can_be_set(self, room):
-        pass
+        return True
+
+    def check_room_can_be_set(self, room, sch_subject):
+        scheduled_subjects_in_room = self.subjects_in_room[room]
+        for event in scheduled_subjects_in_room:
+            difference_between_starts = abs(event.whenStart.hour - sch_subject.whenStart.hour)
+            difference_between_ends = abs(event.whenFinnish.hour - sch_subject.whenFinnish.hour)
+            is_the_same_day = event.dayOfWeek == sch_subject.dayOfWeek
+            if is_the_same_day and \
+                    (difference_between_starts + difference_between_ends) < (event.how_long + sch_subject.how_long):
+                print("I have returned false... labs, rooms")
+                return False
+
+        return True
 
     def check_event_can_be_set(self, event, event_id, dict_of_subjects):
         # search the subject from plan
         for key, value in dict_of_subjects.items():
             if event_id[0:3] == key[0:3] and event_id != key:
                 try:
-                    difference_between_starts = abs(event.whenStart.hour - dict_of_subjects[key].whenStart.hour)
-                    difference_between_ends = abs(event.whenFinnish.hour - dict_of_subjects[key].whenFinnish.hour)
-                    is_the_same_day = event.dayOfWeek == dict_of_subjects[key].dayOfWeek
-                    # show_subjects([value])
-                    # show_subjects([event])
-                    if is_the_same_day and \
-                            difference_between_starts + difference_between_ends <= event.how_long + dict_of_subjects[key].how_long:
-                        print("I return false")
-                        return False
+                    if event.dayOfWeek == dict_of_subjects[key].dayOfWeek:
+                        difference_between_starts = abs(event.whenStart.hour - dict_of_subjects[key].whenStart.hour)
+                        difference_between_ends = abs(event.whenFinnish.hour - dict_of_subjects[key].whenFinnish.hour)
+                        if (difference_between_starts + difference_between_ends) < (event.how_long + dict_of_subjects[key].how_long):
+                            return False
                 except AttributeError:
                     return True
         return True
+
+    def prepare_lectures(self):
+        dict_lectures = {}
+        for list_index in range(0, len(self.subjects_in_plans)):
+            for subject_index in range(len(self.subjects_in_plans[list_index])):
+                if self.subjects_in_plans[list_index][subject_index].type == ScheduledSubject.LECTURE:
+                    new_id = str(list_index) + "|||" + str(subject_index)
+                    dict_lectures[new_id] = self.subjects_in_plans[list_index][subject_index]
+
+        dict_group_lectures = {}
+
+        for sch_subject in dict_lectures.values():
+            dict_group_lectures[sch_subject.subject] = []
+
+        for sch_subject in dict_lectures.values():
+            dict_group_lectures[sch_subject.subject].append(sch_subject)
+
+        return dict_lectures, dict_group_lectures
+
+    def prepare_laboratories(self):
+        # dictionary for all laboratories
+        dict_laboratories = {}
+        for list_index in range(0, len(self.subjects_in_plans)):
+            for subject_index in range(len(self.subjects_in_plans[list_index])):
+                if self.subjects_in_plans[list_index][subject_index].type == ScheduledSubject.LABORATORY:
+                    new_id = str(list_index) + "|||" + str(subject_index)
+                    dict_laboratories[new_id] = self.subjects_in_plans[list_index][subject_index]
+
+        # dictionary for all events
+        dict_all = {}
+        for list_index in range(0, len(self.subjects_in_plans)):
+            for subject_index in range(len(self.subjects_in_plans[list_index])):
+                new_id = str(list_index) + "|||" + str(subject_index)
+                dict_all[new_id] = self.subjects_in_plans[list_index][subject_index]
+
+        return dict_laboratories, dict_all
 
     def show(self):
         for events in self.subjects_in_plans.values():
@@ -243,40 +311,13 @@ class OnePlanGenerator:
             for event in events:
                 print(event)
 
+    @staticmethod
+    def show_objects(objects):
+        for obj in objects:
+            print(str(obj))
 
-class GeneratorPlans:
-    def __init__(self):
-        self.plans_generators = {}
-
-    # https://stackabuse.com/parallel-processing-in-python/ check
-    def generate_plans(self, teachers=None, plans=None, rooms=None, events=None, how_many=3):
-        tasks = []
-        list_of_plans = []
-        for i in range(0,how_many):
-            # plans = OnePlanGenerator(teachers, plans, rooms, events)
-            tasks.append(threading.Thread(target=self.write(i)))
-
-        for task in tasks:
-            task.start()
-
-        for task in tasks:
-            task.join()
-
-        # async example, basic
-        # more: https://realpython.com/asynchronous-tasks-with-django-and-celery/
-        # and: http://www.celeryproject.org
-        with mp.Pool(processes=how_many) as pool:
-            multiple_results = [pool.apply_async(func=self.write) for i in range(4)]
-
-            print(multiple_results.__len__())
-            res = pool.apply_async(time.sleep, (10,))
-
-            try:
-                print(res.get(timeout=1))
-            except TimeoutError:
-                print("We lacked patience and got a multiprocessing.TimeoutError")
-
-    def write(self, para):
-        for i in range(0,100):
-            print(str(para) + str(i))
-        return para
+    @staticmethod
+    def show_subjects(scheduled_subjects):
+        for sch in scheduled_subjects:
+            print(str(sch) + ", " + str(sch.whenStart) + ", " + str(sch.whenFinnish) + ", day:" + str(sch.dayOfWeek)
+                  + ", how_long: " + str(sch.how_long))
