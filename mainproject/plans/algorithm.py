@@ -1,4 +1,5 @@
 from entities.models import Subject, ScheduledSubject, Teacher, Plan, Room, FieldOfStudy
+from multiprocessing import Process as MProcess
 from random import randint, choice
 from datetime import time
 
@@ -16,15 +17,20 @@ def run_it_in_shell(winterOrSummer=FieldOfStudy.WINTER, how_many_plans=3):
 
     plans = OnePlanGenerator.create_empty_plans(fields_of_study, how_many_plans, winterOrSummer)
 
-    OnePlanGenerator.show_objects(plans)
+    # OnePlanGenerator.show_objects(plans)
     # in test purpose only!!!
-    OnePlanGenerator(teachers, plans, rooms).generate_plan()
+    first_plan = OnePlanGenerator(teachers, plans, rooms)
+    return first_plan.generate_plan()
 
 
 class OnePlanGenerator:
-    def __init__(self, teachers, plans, rooms, weeks=15):
+    def __init__(self, teachers, plans=None, rooms=None, how_many_plans=3, winterOrSummer=FieldOfStudy.WINTER, weeks=15):
         self.teachers = list(teachers)
-        self.plans = plans
+        if plans:
+            self.plans = plans
+        else:
+            fields_of_study = FieldOfStudy.objects.all()
+            self.plans = OnePlanGenerator.create_empty_plans(fields_of_study, how_many_plans, winterOrSummer)
         self.rooms = list(rooms)
         # there will be the same index as in plans, teachers, rooms
         self.subjects_in_plans = []
@@ -86,6 +92,7 @@ class OnePlanGenerator:
         self.set_laboratory_time(min_hour=min_hour, max_hour=max_hour, days=days)
         self.set_rooms_to_subjects()
         self.set_teachers_to_class()
+        return {self: self.calculate_value()}
 
     def set_lectures_time(self, min_hour=8, max_hour=19, days=[1,2,3,4,5]):
         """
@@ -179,7 +186,6 @@ class OnePlanGenerator:
                 room = choice(rooms)
                 sch_subject.room = room
                 if self.check_room_can_be_set(room, sch_subject):
-                    print("===")
                     sch_subject.room = room
                     self.subjects_in_room[room].append(sch_subject)
                     break
@@ -250,7 +256,6 @@ class OnePlanGenerator:
             is_the_same_day = event.dayOfWeek == sch_subject.dayOfWeek
             if is_the_same_day and \
                     (difference_between_starts + difference_between_ends) < (event.how_long + sch_subject.how_long):
-                print("I have returned false... labs, rooms")
                 return False
 
         return True
@@ -304,6 +309,45 @@ class OnePlanGenerator:
                 dict_all[new_id] = self.subjects_in_plans[list_index][subject_index]
 
         return dict_laboratories, dict_all
+
+    def calculate_value(self):
+        value = 0
+        for sch_subject_list in self.subjects_in_plans:
+            value += self.value_for_plan(sch_subject_list)
+        return value
+
+    def value_for_plan(self, subjects_in_plan, days=[1,2,3,4,5]):
+        """
+        formula: days - empty days +  (end - start - all how long)
+        :param subjects_in_plan:
+        :return:
+        """
+        values = []
+        value = 0
+        for i in range(0, len(days)):
+            values.append(1)
+            subjects_how_long, first_hour, last_hour = 0, 24, 0
+            list_of_subjects_in_one_day = self.get_events_from_one_day(subjects_in_plan, i+1)
+            for subject in list_of_subjects_in_one_day:
+                if subject.whenStart.hour < first_hour:
+                    first_hour = subject.whenStart.hour
+                if subject.whenFinnish.hour > last_hour:
+                    last_hour = subject.whenFinnish.hour
+                subjects_how_long += subject.how_long
+            if not list_of_subjects_in_one_day:
+                values[i] -= 1
+            else:
+                values[i] += last_hour - first_hour - subjects_how_long
+            value += values[i]
+
+        return value
+
+    def get_events_from_one_day(self, subjects_in_plan, day_int):
+        subjects_in_one_day = []
+        for subject in subjects_in_plan:
+            if subject.dayOfWeek == day_int:
+                subjects_in_one_day.append(subject)
+        return subjects_in_one_day
 
     def show(self):
         for events in self.subjects_in_plans.values():

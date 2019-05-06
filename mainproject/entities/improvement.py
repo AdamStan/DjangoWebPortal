@@ -1,5 +1,5 @@
 from django.db import transaction
-from numpy import array, nditer, zeros
+from numpy import array, zeros
 from random import randint, choice
 from datetime import time
 from copy import deepcopy
