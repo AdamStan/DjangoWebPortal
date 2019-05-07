@@ -81,7 +81,7 @@ WSGI_APPLICATION = 'mainproject.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'webportal_dev2',
+        'NAME': 'webportal_dev',
         'USER': 'postgres',
         'PASSWORD': 'haslo123',
         'HOST': 'localhost',

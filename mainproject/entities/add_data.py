@@ -220,7 +220,7 @@ def add_many_to_many(amount = 6):
         sub.save()
 
 
-def add_more_laboratories()
+def add_more_laboratories():
     building = Building.objects.all()[0]
     room1 = Room(id='r016', building=building, room_type=Room.LABORATORY)
     room2 = Room(id='r017', building=building, room_type=Room.LABORATORY)

@@ -93,6 +93,9 @@ class Subject(models.Model):
                self.fieldOfStudy == other.fieldOfStudy and \
                self.semester == other.semester
 
+    def __hash__(self):
+        return 31 * hash(self.name) * hash(self.semester)
+
 
 class Building(models.Model):
     name = models.CharField(max_length=64)
@@ -139,6 +142,9 @@ class Room(models.Model):
 
     def __eq__(self, other):
         return self.id == other.id
+
+    def __hash__(self):
+        return hash(self.id)
 
 
 class Plan(models.Model):

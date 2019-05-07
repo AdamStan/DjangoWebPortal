@@ -10,17 +10,21 @@ HOW_MANY_TRIES = 100
 IN TEST PURPOSE ONLY
 It will be request function:
 '''
-def run_it_in_shell(winterOrSummer=FieldOfStudy.WINTER, how_many_plans=3):
+
+def create_plan(winterOrSummer=FieldOfStudy.WINTER, how_many_plans=3):
     teachers = Teacher.objects.all()
     rooms = Room.objects.all()
     fields_of_study = FieldOfStudy.objects.all()
-
-    plans = OnePlanGenerator.create_empty_plans(fields_of_study, how_many_plans, winterOrSummer)
-
-    # OnePlanGenerator.show_objects(plans)
-    # in test purpose only!!!
-    first_plan = OnePlanGenerator(teachers, plans, rooms)
-    return first_plan.generate_plan()
+    result = ["Exception"]
+    try:
+        plans = OnePlanGenerator.create_empty_plans(fields_of_study, how_many_plans, winterOrSummer)
+        # OnePlanGenerator.show_objects(plans)
+        # in test purpose only!!!
+        first_plan = OnePlanGenerator(teachers, plans, rooms)
+        result = first_plan.generate_plan()
+    except:
+        print("Exception was thrown")
+    return result
 
 
 class OnePlanGenerator:
@@ -92,7 +96,7 @@ class OnePlanGenerator:
         self.set_laboratory_time(min_hour=min_hour, max_hour=max_hour, days=days)
         self.set_rooms_to_subjects()
         self.set_teachers_to_class()
-        return {self: self.calculate_value()}
+        return [self, self.calculate_value()]
 
     def set_lectures_time(self, min_hour=8, max_hour=19, days=[1,2,3,4,5]):
         """
@@ -354,6 +358,15 @@ class OnePlanGenerator:
             print("+++------------+++")
             for event in events:
                 print(event)
+
+    def save_result(self):
+        Plan.objects.all().delete()
+        ScheduledSubject.objects.all().delete()
+        for plan in self.plans:
+            plan.save()
+        for sch_subject_list in self.subjects_in_plans:
+            for sch_subject in sch_subject_list:
+                sch_subject.save()
 
     @staticmethod
     def show_objects(objects):
