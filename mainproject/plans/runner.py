@@ -1,9 +1,6 @@
-from multiprocessing import Process, Pool
-from entities.models import Teacher, Room, FieldOfStudy, Plan
+from multiprocessing import Pool
+from entities.models import Teacher, Room, FieldOfStudy, Plan, ScheduledSubject
 from .algorithm import OnePlanGenerator
-from itertools import product
-from functools import partial
-from itertools import repeat
 
 def run_it_in_shell():
     cpm = CreatePlanManager()
@@ -47,19 +44,7 @@ class CreatePlanManager():
         return result
 
     def create_plan_asynch(self, winterOrSummer=FieldOfStudy.WINTER, how_many_plans=3):
-        # p1=Process(target=run_it_in_shell)
-        # p2=Process(target=run_it_in_shell)
-        # p3=Process(target=run_it_in_shell)
-        # processes = []
-        # result = []
-        # for i in range(10):
-        #     processes.append(Process(target=run_it_in_shell()))
-        #     processes[-1].start()
-        #
-        # for process in processes:
-        #     process.join()
         pool = Pool(processes = 4)
-        # self.results = pool.map(self.create_plan, product(winterOrSummer, how_many_plans, repeat=10))
         list_with_arguments = []
         for i in range(10):
             list_with_arguments.append((winterOrSummer, how_many_plans))
@@ -68,17 +53,46 @@ class CreatePlanManager():
         print(self.results)
 
     def find_the_best_result(self):
+        print("----- Show results -----")
+        print(self.results)
         the_best_result = None
         for result in self.results:
-            if len(result) > 1 and the_best_result:
+            print(result)
+            print(len(result))
+            if the_best_result and len(result) == 2:
                 if the_best_result[1] > result[1]:
+                    print(result)
                     the_best_result = result
-            else:
+            elif len(result) == 2:
                 the_best_result = result
+        print("The_best_result")
+        print(result)
         return the_best_result
 
     def save_the_best_result(self):
         result_to_save = self.find_the_best_result()
         if result_to_save:
-            result_to_save[0].save_result()
+            plans = result_to_save[0].plans
+            sch_subject_plans = result_to_save[0].subjects_in_plans
+            ScheduledSubject.objects.all().delete()
+            Plan.objects.all().delete()
+            print("plans:")
+            # for plan in Plan.objects.all():
+            #     plan.delete()
+            for plan in Plan.objects.all():
+                print(plan)
+            print("subjects:")
+            for sch_subject in ScheduledSubject.objects.all():
+                print(sch_subject)
+            # SAVE
+            for plan in plans:
+                plan.save()
+            for i in range(len(plans)):
+                title = sch_subject_plans[i][0].plan.title
+                plan = Plan.objects.get(title=title)
+                print(plan)
+                print(plans[i])
+                for sch_subject in sch_subject_plans[i]:
+                    sch_subject.plan = plan
+                    sch_subject.save()
 

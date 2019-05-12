@@ -359,13 +359,24 @@ class OnePlanGenerator:
             for event in events:
                 print(event)
 
+    # DO NOT USE IT!!!
     def save_result(self):
         Plan.objects.all().delete()
         ScheduledSubject.objects.all().delete()
+        print("all plans: (null)")
+        for plan in Plan.objects.all():
+            print(plan)
         for plan in self.plans:
             plan.save()
+        print("after save:")
+        for plan in Plan.objects.all():
+            print(plan)
+        print("::: SAVING SUBJECTS :::")
         for sch_subject_list in self.subjects_in_plans:
+            sch_subject_list[0].plan.save()
             for sch_subject in sch_subject_list:
+                print(sch_subject)
+                print(sch_subject.plan)
                 sch_subject.save()
 
     @staticmethod

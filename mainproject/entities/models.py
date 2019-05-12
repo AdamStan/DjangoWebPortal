@@ -21,6 +21,9 @@ class Faculty(models.Model):
         return self.name == other.name and \
                self.description == other.description
 
+    def __hash__(self):
+        return hash(self.name) + hash(self.description)
+
 
 class FieldOfStudy(models.Model):
     name = models.CharField(max_length=64)
@@ -55,6 +58,10 @@ class FieldOfStudy(models.Model):
                self.type == other.type and \
                self.howManySemesters == other.howManySemesters and \
                self.whenDoesItStarts == other.whenDoesItStarts
+
+    def __hash__(self):
+        return hash(self.name) + hash(self.faculty) + hash(self.degree) + hash(self.type) \
+               + hash(self.howManySemesters) + hash(self.whenDoesItStarts)
 
     def toJSON(self):
         return json.dumps(self.__dict__)
@@ -162,6 +169,9 @@ class Plan(models.Model):
         return self.title == other.title and \
                self.fieldOfStudy == other.fieldOfStudy and \
                self.semester == other.semester
+
+    def __hash__(self):
+        return hash(self.title) + hash(self.fieldOfStudy) + hash(self.semester)
 
 
 class ScheduledSubject(models.Model):
