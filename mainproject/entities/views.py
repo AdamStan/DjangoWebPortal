@@ -6,6 +6,8 @@ from .algorithm import AlgorithmManager
 from .improvement import make_improvement
 from django.http import HttpResponse
 import json
+from plans.runner import CreatePlanManager
+from .models import FieldOfStudy
 
 forbidden = "/entities/forbidden/"
 
@@ -54,7 +56,9 @@ def create_table(plan_id):
     for ss in subjects:
         buff = SubjectExample()
         buff.id = ss.id
-        teacher_name = ss.teacher.user.name + " " + ss.teacher.user.surname
+        teacher_name = ""
+        if ss.teacher:
+            teacher_name = ss.teacher.user.name + " " + ss.teacher.user.surname
         buff.name = ss.subject.name + " " + ss.type + " " + teacher_name
         buff.whenStart = ss.whenStart.hour
         buff.how_long = ss.how_long
@@ -117,13 +121,19 @@ def create_table_for_room(room_id):
 def show_student_plans(request):
     plans = get_plans()
     plan_title = ""
+    message = None
     if request.method == 'POST':
         value = request.POST.get('plan_id', None)
-        parameters, plan_title = create_table(value)
+        try:
+            parameters, plan_title = create_table(value)
+        except:
+            parameters = create_table_example()
+            message = "Timetables are not correctly initialized"
     else:
         parameters = create_table_example()
 
-    return render(request, 'admin/timetables.html', {"values": parameters['values'], "plans": plans, "plan_title":plan_title,"type":"student"})
+    return render(request, 'admin/timetables.html', {"values": parameters['values'], "plans": plans,
+                                                     "plan_title": plan_title, "type": "student", "message": message})
 
 
 def show_teachers_plans(request):
@@ -177,8 +187,12 @@ def show_generate_page(request):
                 print(delete_on)
                 # try:
                 if delete_on:
-                    algo.create_plans(max_hour=int(max_hour), min_hour=int(min_hour), semester=int(semester_type),
-                                 number_of_groups=int(how_many_groups))
+                    # algo.create_plans(max_hour=int(max_hour), min_hour=int(min_hour), semester=int(semester_type),
+                    #              number_of_groups=int(how_many_groups))
+                    cpm = CreatePlanManager()
+                    print(">>>>> semester=" + semester_type)
+                    cpm.create_plan_asynch(winterOrSummer=FieldOfStudy.SUMMER, how_many_plans=int(how_many_groups), min_hour=int(min_hour), max_hour=int(max_hour))
+                    cpm.save_the_best_result()
                 else:
                     # create_plans_without_delete
                     algo.create_plans_without_delete(min_hour=int(min_hour), max_hour=int(max_hour))
@@ -190,6 +204,14 @@ def show_generate_page(request):
             number_of_generations = request.POST.get('number_of_generation')
             make_improvement(int(number_of_generations))
             s_message = "Algorithm made improvement to the plans"
+        elif request.POST.get('action') == "add_new_semestr":
+            students = Student.objects.all()
+            for student in students:
+                if student.semester == student.fieldOfStudy.howManySemesters and not student.isFinished:
+                    student.isFinished = True
+                elif student.semester < student.fieldOfStudy.howManySemesters:
+                    student.semester += 1
+                student.save()
 
     return render(request,'admin/generate.html', {"fail_message": fail_message, "s_message":s_message } )
 
@@ -198,12 +220,17 @@ def show_edit_timetable(request):
     plans = get_plans()
     plan_title = ""
     value = 0
+    message = None
     if request.method == 'POST':
         action = request.POST.get('action')
         if action == 'search':
             value = request.POST.get('plan_id', None)
             print("Which value was taken: " + value)
-            parameters, plan_title = create_table(value)
+            try:
+                parameters, plan_title = create_table(value)
+            except:
+                parameters = create_table_example()
+                message = "Subjects in plans are not scheduled!"
         else:
             event_id=request.POST.get('event_d[event][id]',False)
             start_hour=request.POST.get('event_d[event][start]', False)
@@ -249,7 +276,7 @@ def show_edit_timetable(request):
     else:
         parameters = { "values": [] }
     return render(request, 'admin/edit_timetables.html',{"values": parameters['values'], "actual_plan":value,
-                                                         "plans": plans, "plan_title":plan_title})
+                                                         "plans": plans, "plan_title":plan_title, "message": message})
 
 """ ::: VIEWS FOR STUDENT AND TEACHER ONLY ::: """
 

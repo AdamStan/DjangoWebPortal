@@ -1,10 +1,11 @@
+import traceback
 from multiprocessing import Pool
 from entities.models import Teacher, Room, FieldOfStudy, Plan, ScheduledSubject
 from .algorithm import OnePlanGenerator
 
 def run_it_in_shell():
     cpm = CreatePlanManager()
-    cpm.create_plan_asynch()
+    cpm.create_plan_asynch(winterOrSummer=FieldOfStudy.SUMMER, how_many_plans=2)
     cpm.save_the_best_result()
 
 
@@ -12,22 +13,28 @@ class CreatePlanManager():
     def __init__(self):
         self.results = []
 
-    def create_plan(self, winterOrSummer=FieldOfStudy.WINTER, how_many_plans=3):
-        teachers = Teacher.objects.all()
-        rooms = Room.objects.all()
-        fields_of_study = FieldOfStudy.objects.all()
+    def create_plan(self, winterOrSummer=FieldOfStudy.WINTER, how_many_plans=3, teachers=None, rooms=None, fields_of_study=None,
+                    min_hour=8, max_hour=19):
+        # teachers = Teacher.objects.all()
+        # rooms = Room.objects.all()
+        # fields_of_study = FieldOfStudy.objects.all()
+        from django.db import connection
+        connection.close()
         result = {"Exception"}
         try:
             plans = OnePlanGenerator.create_empty_plans(fields_of_study, how_many_plans, winterOrSummer)
             # OnePlanGenerator.show_objects(plans)
             # in test purpose only!!!
             first_plan = OnePlanGenerator(teachers, plans, rooms)
-            result = first_plan.generate_plan()
-        except:
+            result = first_plan.generate_plan(min_hour, max_hour)
+        except Exception as e:
             print("Exception was thrown")
+            print(str(e))
+            print(e.__class__)
+            print(e.__cause__)
         return result
 
-    def create_plans_without_deleting_plans(self, winterOrSummer=FieldOfStudy.WINTER, how_many_plans=3):
+    def create_plans_without_deleting_plans(self):
         teachers = Teacher.objects.all()
         rooms = Room.objects.all()
         plans = list(Plan.objects.all())
@@ -43,11 +50,15 @@ class CreatePlanManager():
             print("Exception was thrown")
         return result
 
-    def create_plan_asynch(self, winterOrSummer=FieldOfStudy.WINTER, how_many_plans=3):
+    def create_plan_asynch(self, winterOrSummer=FieldOfStudy.WINTER, how_many_plans=3, min_hour=8, max_hour=19):
         pool = Pool(processes = 4)
         list_with_arguments = []
+        teachers = Teacher.objects.all()
+        rooms = Room.objects.all()
+        fields_of_study = FieldOfStudy.objects.all()
         for i in range(10):
-            list_with_arguments.append((winterOrSummer, how_many_plans))
+            list_with_arguments.append((winterOrSummer, how_many_plans, teachers, rooms,
+                                        fields_of_study, min_hour, max_hour))
         print(list_with_arguments)
         self.results = pool.starmap(self.create_plan, list_with_arguments)
         print(self.results)
@@ -70,6 +81,8 @@ class CreatePlanManager():
         return the_best_result
 
     def save_the_best_result(self):
+        from django.db import connection
+        connection.close()
         result_to_save = self.find_the_best_result()
         if result_to_save:
             plans = result_to_save[0].plans

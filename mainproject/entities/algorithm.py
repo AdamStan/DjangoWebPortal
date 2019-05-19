@@ -277,9 +277,9 @@ class AlgorithmManager(metaclass=Singleton):
                     for slecture in lectures:
                         list_lectures.append(slecture)
 
-                    AlgorithmManager.show_scheduled_subjects(list_lectures)
+                    # AlgorithmManager.show_scheduled_subjects(list_lectures)
                     i = AlgorithmManager.search_first_not_null_room(list_lectures)
-                    print(i)
+                    # print(i)
                     if i is not None:
                         ss.room = list_lectures[i].room
                         ss.save()

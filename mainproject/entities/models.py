@@ -217,6 +217,7 @@ class Student(models.Model):
     semester = models.IntegerField(default=1)
     plan = models.ForeignKey(Plan, on_delete=var_on_delete, default=None, null=True)
     indexNumber = models.IntegerField(unique=True, default=1)
+    isFinished = models.BooleanField(default=False)
 
     def __str__(self):
         return self.user.name + " " + self.user.surname + ", " + str(self.indexNumber)
