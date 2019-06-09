@@ -17,12 +17,9 @@ class Faculty(models.Model):
     def __str__(self):
         return self.name
 
-    def __eq__(self, other):
+    def compare_to(self, other):
         return self.name == other.name and \
                self.description == other.description
-
-    def __hash__(self):
-        return hash(self.name) + hash(self.description)
 
 
 class FieldOfStudy(models.Model):
@@ -51,17 +48,25 @@ class FieldOfStudy(models.Model):
         default=WINTER
     )
 
-    def __eq__(self, other):
+    # def compare_to(self, other):
+    #     return self.name == other.name and \
+    #            self.faculty == other.faculty and \
+    #            self.degree == other.degree and \
+    #            self.type == other.type and \
+    #            self.howManySemesters == other.howManySemesters and \
+    #            self.whenDoesItStarts == other.whenDoesItStarts
+    #
+    # def __hash__(self):
+    #     return hash(self.name) + hash(self.faculty) + hash(self.degree) + hash(self.type) \
+    #            + hash(self.howManySemesters) + hash(self.whenDoesItStarts)
+
+    def compare_to(self, other):
         return self.name == other.name and \
-               self.faculty == other.faculty and \
+               self.faculty.compare_to(other.faculty) and \
                self.degree == other.degree and \
                self.type == other.type and \
                self.howManySemesters == other.howManySemesters and \
                self.whenDoesItStarts == other.whenDoesItStarts
-
-    def __hash__(self):
-        return hash(self.name) + hash(self.faculty) + hash(self.degree) + hash(self.type) \
-               + hash(self.howManySemesters) + hash(self.whenDoesItStarts)
 
     def toJSON(self):
         return json.dumps(self.__dict__)
@@ -95,13 +100,10 @@ class Subject(models.Model):
     def __str__(self):
         return self.name + ", " + self.fieldOfStudy.name
 
-    def __eq__(self, other):
+    def compare_to(self, other):
         return self.name == other.name and \
-               self.fieldOfStudy == other.fieldOfStudy and \
+               self.fieldOfStudy.compare_to(other.fieldOfStudy) and \
                self.semester == other.semester
-
-    def __hash__(self):
-        return 31 * hash(self.name) * hash(self.semester)
 
 
 class Building(models.Model):
@@ -117,7 +119,7 @@ class Building(models.Model):
     def __str__(self):
         return self.name + ", " + self.street + ", " + self.city + ", " + self.numberOfBuilding + ", " + self.postalCode
 
-    def __eq__(self, other):
+    def compare_to(self, other):
         return self.name == other.name and \
                self.street == other.street and \
                self.city == other.city and \
@@ -147,11 +149,8 @@ class Room(models.Model):
     def __str__(self):
         return str(self.id) + " " + str(self.room_type)
 
-    def __eq__(self, other):
+    def compare_to(self, other):
         return self.id == other.id
-
-    def __hash__(self):
-        return hash(self.id)
 
 
 class Plan(models.Model):
@@ -165,13 +164,10 @@ class Plan(models.Model):
     def __str__(self):
         return self.title + ", " + self.fieldOfStudy.name + ", " + str(self.semester)
 
-    def __eq__(self, other):
+    def compare_to(self, other):
         return self.title == other.title and \
-               self.fieldOfStudy == other.fieldOfStudy and \
+               self.fieldOfStudy.compare_to(other.fieldOfStudy) and \
                self.semester == other.semester
-
-    def __hash__(self):
-        return hash(self.title) + hash(self.fieldOfStudy) + hash(self.semester)
 
 
 class ScheduledSubject(models.Model):
@@ -202,10 +198,10 @@ class ScheduledSubject(models.Model):
     def __str__(self):
         return self.plan.title + ", " + self.subject.name + ", " + self.type
 
-    def __eq__(self, other):
-        return self.subject == other.subject and \
-               self.plan == other.plan and \
-               self.room == other.room and \
+    def compare_to(self, other):
+        return self.subject.compare_to(other.subject) and \
+               self.plan.compare_to(other.plan) and \
+               self.room.compare_to(other.room) and \
                self.whenStart == other.whenStart and \
                self.whenFinnish == other.whenFinnish and \
                self.dayOfWeek == other.dayOfWeek

@@ -121,7 +121,7 @@ class OnePlanGenerator:
                 sch_subject_list[0].whenFinnish = time(when_start + sch_subject_list[0].how_long, 0, 0)
                 check_for_this_key = ""
                 for key, value in dict_lectures.items():
-                    if value == sch_subject_list[0]:
+                    if value.compare_to(sch_subject_list[0]):
                         check_for_this_key = key
                         break
                 if self.check_event_can_be_set(event=sch_subject_list[0], event_id=check_for_this_key, dict_of_subjects=dict_lectures):

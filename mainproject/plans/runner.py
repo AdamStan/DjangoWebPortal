@@ -5,7 +5,7 @@ from .algorithm import OnePlanGenerator
 
 def run_it_in_shell():
     cpm = CreatePlanManager()
-    cpm.create_plan_asynch(winterOrSummer=FieldOfStudy.SUMMER, how_many_plans=2)
+    cpm.create_plan_asynch_without_deleting()
     cpm.save_the_best_result()
 
 
@@ -34,19 +34,15 @@ class CreatePlanManager():
             print(e.__cause__)
         return result
 
-    def create_plans_without_deleting_plans(self):
-        teachers = Teacher.objects.all()
-        rooms = Room.objects.all()
-        plans = list(Plan.objects.all())
-        for plan in plans:
-            plan.id = None
+    def create_plans_without_deleting_plans(self, teachers, rooms, plans, min_hour, max_hour):
         result = {"Exception"}
         try:
             # OnePlanGenerator.show_objects(plans)
             # in test purpose only!!!
             first_plan = OnePlanGenerator(teachers, plans, rooms)
             result = first_plan.generate_plan()
-        except:
+        except Exception as ex:
+            print(ex)
             print("Exception was thrown")
         return result
 
@@ -61,6 +57,18 @@ class CreatePlanManager():
                                         fields_of_study, min_hour, max_hour))
         print(list_with_arguments)
         self.results = pool.starmap(self.create_plan, list_with_arguments)
+        print(self.results)
+
+    def create_plan_asynch_without_deleting(self, min_hour=8, max_hour=19):
+        pool = Pool(processes=4)
+        teachers = list(Teacher.objects.all())
+        rooms = list(Room.objects.all())
+        plans = list(Plan.objects.all())
+        list_with_arguments = []
+        for i in range(10):
+            list_with_arguments.append((teachers, rooms, plans, min_hour, max_hour))
+        print(list_with_arguments)
+        self.results = pool.starmap(self.create_plans_without_deleting_plans, list_with_arguments)
         print(self.results)
 
     def find_the_best_result(self):

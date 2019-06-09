@@ -195,7 +195,11 @@ def show_generate_page(request):
                     cpm.save_the_best_result()
                 else:
                     # create_plans_without_delete
-                    algo.create_plans_without_delete(min_hour=int(min_hour), max_hour=int(max_hour))
+                    # algo.create_plans_without_delete(min_hour=int(min_hour), max_hour=int(max_hour))
+                    cpm = CreatePlanManager()
+                    print(">>>>> semester=" + semester_type)
+                    cpm.create_plan_asynch_without_deleting(min_hour=int(min_hour), max_hour=int(max_hour))
+                    cpm.save_the_best_result()
                 s_message = "Everything went well, check plans in AllPlans tab"
                 # except:
                 #    fail_message = "Something went wrong, please try again"
