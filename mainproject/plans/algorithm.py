@@ -12,9 +12,11 @@ It will be request function:
 '''
 
 def create_plan(winterOrSummer=FieldOfStudy.WINTER, how_many_plans=3):
+    print("--> I GET ALL FROM DATABASE")
     teachers = Teacher.objects.all()
     rooms = Room.objects.all()
     fields_of_study = FieldOfStudy.objects.all()
+    print("--> I'VE TAKEN WITH SUCCESS")
     result = ["Exception"]
     try:
         plans = OnePlanGenerator.create_empty_plans(fields_of_study, how_many_plans, winterOrSummer)
@@ -28,28 +30,32 @@ def create_plan(winterOrSummer=FieldOfStudy.WINTER, how_many_plans=3):
 
 
 class OnePlanGenerator:
-    def __init__(self, teachers, plans=None, rooms=None, how_many_plans=3, winterOrSummer=FieldOfStudy.WINTER, weeks=15):
+    def __init__(self, teachers, plans=None, rooms=None, scheduled_subjects_in_plans=None,
+                 how_many_plans=3, winterOrSummer=FieldOfStudy.WINTER, weeks=15):
         self.teachers = list(teachers)
-        if plans:
-            self.plans = plans
-        else:
-            fields_of_study = FieldOfStudy.objects.all()
-            self.plans = OnePlanGenerator.create_empty_plans(fields_of_study, how_many_plans, winterOrSummer)
-        self.rooms = list(rooms)
         # there will be the same index as in plans, teachers, rooms
         self.subjects_in_plans = []
         self.subjects_for_teachers = {}
         self.subjects_in_room = {}
+        self.plans = plans
 
-        for plan in self.plans:
-            scheduled_subjects = OnePlanGenerator.create_scheduled_subjects(plan, weeks)
-            self.subjects_in_plans.append(scheduled_subjects)
+        if scheduled_subjects_in_plans:
+            self.subjects_in_plans = scheduled_subjects_in_plans
+        else:
+            fields_of_study = FieldOfStudy.objects.all()
+            self.plans = OnePlanGenerator.create_empty_plans(fields_of_study, how_many_plans, winterOrSummer)
+            for plan in self.plans:
+                scheduled_subjects = OnePlanGenerator.create_scheduled_subjects(plan, weeks)
+                self.subjects_in_plans.append(scheduled_subjects)
+
+        self.rooms = list(rooms)
 
         for room in self.rooms:
             self.subjects_in_room[room] = []
 
         for teacher in self.teachers:
             self.subjects_for_teachers[teacher] = []
+        print("Initialize with success")
 
     @staticmethod
     def create_empty_plans(fields_of_study, how_many_plans, winter_or_summer):
@@ -70,6 +76,7 @@ class OnePlanGenerator:
         subjects = Subject.objects.filter(fieldOfStudy=plan.fieldOfStudy, semester=plan.semester)
         list_of_scheduled_subjects = []
         for subject in subjects:
+            bullshit = subject.fieldOfStudy.faculty
             if subject.lecture_hours and subject.lecture_hours > 0:
                 list_of_scheduled_subjects.append(
                     ScheduledSubject(subject=subject, plan=plan, type=ScheduledSubject.LECTURE,
@@ -110,7 +117,6 @@ class OnePlanGenerator:
         """
         print("--- set lectures time ---")
         dict_lectures, dict_group_lectures = self.prepare_lectures()
-
         for sch_subject_list in dict_group_lectures.values():
             tries = HOW_MANY_TRIES
             while tries > 0:
@@ -363,20 +369,11 @@ class OnePlanGenerator:
     def save_result(self):
         Plan.objects.all().delete()
         ScheduledSubject.objects.all().delete()
-        print("all plans: (null)")
-        for plan in Plan.objects.all():
-            print(plan)
         for plan in self.plans:
             plan.save()
-        print("after save:")
-        for plan in Plan.objects.all():
-            print(plan)
-        print("::: SAVING SUBJECTS :::")
         for sch_subject_list in self.subjects_in_plans:
             sch_subject_list[0].plan.save()
             for sch_subject in sch_subject_list:
-                print(sch_subject)
-                print(sch_subject.plan)
                 sch_subject.save()
 
     @staticmethod

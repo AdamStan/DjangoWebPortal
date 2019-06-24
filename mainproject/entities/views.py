@@ -174,7 +174,6 @@ def show_generate_page(request):
     s_message = ""
     if request.method == 'POST':
         if request.POST.get('action') == "generate":
-            algo = AlgorithmManager()
             min_hour = request.POST.get("first_hour")
             max_hour = request.POST.get("last_hour")
             semester_type = request.POST.get("semester_type")
@@ -183,21 +182,15 @@ def show_generate_page(request):
             if max_hour == "" or min_hour == "" or semester_type == "None" or how_many_groups == "":
                 fail_message = "Plans cannot be create with this values "
             else:
-                #max_hour=int(max_hour), min_hour=int(min_hour), semester=int(semester_type), number_of_groups=int(how_many_groups)
                 print(delete_on)
                 # try:
                 if delete_on:
-                    # algo.create_plans(max_hour=int(max_hour), min_hour=int(min_hour), semester=int(semester_type),
-                    #              number_of_groups=int(how_many_groups))
                     cpm = CreatePlanManager()
-                    print(">>>>> semester=" + semester_type)
                     cpm.create_plan_asynch(winterOrSummer=FieldOfStudy.SUMMER, how_many_plans=int(how_many_groups), min_hour=int(min_hour), max_hour=int(max_hour))
                     cpm.save_the_best_result()
                 else:
                     # create_plans_without_delete
-                    # algo.create_plans_without_delete(min_hour=int(min_hour), max_hour=int(max_hour))
                     cpm = CreatePlanManager()
-                    print(">>>>> semester=" + semester_type)
                     cpm.create_plan_asynch_without_deleting(min_hour=int(min_hour), max_hour=int(max_hour))
                     cpm.save_the_best_result()
                 s_message = "Everything went well, check plans in AllPlans tab"

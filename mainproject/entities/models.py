@@ -201,7 +201,6 @@ class ScheduledSubject(models.Model):
     def compare_to(self, other):
         return self.subject.compare_to(other.subject) and \
                self.plan.compare_to(other.plan) and \
-               self.room.compare_to(other.room) and \
                self.whenStart == other.whenStart and \
                self.whenFinnish == other.whenFinnish and \
                self.dayOfWeek == other.dayOfWeek
