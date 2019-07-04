@@ -11,6 +11,7 @@ def run_it_in_shell():
 
 class CreatePlanManager():
     def __init__(self):
+        self.the_best_result = None
         self.results = []
 
     def create_plan(self, winterOrSummer=FieldOfStudy.WINTER, how_many_plans=3, teachers=None, rooms=None, fields_of_study=None,
@@ -110,4 +111,5 @@ class CreatePlanManager():
                 for sch_subject in sch_subject_plans[i]:
                     sch_subject.plan = plan
                     sch_subject.save()
+            self.the_best_result = result_to_save
 

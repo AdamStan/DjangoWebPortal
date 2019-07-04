@@ -2,7 +2,7 @@ from datetime import time, datetime
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render
 from .models import Student, Teacher, Plan, ScheduledSubject, Room
-from .algorithm import AlgorithmManager
+from .algorithm import ImprovementHelper
 from .improvement import make_improvement
 from django.http import HttpResponse
 import json
@@ -184,18 +184,19 @@ def show_generate_page(request):
             else:
                 print(delete_on)
                 # try:
+                cpm = CreatePlanManager()
                 if delete_on:
-                    cpm = CreatePlanManager()
                     cpm.create_plan_asynch(winterOrSummer=FieldOfStudy.SUMMER, how_many_plans=int(how_many_groups), min_hour=int(min_hour), max_hour=int(max_hour))
                     cpm.save_the_best_result()
                 else:
                     # create_plans_without_delete
-                    cpm = CreatePlanManager()
                     cpm.create_plan_asynch_without_deleting(min_hour=int(min_hour), max_hour=int(max_hour))
                     cpm.save_the_best_result()
-                s_message = "Everything went well, check plans in AllPlans tab"
-                # except:
-                #    fail_message = "Something went wrong, please try again"
+
+                if not cpm.the_best_result:
+                    fail_message = "Something went wrong, please try again"
+                else:
+                    s_message = "Everything went well, check plans in AllPlans tab"
 
         elif request.POST.get('action') == "improve":
             number_of_generations = request.POST.get('number_of_generation')
@@ -209,6 +210,7 @@ def show_generate_page(request):
                 elif student.semester < student.fieldOfStudy.howManySemesters:
                     student.semester += 1
                 student.save()
+            s_message = "New semester has been started"
 
     return render(request,'admin/generate.html', {"fail_message": fail_message, "s_message":s_message } )
 
@@ -243,9 +245,9 @@ def show_edit_timetable(request):
                 subject_to_edit.whenStart = start_hour
                 subject_to_edit.whenFinnish = end_hour
                 subject_to_edit.dayOfWeek = day_of_week.weekday() + 1
-                case1 = AlgorithmManager.check_subject_to_subject_time_exclude(subject_to_edit, subjects)
-                case2 = AlgorithmManager.check_teacher_can_teach_exclude(subject_to_edit, teacher=subject_to_edit.teacher)
-                case3 = AlgorithmManager.check_room_is_not_taken_exclude(subject_to_edit, room=subject_to_edit.room)
+                case1 = ImprovementHelper.check_subject_to_subject_time_exclude(subject_to_edit, subjects)
+                case2 = ImprovementHelper.check_teacher_can_teach_exclude(subject_to_edit, teacher=subject_to_edit.teacher)
+                case3 = ImprovementHelper.check_room_is_not_taken_exclude(subject_to_edit, room=subject_to_edit.room)
                 if case1 and case2 and case3:
                     subject_to_edit.save()
                     return HttpResponse('')
@@ -259,9 +261,9 @@ def show_edit_timetable(request):
                     sch_subject.whenStart = start_hour
                     sch_subject.whenFinnish = end_hour
                     sch_subject.dayOfWeek = day_of_week.weekday() + 1
-                    case1 = AlgorithmManager.check_subject_to_subject_time_exclude(sch_subject, subjects)
-                    case2 = AlgorithmManager.check_teacher_can_teach_exclude(sch_subject, teacher=sch_subject.teacher)
-                    case3 = AlgorithmManager.check_room_is_not_taken_exclude(sch_subject, room=sch_subject.room)
+                    case1 = ImprovementHelper.check_subject_to_subject_time_exclude(sch_subject, subjects)
+                    case2 = ImprovementHelper.check_teacher_can_teach_exclude(sch_subject, teacher=sch_subject.teacher)
+                    case3 = ImprovementHelper.check_room_is_not_taken_exclude(sch_subject, room=sch_subject.room)
                     main_case = main_case and case1 and case2 and case3
 
                 if main_case:
