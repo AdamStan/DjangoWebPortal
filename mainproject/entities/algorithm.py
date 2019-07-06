@@ -36,6 +36,10 @@ class ImprovementHelper():
                 continue
         return True
 
+    def check_subject_to_subject_time_exclude(sch_sub, scheduled_subjects):
+        scheduled_subjects_in_plan = scheduled_subjects.filter(plan=sch_sub.plan).exclude(id=sch_sub.id)
+        return ImprovementHelper.check_subject_to_subject_time(sch_sub, scheduled_subjects_in_plan)
+
     @staticmethod
     def search_first_not_null_hour(lectures_list):
         i = 0
