@@ -1,6 +1,6 @@
 from datetime import time, datetime
-from django.contrib.auth.decorators import login_required, user_passes_test
-from django.shortcuts import render
+from django.contrib.auth.decorators import user_passes_test
+from django.shortcuts import render, redirect
 from .models import Student, Teacher, Plan, ScheduledSubject, Room
 from .algorithm import ImprovementHelper
 from .improvement import make_improvement
@@ -230,6 +230,30 @@ def show_edit_timetable(request):
             except:
                 parameters = create_table_example()
                 message = "Subjects in plans are not scheduled!"
+
+        elif action == "delete":
+            print("delete")
+            sch_subject_id = request.POST.get('event_id')
+            sch_subject = ScheduledSubject.objects.filter(id=sch_subject_id)[0]
+            print(sch_subject)
+            value = sch_subject.plan.id
+            sch_subject.delete()
+            parameters, plan_title = create_table(value)
+        elif action == "Update":
+            room_id = request.POST.get('room_id')
+            teacher_id = request.POST.get('teacher_id')
+            object_id = request.POST.get('object_id')
+            new_room = Room.objects.get(id=room_id)
+            new_teacher = Teacher.objects.get(user_id=teacher_id)
+            sch_subject = ScheduledSubject.objects.get(id=object_id)
+            if sch_subject.type == "LEC":
+                sch_subjects_to_edit = ScheduledSubject.objects.filter(subject=sch_subject.subject, type="LEC")
+                for ss in sch_subjects_to_edit:
+                    ss.room = new_room
+                    ss.teacher = new_teacher
+                    ss.save()
+            parameters, plan_title = create_table(sch_subject.plan.id)
+            s_message = "Class was successfully updated"
         else:
             event_id=request.POST.get('event_d[event][id]',False)
             start_hour=request.POST.get('event_d[event][start]', False)

@@ -5,13 +5,14 @@
 <title> edit students timetables </title>
 <link href="{% static 'fullcalendar-3.9.0//fullcalendar.min.css' %}" rel='stylesheet' />
 <link href="{% static 'fullcalendar-3.9.0/fullcalendar.print.min.css' %}" rel='stylesheet' media='print' />
-<script type="text/javascript" src="{% static 'fullcalendar-3.9.0/important/jquery.min.js' %}"></script>
+<script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="//code.jquery.com/ui/1.10.4/jquery-ui.min.js"></script>
 <script type="text/javascript" src="{% static 'fullcalendar-3.9.0/important/moment.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'fullcalendar-3.9.0/fullcalendar.min.js' %}"></script>
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript" src="{% static 'fullcalendar-3.9.0/important/jquery.ui-contextmenu.js' %}"></script>
 <script type="text/javascript">
     var values = {{values|safe}};
-    console.log(values);
     google.charts.load("current", {packages:["timeline"]});
     google.charts.setOnLoadCallback(drawChart);
     array_of_objects = [];
@@ -82,7 +83,7 @@
             );
         }
 
-        $('#calendar').fullCalendar({
+        var calendarOnPage = $('#calendar').fullCalendar({
             allDaySlot: false,
             defaultView: 'agendaWeek',
             height:727,
@@ -128,10 +129,101 @@
                         alert("Probably cannot set this subject to database, conflict with plan ");
                     }
                 })
+            },
+        });
+
+        // Trigger action when the contexmenu is about to be shown
+        $('a.fc-event').bind("contextmenu", function(event) {
+          // Avoid the real one
+          event.preventDefault();
+          console.log(event);
+          // Show contextmenu, save the a.fc-event $(this) for access later
+          $(".custom-menu").data('event', $(this)).finish().toggle(100).
+            // In the right position (the mouse)
+          css({
+            top: event.pageY + "px",
+            left: event.pageX + "px"
+          });
+        });
+
+        // If the calendar is clicked somewhere
+        $('#calendar').bind("mousedown", function(e) {
+            // If the clicked element is not the menu
+            event.preventDefault();
+            if (!$(e.target).parents(".custom-menu").length > 0) {
+                // Hide it
+                $(".custom-menu").hide(100);
             }
+        });
+        // If the menu element is clicked
+        $("ul.custom-menu li").click(function() {
+          var $event = $(this).parent().data('event');
+          var title = $event.context.innerText;
+          var array = title.split("\n");
+          title = array[1]
+          var id = -1;
+
+          for(var element of event_list){
+            if(title == element.title){
+                id = element.id;
+                break;
+            }
+          }
+
+          var actionToTake = $(this).attr('data-id')
+          if (actionToTake == "delete") {
+              $.ajax({
+                    url: '/entities/edittimetables',
+                    data: {
+                        action: actionToTake,
+                        event_id: id,
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                    type: 'POST',
+                    success:function(){
+                        // alert("You've deleted the class successfully");
+                        // calendarOnPage.fullCalendar('removeEvents', [id]);
+                        location.reload(true);
+
+                    },
+                    error: function(XMLHttpRequest, textStatus, errorThrown) {
+                        //ignore
+                    }
+               })
+          } else if (actionToTake == "edit") {
+              document.getElementById("object_id").value = id;
+              document.getElementById('edit_subject').submit()
+          }
+          // Hide it AFTER the action was triggered
+          $(".custom-menu").hide(100);
         });
     });
 </script>
+<style type="text/css">
+.custom-menu {
+  display: none;
+  z-index: 1000;
+  position: absolute;
+  overflow: hidden;
+  border: 1px solid;
+  white-space: nowrap;
+  font-family: sans-serif;
+  background: #FFF;
+  background-color: limegreen;
+  color: #333;
+  border-radius: 5px;
+  padding: 0;
+}
+.custom-menu li {
+    padding: 8px 12px;
+    cursor: pointer;
+    list-style-type: none;
+    transition: all .3s ease;
+}
+.custom-menu li:hover {
+    background-color: #80ea69;
+}
+</style>
 {% endblock %}
 {% block content %}
     {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
@@ -151,4 +243,13 @@
     <!-- <div class="container" id="timetable_values" style="height: 500px"></div> -->
     <h1> Plan {{ plan_title }} </h1>
     <div id='calendar'></div>
+    <ul class='custom-menu'>
+      <li data-id="delete">Delete class</li>
+      <li data-id="edit">Edit class</li>
+    </ul>
+    <form id="edit_subject" method="post" action="{% url 'entities:model_scheduledsubject' %}">
+        {% csrf_token %}
+        <input type="hidden" id="object_id" name="object_id" value="-1"/>
+        <input type="hidden" name="action" value="Edit"/>
+    </form>
 {% endblock %}
