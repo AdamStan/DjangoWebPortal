@@ -36,9 +36,43 @@ class ImprovementHelper():
                 continue
         return True
 
+    @staticmethod
     def check_subject_to_subject_time_exclude(sch_sub, scheduled_subjects):
         scheduled_subjects_in_plan = scheduled_subjects.filter(plan=sch_sub.plan).exclude(id=sch_sub.id)
         return ImprovementHelper.check_subject_to_subject_time(sch_sub, scheduled_subjects_in_plan)
+
+    @staticmethod
+    def check_teacher_can_teach_exclude_lectures(lecture, teacher):
+        subjects_in_plan = ScheduledSubject.objects.all().filter(teacher=teacher)\
+            .exclude(subject__name=lecture[0].subject.name, type=lecture[0].type)
+        for scheduled in subjects_in_plan:
+            if scheduled.dayOfWeek == lecture[0].dayOfWeek:
+                difference_between_starts = abs(lecture[0].whenStart.hour - scheduled.whenStart.hour)
+                difference_between_ends = abs(lecture[0].whenFinnish.hour - scheduled.whenFinnish.hour)
+                if (difference_between_starts + difference_between_ends) >= (
+                        lecture[0].how_long + scheduled.how_long):
+                    continue
+                else:
+                    return False
+            else:
+                continue
+        return True
+
+    @staticmethod
+    def check_room_is_not_taken_exclude_lectures(lecture, room):
+        subjects_in_this_room = ScheduledSubject.objects.all().filter(room=room)\
+            .exclude(subject__name=lecture[0].subject.name, type=lecture[0].type)
+        for s in subjects_in_this_room:
+            if s.dayOfWeek == lecture[0].dayOfWeek and lecture[0].whenStart:
+                difference_between_starts = abs(lecture[0].whenStart.hour - s.whenStart.hour)
+                difference_between_ends = abs(lecture[0].whenFinnish.hour - s.whenFinnish.hour)
+                if (difference_between_starts + difference_between_ends) >= (lecture[0].how_long + s.how_long):
+                    continue
+                else:
+                    return False
+            else:
+                continue
+        return True
 
     @staticmethod
     def search_first_not_null_hour(lectures_list):
@@ -117,13 +151,6 @@ class ImprovementHelper():
             else:
                 continue
         return True
-
-    @staticmethod
-    def check_that_plans_are_correctly(self, scheduled_subjects):
-        # -- let's do this...
-        self.check_room_is_not_taken()
-        self.check_subject_to_subject_time()
-        self.check_teacher_can_teach()
 
     @transaction.atomic
     def create_plans(self, number_of_groups=3, semester=1, min_hour=8, max_hour=19):

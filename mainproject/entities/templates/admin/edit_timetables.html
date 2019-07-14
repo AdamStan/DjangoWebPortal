@@ -226,8 +226,8 @@
 </style>
 {% endblock %}
 {% block content %}
-    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
     {% if message %}<p class="bg-danger text-white">{{ message }}</p>{% endif %}
+    {% if s_message %}<p class="bg-success text-white">{{ s_message }}</p>{% endif %}
     <form method="post" action="{% url 'entities:edittimetables' %}">
         {% csrf_token %}
         <select class="btn background-second" name="plan_id">

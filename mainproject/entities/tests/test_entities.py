@@ -78,17 +78,19 @@ class AbstractTestEntities(TestCase):
 
         scheduled_subject_list = []
         for p in plan_list:
+            i = 6
             for s in subjects:
                 if s.lecture_hours > 0:
                     scheduled_subject_list.append(
                         ScheduledSubject(subject=s, plan=p, type=ScheduledSubject.LECTURE, teacher=teacher,
-                        whenStart = time(15, 0, 0), whenFinnish= time(17, 0, 0), how_long = 2, dayOfWeek=2)
+                        whenStart = time(i, 0, 0), whenFinnish= time(i+1, 0, 0), how_long = 1, dayOfWeek=2)
                     )
                 if s.laboratory_hours > 0:
                     scheduled_subject_list.append(
                         ScheduledSubject(subject=s, plan=p, type=ScheduledSubject.LABORATORY, teacher=teacher,
-                        whenStart = time(15, 0, 0), whenFinnish= time(18, 0, 0), how_long = 3, dayOfWeek=3)
+                        whenStart = time(i, 0, 0), whenFinnish= time(i+1, 0, 0), how_long = 1, dayOfWeek=3)
                     )
+                i += 1
 
         for ss in scheduled_subject_list:
             ss.save()

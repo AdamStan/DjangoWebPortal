@@ -220,6 +220,7 @@ def show_edit_timetable(request):
     plan_title = ""
     value = 0
     message = None
+    s_message = None
     if request.method == 'POST':
         action = request.POST.get('action')
         if action == 'search':
@@ -246,12 +247,30 @@ def show_edit_timetable(request):
             new_room = Room.objects.get(id=room_id)
             new_teacher = Teacher.objects.get(user_id=teacher_id)
             sch_subject = ScheduledSubject.objects.get(id=object_id)
+            subjects = ScheduledSubject.objects.filter(plan=sch_subject.plan)
+            sch_subject.room = new_room
+            sch_subject.teacher = new_teacher
             if sch_subject.type == "LEC":
                 sch_subjects_to_edit = ScheduledSubject.objects.filter(subject=sch_subject.subject, type="LEC")
+                case1 = True
+                # check all in there plans
                 for ss in sch_subjects_to_edit:
-                    ss.room = new_room
-                    ss.teacher = new_teacher
-                    ss.save()
+                    subjects = ScheduledSubject.objects.filter(plan=ss.plan)
+                    case1 = case1 and ImprovementHelper.check_subject_to_subject_time_exclude(ss, subjects)
+                # check teacher can teach and exclude other lectures
+                case2 = ImprovementHelper.check_teacher_can_teach_exclude_lectures(sch_subjects_to_edit,
+                                                                                   teacher=sch_subject.teacher)
+                case3 = ImprovementHelper.check_room_is_not_taken_exclude_lectures(sch_subjects_to_edit,
+                                                                                   room=sch_subject.room)
+                if case1 and case2 and case3:
+                    for ss in sch_subjects_to_edit:
+                        ss.save()
+            elif sch_subject.type == "LAB":
+                case1 = ImprovementHelper.check_subject_to_subject_time_exclude(sch_subject, subjects)
+                case2 = ImprovementHelper.check_teacher_can_teach_exclude(sch_subject, teacher=sch_subject.teacher)
+                case3 = ImprovementHelper.check_room_is_not_taken_exclude(sch_subject, room=sch_subject.room)
+                if case1 and case2 and case3:
+                    sch_subject.save()
             parameters, plan_title = create_table(sch_subject.plan.id)
             s_message = "Class was successfully updated"
         else:
@@ -263,7 +282,6 @@ def show_edit_timetable(request):
             start_hour = time(int(start_hour[11:13]), 0, 0)
             end_hour = time(int(end_hour[11:13]), 0, 0)
             subject_to_edit = ScheduledSubject.objects.get(id=int(event_id))
-            case1, case2, case3 = False, False, False
             if subject_to_edit.type == "LAB":
                 subjects = ScheduledSubject.objects.filter(plan=subject_to_edit.plan)
                 subject_to_edit.whenStart = start_hour
@@ -279,27 +297,28 @@ def show_edit_timetable(request):
                     raise Exception("I cannot set this subject to database, conflict with other plan")
             elif subject_to_edit.type == "LEC":
                 diff_lectures = ScheduledSubject.objects.filter(subject=subject_to_edit.subject, type=subject_to_edit.type)
-                main_case = True
+                case1 = True
                 for sch_subject in diff_lectures:
                     subjects = ScheduledSubject.objects.filter(plan=sch_subject.plan)
                     sch_subject.whenStart = start_hour
                     sch_subject.whenFinnish = end_hour
                     sch_subject.dayOfWeek = day_of_week.weekday() + 1
-                    case1 = ImprovementHelper.check_subject_to_subject_time_exclude(sch_subject, subjects)
-                    case2 = ImprovementHelper.check_teacher_can_teach_exclude(sch_subject, teacher=sch_subject.teacher)
-                    case3 = ImprovementHelper.check_room_is_not_taken_exclude(sch_subject, room=sch_subject.room)
-                    main_case = main_case and case1 and case2 and case3
+                    case1 = case1 and ImprovementHelper.check_subject_to_subject_time_exclude(sch_subject, subjects)
 
-                if main_case:
+                case2 = ImprovementHelper.check_teacher_can_teach_exclude_lectures(diff_lectures, teacher=sch_subject.teacher)
+                case3 = ImprovementHelper.check_room_is_not_taken_exclude_lectures(diff_lectures, room=sch_subject.room)
+
+                if case1 and case2 and case3:
                     for sch_subject in diff_lectures:
                         sch_subject.save()
                     return HttpResponse('')
                 else:
+                    print(str(case1) + " " + str(case2) + " " + str(case3))
                     raise Exception("I cannot set this subject to database, conflict with other plans")
     else:
         parameters = { "values": [] }
     return render(request, 'admin/edit_timetables.html',{"values": parameters['values'], "actual_plan":value,
-                                                         "plans": plans, "plan_title":plan_title, "message": message})
+                                                         "plans": plans, "plan_title":plan_title, "message": message, "s_message": s_message})
 
 """ ::: VIEWS FOR STUDENT AND TEACHER ONLY ::: """
 
