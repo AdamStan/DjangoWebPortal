@@ -68,7 +68,8 @@ class OnePlanGenerator:
                 sm = 2
             for sem in range(sm, field.howManySemesters + 1, 2):
                 for i in range(1, how_many_plans + 1):
-                    plans.append(Plan(title=field.name + str(sem) + "_" + str(i), fieldOfStudy=field, semester=sem))
+                    title_of_plan = field.name + str(sem) + "_" + str(i) + "|" + field.degree
+                    plans.append(Plan(title=title_of_plan, fieldOfStudy=field, semester=sem))
         return plans
 
     @staticmethod
