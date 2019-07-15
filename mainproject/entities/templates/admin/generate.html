@@ -62,4 +62,15 @@
         </table>
     </div>
 </form>
+<h1> New semester</h1>
+<form action="{% url 'entities:generate' %}" method="post">
+    {% csrf_token %}
+    <div class="table-responsive">
+        <table>
+            <tr>
+                <td><button class="btn background-second" type="submit" name="action" value="add_new_semestr"> Start new semester </button></td>
+            </tr>
+        </table>
+    </div>
+</form>
 {% endblock %}

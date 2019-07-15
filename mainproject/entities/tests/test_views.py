@@ -7,6 +7,8 @@ from .test_entities import AbstractTestEntities
 https://docs.djangoproject.com/en/2.1/topics/testing/tools/ - how to create tests
 It tests all functions in entities\views.py
 """
+
+
 class TestViews(AbstractTestEntities):
     
     def test_create_table(self):
@@ -99,5 +101,3 @@ class TestViews(AbstractTestEntities):
         room = Room.objects.get(id="r001")
         response = self.client.post('/entities/timetables/room', {"plan_id": room.id})
         self.assertEqual(response.status_code, AbstractTestEntities.status_ok)
-
-    # TESTS FOR CHOOSING PLANS

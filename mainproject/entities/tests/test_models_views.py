@@ -7,6 +7,7 @@ from ..urls import tab_models_urls
 
 STATUS_REDIRECT = 302
 
+
 class TestViewModelAdmin(TestCase):
     def setUp(self):
         user_admin = User.objects.create_superuser(

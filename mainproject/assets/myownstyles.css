@@ -37,8 +37,15 @@ background-first:click{
     width: 100%;
 }
 body {
+    min-height:100vh;
     font-family: Arial;
     color: black;
     background-color: white;
+}
+html{
+    min-height: 100vh;
+}
+.full-height {
+    min-height: 100vh;
 }
 .top-buffer { margin-top:20px; }

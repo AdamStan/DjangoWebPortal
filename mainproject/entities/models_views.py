@@ -2,7 +2,7 @@ from datetime import time
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render, get_object_or_404, redirect
 from setuptools.command.rotate import rotate
-
+from .algorithm import ImprovementHelper
 from .views import test_user_is_admin, forbidden
 from accounts.models import User, UserManager
 from .models import *
@@ -297,16 +297,28 @@ def show_scheduledsubject(request):
             new_room = Room.objects.get(id=room_id)
             new_teacher = Teacher.objects.get(user_id=teacher_id)
             sch_subject = ScheduledSubject.objects.get(id=object_id)
-            if sch_subject.type == "LEC":
+            subjects = ScheduledSubject.objects.filter(plan=sch_subject.plan)
+            sch_subject.room = new_room
+            sch_subject.teacher = new_teacher
+            if sch_subject.type == "LEC" :
                 sch_subjects_to_edit = ScheduledSubject.objects.filter(subject=sch_subject.subject, type="LEC")
+                case1 = True
+                #check all in there plans
                 for ss in sch_subjects_to_edit:
-                    ss.room = new_room
-                    ss.teacher = new_teacher
-                    ss.save()
-            else:
-                sch_subject.room = new_room
-                sch_subject.teacher = new_teacher
-                sch_subject.save()
+                    subjects = ScheduledSubject.objects.filter(plan=ss.plan)
+                    case1 = case1 and ImprovementHelper.check_subject_to_subject_time_exclude(ss, subjects)
+                #check teacher can teach and exclude other lectures
+                case2 = ImprovementHelper.check_teacher_can_teach_exclude_lectures(sch_subjects_to_edit, teacher=sch_subject.teacher)
+                case3 = ImprovementHelper.check_room_is_not_taken_exclude_lectures(sch_subjects_to_edit, room=sch_subject.room)
+                if case1 and case2 and case3:
+                    for ss in sch_subjects_to_edit:
+                        ss.save()
+            elif sch_subject.type == "LAB":
+                case1 = ImprovementHelper.check_subject_to_subject_time_exclude(sch_subject, subjects)
+                case2 = ImprovementHelper.check_teacher_can_teach_exclude(sch_subject, teacher=sch_subject.teacher)
+                case3 = ImprovementHelper.check_room_is_not_taken_exclude(sch_subject, room=sch_subject.room)
+                if case1 and case2 and case3:
+                    sch_subject.save()
             s_message = "You've changed classes successfully"
         else:
             fail_message = "You have to choose field of study to " + action.lower()
