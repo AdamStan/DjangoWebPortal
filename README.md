@@ -50,24 +50,9 @@ To run all tests put:
 python manage.py test
 ```
 
-To run tests from one module (or file) put:
+To run tests from one module (or file) put (for example):
 ```
-```
-
-### Break down into end to end tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
+python manage.py test entities.tests.file
 ```
 
 ## Authors
