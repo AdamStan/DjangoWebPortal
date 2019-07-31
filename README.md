@@ -61,7 +61,7 @@ python manage.py test entities.tests.file
 
 ## License
 
-I would be an honor for me if it can help you or it would be useful for you.
+It would be an honor for me if it can help you or it would be useful for you.
 Don't pay, get for free.
 
 ## The END
