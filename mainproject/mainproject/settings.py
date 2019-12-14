@@ -25,7 +25,7 @@ SECRET_KEY = '^x27+s$++h1h920_h6qu*^g&o9^vw9@k98%vx=6sy1^0a4gw_s'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -81,10 +81,10 @@ WSGI_APPLICATION = 'mainproject.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'webportal',
-        'USER': 'postgres',
-        'PASSWORD': 'haslo123',
-        'HOST': 'localhost',
+        'NAME': 'djangowebportal',
+        'USER': 'postgres@universitet',
+        'PASSWORD': 'trudneHASLE123',
+        'HOST': 'universitet.postgres.database.azure.com',
         'PORT': '5432'
     }
 }
